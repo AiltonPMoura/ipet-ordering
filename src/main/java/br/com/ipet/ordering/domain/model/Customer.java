@@ -18,14 +18,8 @@ public class Customer {
     private OffsetDateTime registerAt;
 
     @Builder(builderClassName = "CreateNewCustomerBuild", builderMethodName = "createNew")
-    private Customer(FullName fullName, Email email, CelPhone celPhone, Document document, Address address) {
-        this.setId(new CustumerId());
-        this.setFullName(fullName);
-        this.setEmail(email);
-        this.setCelPhone(celPhone);
-        this.setDocument(document);
-        this.setAddress(address);
-        this.setRegisterAt(OffsetDateTime.now());
+    private static Customer create(FullName fullName, Email email, CelPhone celPhone, Document document, Address address) {
+        return new Customer(new CustumerId(), fullName, email, celPhone, document, address, OffsetDateTime.now());
     }
 
     @Builder(builderClassName = "CreateExistingCustomerBuild", builderMethodName = "createExisting")
@@ -61,37 +55,37 @@ public class Customer {
     }
 
     private void setId(CustumerId id) {
-        FieldValidator.notNull("id", id);
+        FieldValidator.requiresNonNull("id", id);
         this.id = id;
     }
 
     private void setFullName(FullName fullName) {
-        FieldValidator.notNull("fullName", fullName);
+        FieldValidator.requiresNonNull("fullName", fullName);
         this.fullName = fullName;
     }
 
     private void setEmail(Email email) {
-        FieldValidator.notNull("email", email);
+        FieldValidator.requiresNonNull("email", email);
         this.email = email;
     }
 
     private void setCelPhone(CelPhone celPhone) {
-        FieldValidator.notNull("celPhone", celPhone);
+        FieldValidator.requiresNonNull("celPhone", celPhone);
         this.celPhone = celPhone;
     }
 
     private void setDocument(Document document) {
-        FieldValidator.notNull("document", document);
+        FieldValidator.requiresNonNull("document", document);
         this.document = document;
     }
 
     private void setAddress(Address address) {
-        FieldValidator.notNull("address", address);
+        FieldValidator.requiresNonNull("address", address);
         this.address = address;
     }
 
     private void setRegisterAt(OffsetDateTime registerAt) {
-        FieldValidator.notNull("registerAt", registerAt);
+        FieldValidator.requiresNonNull("registerAt", registerAt);
         this.registerAt = registerAt;
     }
 }

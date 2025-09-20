@@ -13,12 +13,12 @@ public record Address(String street,
                       ZipCode zipCode) {
 
     public Address {
-        FieldValidator.notBlank("Street", street);
-        FieldValidator.notNull("number", number);
-        FieldValidator.notBlank("neighborhood", neighborhood);
-        FieldValidator.notBlank("city", city);
-        FieldValidator.notBlank("state", state);
-        FieldValidator.notNull("zipCode", zipCode);
+        FieldValidator.requiresNonBlank("Street", street);
+        FieldValidator.requiresNonNull("number", number);
+        FieldValidator.requiresNonBlank("neighborhood", neighborhood);
+        FieldValidator.requiresNonBlank("city", city);
+        FieldValidator.requiresNonBlank("state", state);
+        FieldValidator.requiresNonNull("zipCode", zipCode);
 
     }
 

@@ -9,12 +9,12 @@ public class FieldValidator {
 
     private FieldValidator(){}
 
-    public static void notNull(String field, Object value) {
+    public static void requiresNonNull(String field, Object value) {
         if (value == null)
             throw new FieldCannotBeEmptyException(field);
     }
 
-    public static void notBlank(String field, String value) {
+    public static void requiresNonBlank(String field, String value) {
         if (!StringUtils.hasText(value))
             throw new FieldCannotBeEmptyException(field);
     }

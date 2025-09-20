@@ -8,7 +8,7 @@ import java.util.UUID;
 public record CustumerId(UUID value) {
 
     public CustumerId {
-        FieldValidator.notNull("customerId value", value);
+        FieldValidator.requiresNonNull("customerId value", value);
     }
 
     public CustumerId() {
