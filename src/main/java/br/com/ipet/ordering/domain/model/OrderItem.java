@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model;
 
+import br.com.ipet.ordering.domain.util.FieldValidator;
 import br.com.ipet.ordering.domain.valueobject.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,13 +15,17 @@ public class OrderItem {
 
     @Builder(builderClassName = "CreateOrderItemBuilder", builderMethodName = "createNew")
     private static OrderItem create(OrderId orderId, Product product, Quantity quantity) {
-        return new OrderItem(
+        var orderItem = new OrderItem(
                 new OrderItemId(),
                 orderId,
                 product,
                 quantity,
-                calculateTotals(product, quantity)
+                Money.ZERO
         );
+
+        orderItem.reCalculateTotals();
+
+        return orderItem;
     }
 
     @Builder(builderClassName = "ExistingOrderItemBuilder", builderMethodName = "existing")
@@ -34,29 +39,36 @@ public class OrderItem {
 
     void changeQuantity(Quantity quantity) {
         this.setQuantity(quantity);
+        reCalculateTotals();
     }
 
-    private static Money calculateTotals(Product product, Quantity quantity) {
-        return product.price().multiply(quantity);
+    private void reCalculateTotals() {
+        var totalAmount = this.product.price().multiply(this.quantity);
+        this.setTotalAmount(totalAmount);
     }
 
     private void setId(OrderItemId id) {
+        FieldValidator.requiresNonNull("order item id", id);
         this.id = id;
     }
 
     private void setOrderId(OrderId orderId) {
+        FieldValidator.requiresNonNull("order id", orderId);
         this.orderId = orderId;
     }
 
     private void setQuantity(Quantity quantity) {
+        FieldValidator.requiresNonNull("order item quantity", quantity);
         this.quantity = quantity;
     }
 
     private void setProduct(Product product) {
+        FieldValidator.requiresNonNull("order item product", product);
         this.product = product;
     }
 
     private void setTotalAmount(Money totalAmount) {
+        FieldValidator.requiresNonNull("order item total amount", totalAmount);
         this.totalAmount = totalAmount;
     }
 }
