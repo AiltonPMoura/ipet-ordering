@@ -31,20 +31,10 @@ public class Order {
     private LocalDateTime cancelAt;
 
     public static Order draft(CustumerId custumerId) {
-        return new Order(
-                new OrderId(),
-                custumerId,
-                new HashSet<>(),
-                Money.ZERO,
-                Quantity.ZERO,
-                null,
-                OrderStatus.DRAFT,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
+        return new Order(new OrderId(), custumerId, new HashSet<>(),
+                Money.ZERO, Quantity.ZERO,
+                null, OrderStatus.DRAFT,
+                null, null, null, null, null, null
         );
     }
 
@@ -72,7 +62,7 @@ public class Order {
     public void addItem(Product product, Quantity quantity) {
         this.verifyIfChangeable();
 
-        OrderItem orderItem = OrderItem.createNew()
+        var orderItem = OrderItem.createNew()
                 .orderId(this.id)
                 .product(product)
                 .quantity(quantity)
@@ -85,7 +75,7 @@ public class Order {
 
     public void changeItemQuantity(OrderItemId itemId, Quantity quantity) {
         this.verifyIfChangeable();
-        OrderItem orderItem = findOrderItem(itemId);
+        var orderItem = findOrderItem(itemId);
         orderItem.changeQuantity(quantity);
         recalculateTotals();
     }
@@ -199,7 +189,7 @@ public class Order {
         return this.items.stream()
                 .filter(orderItem -> orderItem.getId().equals(itemId))
                 .findFirst()
-                .orElseThrow(() -> new OrderItemNotFoundException(this.id.toString(), itemId.id().toString()));
+                .orElseThrow(() -> new OrderItemNotFoundException(this.id.value().toString(), itemId.id().toString()));
     }
 
     private void recalculateTotals() {

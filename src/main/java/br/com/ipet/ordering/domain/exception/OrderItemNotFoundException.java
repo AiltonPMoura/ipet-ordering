@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 public class OrderItemNotFoundException extends DomainException {
 
-    private final String[] params;
+    private final String[] fields;
 
-    public OrderItemNotFoundException(String... params) {
-        super(MessageCode.ERROR_FIELD_CANNOT_BE_EMPTY);
-        this.params = params;
+    public OrderItemNotFoundException(String... fields) {
+        super(MessageCode.ERROR_ORDER_ITEM_NOT_FOUND);
+        this.fields = fields;
     }
 }

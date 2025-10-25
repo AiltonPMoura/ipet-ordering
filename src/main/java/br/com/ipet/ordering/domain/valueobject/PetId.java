@@ -5,14 +5,14 @@ import br.com.ipet.ordering.domain.util.IdGenerator;
 
 import java.util.UUID;
 
-public record OrderId(UUID value) {
+public record PetId(UUID id) {
 
-    public OrderId() {
+    public PetId() {
         this(IdGenerator.generateTimeBasedEpochRandomGenerator());
     }
 
-    public OrderId {
-        FieldValidator.requiresNonNull("order id value", value);
+    public PetId {
+        FieldValidator.requiresNonNull("pet id", id);
     }
 
 }

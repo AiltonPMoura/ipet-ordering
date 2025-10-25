@@ -1,13 +1,15 @@
 package br.com.ipet.ordering.domain.model;
 
+import br.com.ipet.ordering.domain.exception.PetNotFoundException;
 import br.com.ipet.ordering.domain.util.FieldValidator;
 import br.com.ipet.ordering.domain.valueobject.*;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-@Getter
 public class Customer {
     private CustumerId id;
     private FullName fullName;
@@ -15,23 +17,39 @@ public class Customer {
     private CelPhone celPhone;
     private Document document;
     private Address address;
+    private Set<Pet> pets;
     private OffsetDateTime registerAt;
 
     @Builder(builderClassName = "CreateNewCustomerBuild", builderMethodName = "createNew")
     private static Customer create(FullName fullName, Email email, CelPhone celPhone, Document document, Address address) {
-        return new Customer(new CustumerId(), fullName, email, celPhone, document, address, OffsetDateTime.now());
+        return new Customer(new CustumerId(), fullName, email, celPhone, document, address, OffsetDateTime.now(), new HashSet<>());
     }
 
-    @Builder(builderClassName = "CreateExistingCustomerBuild", builderMethodName = "createExisting")
+    @Builder(builderClassName = "CreateExistingCustomerBuild", builderMethodName = "existing")
     private Customer(CustumerId id, FullName fullName, Email email, CelPhone celPhone, Document document,
-                     Address address, OffsetDateTime registerAt) {
+                     Address address, OffsetDateTime registerAt, Set<Pet> pets) {
         this.setId(id);
         this.setFullName(fullName);
         this.setEmail(email);
         this.setCelPhone(celPhone);
         this.setDocument(document);
         this.setAddress(address);
+        this.setPet(pets);
         this.setRegisterAt(registerAt);
+    }
+
+    public void addPet(Name name, Type type, Breed breed,
+                       Gender gender, Size size, Weight weight) {
+        var pet = Pet.createNew()
+                .name(name)
+                .type(type)
+                .breed(breed)
+                .gender(gender)
+                .size(size)
+                .weight(weight)
+                .build();
+
+        this.pets.add(pet);
     }
 
     public void changeFullName(FullName fullName) {
@@ -54,34 +72,108 @@ public class Customer {
         this.setAddress(address);
     }
 
+    public void changePetName(PetId id, Name name) {
+        var pet = findPet(id);
+        pet.changeName(name);
+    }
+
+    public void changePetType(PetId id, Type type) {
+        var pet = findPet(id);
+        pet.changeType(type);
+    }
+
+    public void changePetBreed(PetId id, Breed breed) {
+        var pet = findPet(id);
+        pet.changeBreed(breed);
+    }
+
+    public void changePetGender(PetId id, Gender gender) {
+        var pet = findPet(id);
+        pet.changeGender(gender);
+    }
+
+    public void changePetName(PetId id, Size size) {
+        var pet = findPet(id);
+        pet.changeSize(size);
+    }
+
+    public void changePetWeight(PetId id, Weight weight) {
+        var pet = findPet(id);
+        pet.changeWeight(weight);
+    }
+
+    public CustumerId id() {
+        return id;
+    }
+
+    public FullName fullName() {
+        return fullName;
+    }
+
+    public Email email() {
+        return email;
+    }
+
+    public CelPhone celPhone() {
+        return celPhone;
+    }
+
+    public Document document() {
+        return document;
+    }
+
+    public Address address() {
+        return address;
+    }
+
+    public Set<Pet> pets() {
+        return Collections.unmodifiableSet(pets);
+    }
+
+    public OffsetDateTime registerAt() {
+        return registerAt;
+    }
+
+    private Pet findPet(PetId id) {
+        return this.pets.stream()
+                .filter(pet -> pet.id().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new PetNotFoundException(this.id.value().toString(), id.toString()));
+    }
+
     private void setId(CustumerId id) {
-        FieldValidator.requiresNonNull("id", id);
+        FieldValidator.requiresNonNull("customer id", id);
         this.id = id;
     }
 
     private void setFullName(FullName fullName) {
-        FieldValidator.requiresNonNull("fullName", fullName);
+        FieldValidator.requiresNonNull("customer fullName", fullName);
         this.fullName = fullName;
     }
 
     private void setEmail(Email email) {
-        FieldValidator.requiresNonNull("email", email);
+        FieldValidator.requiresNonNull("customer email", email);
         this.email = email;
     }
 
     private void setCelPhone(CelPhone celPhone) {
-        FieldValidator.requiresNonNull("celPhone", celPhone);
+        FieldValidator.requiresNonNull("customer celPhone", celPhone);
         this.celPhone = celPhone;
     }
 
     private void setDocument(Document document) {
-        FieldValidator.requiresNonNull("document", document);
+        FieldValidator.requiresNonNull("customer document", document);
         this.document = document;
     }
 
     private void setAddress(Address address) {
-        FieldValidator.requiresNonNull("address", address);
+        FieldValidator.requiresNonNull("customer address", address);
         this.address = address;
+    }
+
+    private void setPet(Set<Pet> pets) {
+        FieldValidator.requiresNonNull("customer pets", pets);
+        this.pets = pets;
     }
 
     private void setRegisterAt(OffsetDateTime registerAt) {
