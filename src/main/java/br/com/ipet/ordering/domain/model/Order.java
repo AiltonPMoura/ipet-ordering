@@ -19,6 +19,7 @@ import java.util.Set;
 public class Order {
     private OrderId id;
     private CustumerId custumerId;
+    private CompanyId companyId;
     private Set<OrderItem> items;
     private Money totalAmount;
     private Quantity totalItems;
@@ -31,21 +32,23 @@ public class Order {
     private LocalDateTime deliveryAt;
     private LocalDateTime cancelAt;
 
-    public static Order draft(CustumerId custumerId) {
-        return new Order(new OrderId(), custumerId, new HashSet<>(),
-                Money.ZERO, Quantity.ZERO,
+    public static Order draft(CustumerId custumerId, CompanyId companyId) {
+        return new Order(new OrderId(), custumerId, companyId,
+                new HashSet<>(), Money.ZERO, Quantity.ZERO,
                 null, OrderStatus.DRAFT,
-                null, null, null, null, null, null
+                null, null, null,
+                null, null, null
         );
     }
 
     @Builder(builderClassName = "ExistingOrderBuilder", builderMethodName = "existing")
-    private Order(OrderId id, CustumerId custumerId, Set<OrderItem> items,
-                 Money totalAmount, Quantity totalItems,
+    private Order(OrderId id, CustumerId custumerId, CompanyId companyId,
+                  Set<OrderItem> items, Money totalAmount, Quantity totalItems,
                   PaymentMethod paymentMethod, OrderStatus status,
-                 OffsetDateTime placedAt, OffsetDateTime readyAt, OffsetDateTime paidAt,
-                 LocalDateTime deliveringAt, LocalDateTime deliveryAt, LocalDateTime cancelAt) {
+                  OffsetDateTime placedAt, OffsetDateTime readyAt, OffsetDateTime paidAt,
+                  LocalDateTime deliveringAt, LocalDateTime deliveryAt, LocalDateTime cancelAt) {
         this.setId(id);
+        this.setCompanyId(companyId);
         this.setCustomrtId(custumerId);
         this.setItems(items);
         this.setTotalAmount(totalAmount);
@@ -138,6 +141,10 @@ public class Order {
         return custumerId;
     }
 
+    public CompanyId ccompanyId() {
+        return companyId;
+    }
+
     public Set<OrderItem> items() {
         return Collections.unmodifiableSet(items);
     }
@@ -205,13 +212,18 @@ public class Order {
     }
 
     private void setId(OrderId id) {
-        FieldValidator.requiresNonNull("order id", id);
+        FieldValidator.requiresNonNull("orderId", id);
         this.id = id;
     }
 
     private void setCustomrtId(CustumerId custumerId) {
-        FieldValidator.requiresNonNull("customer id", custumerId);
+        FieldValidator.requiresNonNull("customerId", custumerId);
         this.custumerId = custumerId;
+    }
+
+    private void setCompanyId(CompanyId companyId) {
+        FieldValidator.requiresNonNull("companyId", companyId);
+        this.companyId = companyId;
     }
 
     private void setItems(Set<OrderItem> items) {
