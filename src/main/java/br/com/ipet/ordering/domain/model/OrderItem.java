@@ -1,11 +1,14 @@
 package br.com.ipet.ordering.domain.model;
 
 import br.com.ipet.ordering.domain.util.FieldValidator;
-import br.com.ipet.ordering.domain.valueobject.*;
-import lombok.Builder;
-import lombok.Getter;
 
-@Getter
+import br.com.ipet.ordering.domain.valueobject.Money;
+import br.com.ipet.ordering.domain.valueobject.OrderId;
+import br.com.ipet.ordering.domain.valueobject.OrderItemId;
+import br.com.ipet.ordering.domain.valueobject.Product;
+import br.com.ipet.ordering.domain.valueobject.Quantity;
+import lombok.Builder;
+
 public class OrderItem {
     private OrderItemId id;
     private OrderId orderId;
@@ -43,8 +46,27 @@ public class OrderItem {
     }
 
     private void reCalculateTotals() {
-        var totalAmount = this.product.price().multiply(this.quantity);
-        this.setTotalAmount(totalAmount);
+        this.setTotalAmount(this.product.price().multiply(this.quantity));
+    }
+
+    public OrderItemId id() {
+        return id;
+    }
+
+    public OrderId orderId() {
+        return orderId;
+    }
+
+    public Product product() {
+        return product;
+    }
+
+    public Quantity quantity() {
+        return quantity;
+    }
+
+    public Money totalAmount() {
+        return totalAmount;
     }
 
     private void setId(OrderItemId id) {

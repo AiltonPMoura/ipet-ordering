@@ -6,6 +6,7 @@ import br.com.ipet.ordering.domain.exception.OrderIsNotDraftToChangeException;
 import br.com.ipet.ordering.domain.exception.OrderItemNotFoundException;
 import br.com.ipet.ordering.domain.util.FieldValidator;
 import br.com.ipet.ordering.domain.valueobject.*;
+import br.com.ipet.ordering.domain.valueobject.Product;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -187,16 +188,16 @@ public class Order {
 
     private OrderItem findOrderItem(OrderItemId itemId) {
         return this.items.stream()
-                .filter(orderItem -> orderItem.getId().equals(itemId))
+                .filter(orderItem -> orderItem.id().equals(itemId))
                 .findFirst()
                 .orElseThrow(() -> new OrderItemNotFoundException(this.id.value().toString(), itemId.id().toString()));
     }
 
     private void recalculateTotals() {
-        var totalItemsQuantity = this.items.stream().map(item -> item.getQuantity().value())
+        var totalItemsQuantity = this.items.stream().map(item -> item.quantity().value())
                 .reduce(0, Integer::sum);
 
-        var totalItemsAmount = this.items.stream().map(item -> item.getTotalAmount().value())
+        var totalItemsAmount = this.items.stream().map(item -> item.totalAmount().value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         this.setTotalItems(new Quantity(totalItemsQuantity));

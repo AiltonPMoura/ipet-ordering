@@ -21,8 +21,10 @@ public class Customer {
     private OffsetDateTime registerAt;
 
     @Builder(builderClassName = "CreateNewCustomerBuild", builderMethodName = "createNew")
-    private static Customer create(FullName fullName, Email email, CelPhone celPhone, Document document, Address address) {
-        return new Customer(new CustumerId(), fullName, email, celPhone, document, address, OffsetDateTime.now(), new HashSet<>());
+    private static Customer create(FullName fullName, Email email,
+                                   CelPhone celPhone, Document document, Address address) {
+        return new Customer(new CustumerId(), fullName, email, celPhone,
+                document, address, OffsetDateTime.now(), new HashSet<>());
     }
 
     @Builder(builderClassName = "CreateExistingCustomerBuild", builderMethodName = "existing")
@@ -41,6 +43,7 @@ public class Customer {
     public void addPet(Name name, Type type, Breed breed,
                        Gender gender, Size size, Weight weight) {
         var pet = Pet.createNew()
+                .custumerId(this.id)
                 .name(name)
                 .type(type)
                 .breed(breed)

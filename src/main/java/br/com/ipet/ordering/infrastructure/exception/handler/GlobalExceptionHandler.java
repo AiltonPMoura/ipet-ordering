@@ -68,6 +68,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ServiceNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> serviceNotFoundExceptionHandler(ServiceNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<>(
+                getMessageResponse(ex.getMessage(), request, ex.getFields()),
+                HttpStatus.BAD_REQUEST);
+    }
+
     private ExceptionResponse getMessageResponse(String message, WebRequest request, String... params) {
         return new ExceptionResponse(
                 messageSource.getMessage(message, params, Locale.getDefault()),
