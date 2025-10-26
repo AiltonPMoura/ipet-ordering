@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model;
 
+import br.com.ipet.ordering.domain.exception.ProductNotFoundException;
 import br.com.ipet.ordering.domain.exception.ServiceNotFoundException;
 import br.com.ipet.ordering.domain.util.FieldValidator;
 import br.com.ipet.ordering.domain.valueobject.*;
@@ -51,6 +52,17 @@ public class Company {
         this.services.add(service);
     }
 
+    public void addProduct(Name name, Description description, Money price) {
+        var product = Product.createNew()
+                .companyId(this.id)
+                .name(name)
+                .description(description)
+                .price(price)
+                .build();
+
+        this.products.add(product);
+    }
+
     public void changeCompanyName(CompanyName companyName) {
         this.setCompanyName(companyName);
     }
@@ -86,6 +98,21 @@ public class Company {
         service.changePrice(price);
     }
 
+    public void changeProductName(ProductId id, Name name) {
+        var product = findProduct(id);
+        product.changeName(name);
+    }
+
+    public void changeProductDescription(ProductId id, Description name) {
+        var product = findProduct(id);
+        product.changeDescription(name);
+    }
+
+    public void changeProductPrice(ProductId id, Money price) {
+        var product = findProduct(id);
+        product.changePrice(price);
+    }
+
     public CompanyId id() {
         return id;
     }
@@ -115,6 +142,13 @@ public class Company {
                 .filter(service -> service.id().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new ServiceNotFoundException(id.value().toString(), this.id.value().toString()));
+    }
+
+    private Product findProduct(ProductId id) {
+        return this.products.stream()
+                .filter(product -> product.id().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new ProductNotFoundException(id.value().toString(), this.id.value().toString()));
     }
 
     private void setId(CompanyId id) {

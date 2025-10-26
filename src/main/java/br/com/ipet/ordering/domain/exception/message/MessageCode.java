@@ -1,9 +1,10 @@
 package br.com.ipet.ordering.domain.exception.message;
 
 public class MessageCode {
+
     private MessageCode(){}
 
-    public static final String ERROR_FIELD_CANNOT_BE_EMPTY = "error.attribute.cannot.be.empty";
+    public static final String ERROR_FIELD_CANNOT_BE_EMPTY = "error.field.cannot.be.empty";
     public static final String ERROR_EMAIL_NOT_VALID = "error.email.not.valid";
     public static final String ERROR_NUMBER_CANNOT_BE_NEGATIVE = "error.number.cannot.be.negative";
     public static final String ERROR_QUANTITY_GREATER_THAN_ZERO = "error.quantity.greater.than.zero";
@@ -15,5 +16,6 @@ public class MessageCode {
     public static final String ERROR_PET_NOT_FOUND = "error.pet.not.found";
     public static final String ERROR_WEIGHT_CANNOT_BE_ZERO_OR_NEGATIVE = "error.cannot.be.zero.or.negative";
     public static final String ERROR_SERVICE_NOT_FOUND = "error.service.not.found";
+    public static final String ERROR_PRODUCT_NOT_FOUND = "error.product.not.found";
 
 }
