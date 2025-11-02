@@ -40,11 +40,11 @@ public class Customer {
         this.setRegisterAt(registerAt);
     }
 
-    public void addPet(Name name, Type type, Breed breed,
+    public void addPet(PetName petName, Type type, Breed breed,
                        Gender gender, Size size, Weight weight) {
         var pet = Pet.createNew()
                 .custumerId(this.id)
-                .name(name)
+                .name(petName)
                 .type(type)
                 .breed(breed)
                 .gender(gender)
@@ -75,9 +75,9 @@ public class Customer {
         this.setAddress(address);
     }
 
-    public void changePetName(PetId id, Name name) {
+    public void changePetName(PetId id, PetName petName) {
         var pet = findPet(id);
-        pet.changeName(name);
+        pet.changeName(petName);
     }
 
     public void changePetType(PetId id, Type type) {

@@ -41,7 +41,7 @@ public class Company {
         this.setProducts(products);
     }
 
-    public void addService(Name name, Description description, Money price) {
+    public void addService(ServiceName name, ServiceDescription description, Money price) {
         var service = Service.createNew()
                 .companyId(this.id)
                 .name(name)
@@ -52,7 +52,7 @@ public class Company {
         this.services.add(service);
     }
 
-    public void addProduct(Name name, Description description, Money price) {
+    public void addProduct(ProductName name, ProductDescription description, Money price) {
         var product = Product.createNew()
                 .companyId(this.id)
                 .name(name)
@@ -83,12 +83,12 @@ public class Company {
         this.setAddress(address);
     }
 
-    public void changeServiceName(ServiceId id, Name name) {
+    public void changeServiceName(ServiceId id, ServiceName name) {
         var service = findService(id);
         service.changeName(name);
     }
 
-    public void changeServiceDescription(ServiceId id, Description description) {
+    public void changeServiceDescription(ServiceId id, ServiceDescription description) {
         var service = findService(id);
         service.changeDescription(description);
     }
@@ -98,14 +98,14 @@ public class Company {
         service.changePrice(price);
     }
 
-    public void changeProductName(ProductId id, Name name) {
+    public void changeProductName(ProductId id, ProductName name) {
         var product = findProduct(id);
         product.changeName(name);
     }
 
-    public void changeProductDescription(ProductId id, Description name) {
+    public void changeProductDescription(ProductId id, ProductDescription description) {
         var product = findProduct(id);
-        product.changeDescription(name);
+        product.changeDescription(description);
     }
 
     public void changeProductPrice(ProductId id, Money price) {

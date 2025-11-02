@@ -7,29 +7,29 @@ import lombok.Builder;
 public class Product {
     private ProductId id;
     private CompanyId companyId;
-    private Name name;
-    private Description description;
+    private ProductName name;
+    private ProductDescription description;
     private Money price;
 
     @Builder(builderClassName = "CreateNewProductBuilder", builderMethodName = "createNew")
-    private static Product create(CompanyId companyId, Name name, Description description, Money price) {
+    private static Product create(CompanyId companyId, ProductName name, ProductDescription description, Money price) {
         return new Product(new ProductId(), companyId, name, description, price);
     }
 
     @Builder(builderClassName = "CreateExistingProductBuilder", builderMethodName = "existing")
-    private Product(ProductId id, CompanyId companyId, Name name, Description description, Money price) {
+    private Product(ProductId id, CompanyId companyId, ProductName name, ProductDescription description, Money price) {
         this.setId(id);
         this.setCompanyId(companyId);
-        this.setName(name);
+        this.setProductName(name);
         this.setDescription(description);
         this.setPrice(price);
     }
 
-    void changeName(Name name) {
-        this.setName(name);
+    void changeName(ProductName name) {
+        this.setProductName(name);
     }
 
-    void changeDescription(Description description) {
+    void changeDescription(ProductDescription description) {
         FieldValidator.requiresNonNull("product description", description);
         this.setDescription(description);
     }
@@ -46,11 +46,11 @@ public class Product {
         return companyId;
     }
 
-    public Name name() {
+    public ProductName name() {
         return name;
     }
 
-    public Description description() {
+    public ProductDescription description() {
         return description;
     }
 
@@ -68,12 +68,13 @@ public class Product {
         this.companyId = companyId;
     }
 
-    private void setName(Name name) {
+    private void setProductName(ProductName name) {
         FieldValidator.requiresNonNull("product name", name);
         this.name = name;
     }
 
-    private void setDescription(Description description) {
+    private void setDescription(ProductDescription description) {
+        FieldValidator.requiresNonNull("product description", price);
         this.description = description;
     }
 

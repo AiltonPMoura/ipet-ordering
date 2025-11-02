@@ -17,5 +17,9 @@ public class MessageCode {
     public static final String ERROR_WEIGHT_CANNOT_BE_ZERO_OR_NEGATIVE = "error.cannot.be.zero.or.negative";
     public static final String ERROR_SERVICE_NOT_FOUND = "error.service.not.found";
     public static final String ERROR_PRODUCT_NOT_FOUND = "error.product.not.found";
+    public static final String ERROR_PRODUCT_NAME_CANNOT_BE_VERY_SMALL = "error.product.name.cannot.be.very.small";
+    public static final String ERROR_PRODUCT_DESCRIPTION_CANNOT_BE_VERY_SMALL = "error.product.description.cannot.be.very.small";
+    public static final String ERROR_SERVICE_NAME_CANNOT_BE_VERY_SMALL = "error.service.name.cannot.be.very.small";
+    public static final String ERROR_SERVICE_DESCRIPTION_CANNOT_BE_VERY_SMALL = "error.service.description.cannot.be.very.small";
 
 }

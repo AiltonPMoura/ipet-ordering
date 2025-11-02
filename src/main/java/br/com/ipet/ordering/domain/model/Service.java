@@ -7,19 +7,19 @@ import lombok.Builder;
 public class Service {
     private ServiceId id;
     private CompanyId companyId;
-    private Name name;
-    private Description description;
+    private ServiceName name;
+    private ServiceDescription description;
     private Money price;
 
     @Builder(builderClassName = "CreateNewServiceBuilder", builderMethodName = "createNew")
-    private static Service create(CompanyId companyId, Name name,
-                                  Description description, Money price) {
+    private static Service create(CompanyId companyId, ServiceName name,
+                                  ServiceDescription description, Money price) {
         return new Service(new ServiceId(), companyId, name, description, price);
     }
 
     @Builder(builderClassName = "CreateExistingServiceBuilder", builderMethodName = "existing")
     private Service(ServiceId id, CompanyId companyId,
-                   Name name, Description description, Money price) {
+                    ServiceName name, ServiceDescription description, Money price) {
         this.setId(id);
         this.setCompanyId(companyId);
         this.setName(name);
@@ -27,11 +27,11 @@ public class Service {
         this.setPrice(price);
     }
 
-    void changeName(Name name) {
+    void changeName(ServiceName name) {
         this.setName(name);
     }
 
-    void changeDescription(Description description) {
+    void changeDescription(ServiceDescription description) {
         FieldValidator.requiresNonNull("service description", description);
     }
 
@@ -47,11 +47,11 @@ public class Service {
         return companyId;
     }
 
-    public Name name() {
+    public ServiceName name() {
         return name;
     }
 
-    public Description description() {
+    public ServiceDescription description() {
         return description;
     }
 
@@ -69,12 +69,13 @@ public class Service {
         this.companyId = companyId;
     }
 
-    private void setName(Name name) {
+    private void setName(ServiceName name) {
         FieldValidator.requiresNonNull("service name", name);
         this.name = name;
     }
 
-    private void setDescription(Description description) {
+    private void setDescription(ServiceDescription description) {
+        FieldValidator.requiresNonNull("service description", description);
         this.description = description;
     }
 

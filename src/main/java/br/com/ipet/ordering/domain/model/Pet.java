@@ -2,7 +2,7 @@ package br.com.ipet.ordering.domain.model;
 
 import br.com.ipet.ordering.domain.util.FieldValidator;
 import br.com.ipet.ordering.domain.valueobject.CustumerId;
-import br.com.ipet.ordering.domain.valueobject.Name;
+import br.com.ipet.ordering.domain.valueobject.PetName;
 import br.com.ipet.ordering.domain.valueobject.PetId;
 import br.com.ipet.ordering.domain.valueobject.Weight;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import lombok.Builder;
 public class Pet {
     private PetId id;
     private CustumerId custumerId;
-    private Name name;
+    private PetName name;
     private Type type;
     private Breed breed;
     private Gender gender;
@@ -18,7 +18,7 @@ public class Pet {
     private Weight weight;
 
     @Builder(builderClassName = "createNewPetBuilder", builderMethodName = "createNew")
-    private static Pet create(Name name, CustumerId custumerId,
+    private static Pet create(PetName name, CustumerId custumerId,
                               Type type, Breed breed, Gender gender,
                               Size size, Weight weight) {
         return new Pet(new PetId(), custumerId, name, type, breed, gender, size, weight);
@@ -26,7 +26,7 @@ public class Pet {
 
     @Builder(builderClassName = "createExistingPetBuilder", builderMethodName = "existing")
     private Pet(PetId id, CustumerId custumerId,
-                Name name, Type type, Breed breed,
+                PetName name, Type type, Breed breed,
                 Gender gender, Size size, Weight weight) {
         this.setId(id);
         this.setCustumerId(custumerId);
@@ -38,7 +38,7 @@ public class Pet {
         this.setWeight(weight);
     }
 
-    void changeName(Name name) {
+    void changeName(PetName name) {
         this.setName(name);
     }
 
@@ -70,7 +70,7 @@ public class Pet {
         return custumerId;
     }
 
-    public Name name() {
+    public PetName name() {
         return name;
     }
 
@@ -104,7 +104,7 @@ public class Pet {
         this.custumerId = custumerId;
     }
 
-    private void setName(Name name) {
+    private void setName(PetName name) {
         FieldValidator.requiresNonNull("pet name", name);
         this.name = name;
     }
