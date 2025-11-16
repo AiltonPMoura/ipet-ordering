@@ -1,6 +1,7 @@
 package br.com.ipet.ordering.domain.model;
 
 import br.com.ipet.ordering.domain.exception.CanNotChangeSchedulingAtException;
+import br.com.ipet.ordering.domain.exception.CannotBeChangeStatusException;
 import br.com.ipet.ordering.domain.exception.SchedulingIsNotDraftToChangeException;
 import br.com.ipet.ordering.domain.exception.SchedulingItemNotFoundException;
 import br.com.ipet.ordering.domain.util.FieldValidator;
@@ -86,6 +87,19 @@ public class Scheduling {
         this.setSchedulingAt(schedulingAt);
     }
 
+    public void cancel() {
+        this.changeStatus(CANCELED);
+        this.setCancelAt(OffsetDateTime.now());
+    }
+
+    public boolean isDraft() {
+        return SCHEDULED.equals(this.status);
+    }
+
+    public boolean isCancel() {
+        return CANCELED.equals(this.status);
+    }
+
     public SchedulingId id() {
         return id;
     }
@@ -155,8 +169,11 @@ public class Scheduling {
             throw new SchedulingIsNotDraftToChangeException(this.id.toString());
     }
 
-    public boolean isDraft() {
-        return SCHEDULED.equals(this.status);
+    private void changeStatus(SchedulingStatus newStatus) {
+        if (this.status.canNotChange(newStatus))
+            throw new CannotBeChangeStatusException(this.status.name(), newStatus.name());
+
+        this.setStatus(newStatus);
     }
 
     private void setId(SchedulingId id) {

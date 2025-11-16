@@ -85,7 +85,7 @@ public class Order {
         recalculateTotals();
     }
 
-    public void changeStatus(OrderStatus newStatus) {
+    private void changeStatus(OrderStatus newStatus) {
         if (this.status.canNotChange(newStatus))
             throw new CannotBeChangeStatusException(this.status.name(), newStatus.name());
 
