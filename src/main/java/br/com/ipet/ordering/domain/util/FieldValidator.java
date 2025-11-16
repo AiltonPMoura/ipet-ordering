@@ -1,9 +1,14 @@
 package br.com.ipet.ordering.domain.util;
 
+import br.com.ipet.ordering.domain.exception.DateTimeMustBeLaterThanNowException;
 import br.com.ipet.ordering.domain.exception.EmailValidatorException;
 import br.com.ipet.ordering.domain.exception.FieldCannotBeEmptyException;
+import br.com.ipet.ordering.domain.exception.EndDateOrTimeMustBeLaterThanStartException;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.util.StringUtils;
+
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 
 public class FieldValidator {
 
@@ -24,4 +29,13 @@ public class FieldValidator {
             throw new EmailValidatorException(email);
     }
 
+    public static void requireDateTimeIsAfterNow(String field, OffsetDateTime dateTime) {
+        if (!dateTime.isAfter(OffsetDateTime.now()))
+            throw new DateTimeMustBeLaterThanNowException(field);
+    }
+
+    public static void requireEndTimeIsAfterStartTime(String field, OffsetTime startTime, OffsetTime endTime) {
+        if (!endTime.isAfter(startTime))
+            throw new EndDateOrTimeMustBeLaterThanStartException(field, startTime.toString(), endTime.toString());
+    }
 }

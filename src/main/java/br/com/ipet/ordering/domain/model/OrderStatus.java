@@ -9,7 +9,7 @@ public enum OrderStatus {
     PAID(PLACED),
     READY(PAID),
     DELIVERING(READY),
-    DELIVERIED(DELIVERING),
+    COMPLETED(DELIVERING),
     CANCELED(DRAFT, PLACED, PAID);
 
     OrderStatus(OrderStatus... previousStatuses) {

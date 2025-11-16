@@ -40,6 +40,20 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(OrderIsNotDraftToChangeException.class)
+    public ResponseEntity<ExceptionResponse> orderIsNotDraftToChangeExceptionHandler(OrderIsNotDraftToChangeException ex, WebRequest request) {
+        return new ResponseEntity<>(
+                getMessageResponse(ex.getMessage(), request, ex.getOrderId()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SchedulingIsNotDraftToChangeException.class)
+    public ResponseEntity<ExceptionResponse> schedulingIsNotDraftToChangeExceptionHandler(SchedulingIsNotDraftToChangeException ex, WebRequest request) {
+        return new ResponseEntity<>(
+                getMessageResponse(ex.getMessage(), request, ex.getSchedulingId()),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(OrderCannotBePlacedException.class)
     public ResponseEntity<ExceptionResponse> orderCannotBePlacedExceptionHandler(OrderCannotBePlacedException ex, WebRequest request) {
         return new ResponseEntity<>(
@@ -79,6 +93,35 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> productNotFoundExceptionHandler(ProductNotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(
                 getMessageResponse(ex.getMessage(), request, ex.getFields()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SchedulingItemNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> schedulingItemNotFoundExceptionHandler(SchedulingItemNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<>(
+                getMessageResponse(ex.getMessage(), request, ex.getFields()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EndDateOrTimeMustBeLaterThanStartException.class)
+    public ResponseEntity<ExceptionResponse> endDateOrTimeMustBeLaterThanStartHandler(EndDateOrTimeMustBeLaterThanStartException ex, WebRequest request) {
+        return new ResponseEntity<>(
+                getMessageResponse(ex.getMessage(), request, ex.getFields()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DateTimeMustBeLaterThanNowException.class)
+    public ResponseEntity<ExceptionResponse> dateTimeMustBeLaterThanNowExceptionHandler(DateTimeMustBeLaterThanNowException ex,
+                                                                                        WebRequest request) {
+        return new ResponseEntity<>(
+                getMessageResponse(ex.getMessage(), request, ex.getField()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CanNotChangeSchedulingAtException.class)
+    public ResponseEntity<ExceptionResponse> canNotChangeSchedulingAtHandler(CanNotChangeSchedulingAtException ex, WebRequest request) {
+        return new ResponseEntity<>(
+                getMessageResponse(ex.getMessage(), request, ex.getValue()),
                 HttpStatus.BAD_REQUEST);
     }
 

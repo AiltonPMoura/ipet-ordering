@@ -21,6 +21,7 @@ public class Order {
     private CustumerId custumerId;
     private CompanyId companyId;
     private Set<OrderItem> items;
+    private Set<OrderService> services;
     private Money totalAmount;
     private Quantity totalItems;
     private PaymentMethod paymentMethod;
@@ -128,11 +129,6 @@ public class Order {
         return OrderStatus.READY.equals(this.status);
     }
 
-    private void verifyIfChangeable() {
-        if (!isDraft())
-            throw new OrderIsNotDraftToChangeException(this.id.toString());
-    }
-
     public OrderId id() {
         return id;
     }
@@ -209,6 +205,11 @@ public class Order {
 
         this.setTotalItems(new Quantity(totalItemsQuantity));
         this.setTotalAmount(new Money(totalItemsAmount));
+    }
+
+    private void verifyIfChangeable() {
+        if (!isDraft())
+            throw new OrderIsNotDraftToChangeException(this.id.toString());
     }
 
     private void setId(OrderId id) {
