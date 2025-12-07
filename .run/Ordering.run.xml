@@ -2,7 +2,7 @@
   <configuration default="false" name="Ordering" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="21" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-    <option name="MAIN_CLASS_NAME" value="br.com.ipet.sale.OrderingApplication" />
+    <option name="MAIN_CLASS_NAME" value="br.com.ipet.ordering.OrderingApplication" />
     <module name="ordering" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/microsservices/ordering" />
     <method v="2">

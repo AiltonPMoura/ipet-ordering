@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.infrastructure.exception.handler;
 
-import br.com.ipet.ordering.domain.exception.*;
+import br.com.ipet.ordering.domain.model.exception.*;
 import br.com.ipet.ordering.infrastructure.exception.response.ExceptionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -22,7 +22,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> globalExceptionHandler(Exception ex, WebRequest request) {
         return new ResponseEntity<>(
-                getMessageResponse(ex.getMessage(), request, ""),
+                new ExceptionResponse(
+                        ex.getMessage(),
+                        request.getDescription(false),
+                        OffsetDateTime.now()),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
