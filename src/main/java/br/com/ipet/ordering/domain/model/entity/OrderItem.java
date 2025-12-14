@@ -9,6 +9,8 @@ import br.com.ipet.ordering.domain.model.valueobject.Product;
 import br.com.ipet.ordering.domain.model.valueobject.Quantity;
 import lombok.Builder;
 
+import java.util.Objects;
+
 public class OrderItem {
     private OrderItemId id;
     private OrderId orderId;
@@ -92,5 +94,17 @@ public class OrderItem {
     private void setTotalAmount(Money totalAmount) {
         FieldValidator.requiresNonNull("order item total amount", totalAmount);
         this.totalAmount = totalAmount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderItem orderItem = (OrderItem) o;
+        return Objects.equals(id, orderItem.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

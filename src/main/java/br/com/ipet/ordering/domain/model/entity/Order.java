@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Order implements AggregateRoot<OrderId> {
@@ -283,5 +284,17 @@ public class Order implements AggregateRoot<OrderId> {
 
     private void setCancelAt(LocalDateTime cancelAt) {
         this.cancelAt = cancelAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return Objects.equals(id, order.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
