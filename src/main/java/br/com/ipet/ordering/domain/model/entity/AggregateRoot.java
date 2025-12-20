@@ -1,5 +1,5 @@
 package br.com.ipet.ordering.domain.model.entity;
 
-public interface AggregateRoot<ID> {
-    ID id();
+public interface AggregateRoot<I> {
+    I id();
 }

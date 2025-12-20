@@ -1,7 +1,5 @@
 package br.com.ipet.ordering.infrastructure.persistence.entity;
 
-import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddable;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -24,25 +22,22 @@ import java.util.UUID;
 @ToString(of = "id")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "order_item")
-public class OrderItemPersistenceEntity {
+@Table(name = "service")
+public class ServicePersistenceEntity {
 
     @Id
-    @EqualsAndHashCode.Include
     private UUID id;
 
     @JoinColumn
     @ManyToOne(optional = false)
-    private OrderPersistenceEntity order;
+    private CompanyPersistenceEntity company;
 
-    @Embedded
-    private ProductEmbeddable product;
+    private String name;
+    private String description;
+    private BigDecimal price;
 
-    private Integer quantity;
-    private BigDecimal totalAmount;
-
-    public UUID getOrderId() {
-        return this.order.getId();
+    public UUID getCompanyId() {
+        return this.company.getId();
     }
 
 }

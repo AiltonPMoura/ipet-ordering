@@ -1,17 +1,10 @@
 package br.com.ipet.ordering.infrastructure.persistence.entity;
 
-import br.com.ipet.ordering.domain.model.entity.Pet;
-import br.com.ipet.ordering.domain.model.valueobject.Address;
-import br.com.ipet.ordering.domain.model.valueobject.CelPhone;
-import br.com.ipet.ordering.domain.model.valueobject.CustumerId;
-import br.com.ipet.ordering.domain.model.valueobject.Document;
-import br.com.ipet.ordering.domain.model.valueobject.Email;
-import br.com.ipet.ordering.domain.model.valueobject.FullName;
-import br.com.ipet.ordering.infrastructure.persistence.embedded.AddressEmbedded;
-import br.com.ipet.ordering.infrastructure.persistence.embedded.FullNameEmbedded;
+import br.com.ipet.ordering.infrastructure.persistence.embedded.AddressEmbeddable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -36,17 +29,17 @@ import java.util.UUID;
 @Table(name = "customer")
 public class CustomerPersistenceEntity {
 
+    @Id
     private UUID id;
 
+    private String firstName;
+    private String lastName;
     private String email;
     private Integer celPhone;
     private String document;
 
     @Embedded
-    private FullNameEmbedded fullName;
-
-    @Embedded
-    private AddressEmbedded address;
+    private AddressEmbeddable address;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private Set<PetPersistenceEntity> pets = new HashSet<>();

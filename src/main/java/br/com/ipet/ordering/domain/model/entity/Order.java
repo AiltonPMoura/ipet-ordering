@@ -204,7 +204,7 @@ public class Order implements AggregateRoot<OrderId> {
         return this.items.stream()
                 .filter(orderItem -> orderItem.id().equals(itemId))
                 .findFirst()
-                .orElseThrow(() -> new OrderItemNotFoundException(this.id.value().toString(), itemId.id().toString()));
+                .orElseThrow(() -> new OrderItemNotFoundException(this.id.value().toString(), itemId.value().toString()));
     }
 
     private void recalculateTotals() {

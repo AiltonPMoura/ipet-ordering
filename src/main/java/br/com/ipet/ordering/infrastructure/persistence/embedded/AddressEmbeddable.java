@@ -11,7 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class FullNameEmbedded {
-    private String firstName;
-    private String lastName;
+public class AddressEmbeddable {
+    private String street;
+    private Integer number;
+    private String neighborhood;
+    private String complement;
+    private String city;
+    private String state;
+    private Integer zipCode;
 }

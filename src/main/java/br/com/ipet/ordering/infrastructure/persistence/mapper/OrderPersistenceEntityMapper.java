@@ -2,9 +2,10 @@ package br.com.ipet.ordering.infrastructure.persistence.mapper;
 
 import br.com.ipet.ordering.domain.model.entity.Order;
 import br.com.ipet.ordering.domain.model.entity.OrderItem;
-import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbedded;
+import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddable;
 import br.com.ipet.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
+import br.com.ipet.ordering.infrastructure.persistence.repository.CompanyPersistenceEntityRepository;
 import br.com.ipet.ordering.infrastructure.persistence.repository.CustomerPersistenceEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class OrderPersistenceEntityMapper {
 
     private final CustomerPersistenceEntityRepository customerPersistenceEntityRepository;
+    private final CompanyPersistenceEntityRepository companyPersistenceEntityRepository;
 
     public OrderPersistenceEntity fromDomain(Order order) {
         return merge(new OrderPersistenceEntity(), order);
@@ -25,7 +27,7 @@ public class OrderPersistenceEntityMapper {
     public OrderPersistenceEntity merge(OrderPersistenceEntity orderPersistenceEntity, Order order) {
         orderPersistenceEntity.setId(order.id().value());
         orderPersistenceEntity.setCustomer(customerPersistenceEntityRepository.getReferenceById(order.custumerId().value()));
-        //orderPersistenceEntity.setCompany(order.ccompanyId().value());
+        orderPersistenceEntity.setCompany(companyPersistenceEntityRepository.getReferenceById(order.ccompanyId().value()));
         orderPersistenceEntity.setTotalAmount(order.totalAmount().value());
         orderPersistenceEntity.setTotalItems(order.totalItems().value());
         orderPersistenceEntity.setPaymentMethod(order.paymentMethod().name());
@@ -66,7 +68,7 @@ public class OrderPersistenceEntityMapper {
 
     private OrderItemPersistenceEntity mergeItem(OrderItemPersistenceEntity orderItemPersistenceEntity, OrderItem orderItem) {
         orderItemPersistenceEntity.setId(orderItem.orderId().value());
-        orderItemPersistenceEntity.setProduct(ProductEmbedded.builder()
+        orderItemPersistenceEntity.setProduct(ProductEmbeddable.builder()
                         .name(orderItem.product().name().value())
                         .description(orderItem.product().description().value())
                         .price(orderItem.product().price().value())

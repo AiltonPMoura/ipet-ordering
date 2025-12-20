@@ -54,7 +54,7 @@ public class OrderPersistenceEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderItemPersistenceEntity> items = new HashSet<>();
 
-    private Set<OrderService> services;
+    //private Set<OrderService> services;
 
     private BigDecimal totalAmount;
     private Integer totalItems;
@@ -71,6 +71,14 @@ public class OrderPersistenceEntity {
     public void setItems(Set<OrderItemPersistenceEntity> items) {
         items.forEach(item -> item.setOrder(this));
         this.items = items;
+    }
+
+    public UUID getCustomerId() {
+        return this.customer.getId();
+    }
+
+    public UUID getCompanyId() {
+        return this.company.getId();
     }
 
 }
