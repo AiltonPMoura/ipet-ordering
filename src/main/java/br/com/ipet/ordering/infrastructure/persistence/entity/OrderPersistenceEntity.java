@@ -1,11 +1,5 @@
 package br.com.ipet.ordering.infrastructure.persistence.entity;
 
-import br.com.ipet.ordering.domain.model.entity.OrderItem;
-import br.com.ipet.ordering.domain.model.entity.OrderService;
-import br.com.ipet.ordering.domain.model.entity.OrderStatus;
-import br.com.ipet.ordering.domain.model.entity.PaymentMethod;
-import br.com.ipet.ordering.domain.model.valueobject.Money;
-import br.com.ipet.ordering.domain.model.valueobject.Quantity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

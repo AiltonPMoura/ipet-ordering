@@ -13,9 +13,9 @@ public record Service(
         OffsetDateTime scheduling) {
 
     public Service {
-        FieldValidator.requiresNonNull("product name", name);
-        FieldValidator.requiresNonNull("product description", description);
-        FieldValidator.requiresNonNull("product price", price);
+        FieldValidator.requiresNonNull("service name", name);
+        FieldValidator.requiresNonNull("service description", description);
+        FieldValidator.requiresNonNull("service price", price);
     }
 
 }

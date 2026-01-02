@@ -22,13 +22,14 @@ public class Scheduling {
     private SchedulingId id;
     private CustumerId custumerId;
     private CompanyId companyId;
-    private OffsetDateTime createdAt;
-    private OffsetDateTime schedulingAt;
-    private OffsetDateTime cancelAt;
     private Quantity totalItems;
     private Money totalAmount;
     private SchedulingStatus status;
     private Set<SchedulingItem> items;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime paidAt;
+    private OffsetDateTime schedulingAt;
+    private OffsetDateTime cancelAt;
 
     @Builder(builderClassName = "CreateSchedulingBuilder", builderMethodName = "createNew")
     private static Scheduling create(CustumerId custumerId, CompanyId companyId) {
@@ -55,13 +56,13 @@ public class Scheduling {
         this.setItems(items);
     }
 
-    public void addItem(Service service, Pet pet) {
+    public void addItem(Service service, Set<Pet> pets) {
         this.verifyIfChangeable();
 
         var item = SchedulingItem.createNew()
                 .schedulingId(this.id)
                 .service(service)
-                .pet(pet)
+                .pets(pets)
                 .build();
 
         this.items.add(item);
@@ -79,12 +80,33 @@ public class Scheduling {
         this.recalculateTotals();
     }
 
+    public void changeItemService(Service service, SchedulingItemId id) {
+        this.verifyIfChangeable();
+
+        var item = this.findISchedulingtemById(id);
+
+        item.changeService(service);
+    }
+
+    public void changePets(Set<Pet> pets, SchedulingItemId id) {
+        this.verifyIfChangeable();
+
+        var item = this.findISchedulingtemById(id);
+
+        item.changePets(pets);
+    }
+
     public void changeSchedulingAt(OffsetDateTime schedulingAt) {
         FieldValidator.requiresNonNull("schedulingAt", schedulingAt);
         FieldValidator.requireDateTimeIsAfterNow("schedulingAt", schedulingAt);
         this.canChangeSchedulingAt();
 
         this.setSchedulingAt(schedulingAt);
+    }
+
+    public void markToPaid() {
+        this.changeStatus(PAID);
+        this.setPaidAt(OffsetDateTime.now());
     }
 
     public void cancel() {
@@ -114,6 +136,10 @@ public class Scheduling {
 
     public OffsetDateTime createdAt() {
         return createdAt;
+    }
+
+    public OffsetDateTime paidAt() {
+        return paidAt;
     }
 
     public OffsetDateTime schedulingAt() {
@@ -148,11 +174,14 @@ public class Scheduling {
     }
 
     private void recalculateTotals() {
-        var totalAmount = this.items.stream().map(item -> item.service().price().value())
+        var total = this.items.stream().map(item -> item.totalAmount().value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        this.setTotalAmount(new Money(totalAmount));
-        this.setTotalItems(new Quantity(this.items.size()));
+        var quantity = this.items.stream().map(item -> item.pets().size())
+                .reduce(0, Integer::sum);
+
+        this.setTotalAmount(new Money(total));
+        this.setTotalItems(new Quantity(quantity));
     }
 
     private void canChangeSchedulingAt() {
@@ -196,6 +225,10 @@ public class Scheduling {
         this.createdAt = createdAt;
     }
 
+    private void setPaidAt(OffsetDateTime paidAt) {
+        this.paidAt = paidAt;
+    }
+
     private void setSchedulingAt(OffsetDateTime schedulingAt) {
         this.schedulingAt = schedulingAt;
     }
@@ -220,7 +253,7 @@ public class Scheduling {
     }
 
     private void setItems(Set<SchedulingItem> items) {
-        FieldValidator.requiresNonNull("SchedulingItem", items);
+        FieldValidator.requiresNonNull("SchedulingService", items);
         this.items = items;
     }
 }

@@ -28,7 +28,6 @@ public class Order implements AggregateRoot<OrderId> {
     private CustumerId custumerId;
     private CompanyId companyId;
     private Set<OrderItem> items;
-    private Set<OrderService> services;
     private Money totalAmount;
     private Quantity totalItems;
     private PaymentMethod paymentMethod;
