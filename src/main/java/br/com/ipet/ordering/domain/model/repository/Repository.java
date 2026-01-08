@@ -4,9 +4,9 @@ import br.com.ipet.ordering.domain.model.entity.AggregateRoot;
 
 import java.util.Optional;
 
-public interface Repository<T extends AggregateRoot<ID>, ID> {
-    Optional<T> ofId(ID id);
-    boolean exists(ID id);
+public interface Repository<T extends AggregateRoot<I>, I> {
+    Optional<T> ofId(I id);
+    boolean exists(I id);
     void add(T aggregateRoot);
     int count();
 }

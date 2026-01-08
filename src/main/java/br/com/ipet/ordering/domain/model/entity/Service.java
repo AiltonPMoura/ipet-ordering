@@ -21,7 +21,7 @@ public class Service {
         return new Service(new ServiceId(), companyId, name, description, price);
     }
 
-    @Builder(builderClassName = "CreateExistingServiceBuilder", builderMethodName = "existing")
+    @Builder(builderClassName = "ExistingServiceBuilder", builderMethodName = "existing")
     private Service(ServiceId id, CompanyId companyId,
                     ServiceName name, ServiceDescription description, Money price) {
         this.setId(id);

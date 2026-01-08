@@ -11,7 +11,8 @@ public class MessageCode {
     public static final String ERROR_NO_ITEMS = "error.no.items";
     public static final String ERROR_NO_PAYMENT_METHOD = "error.no.payment.method";
     public static final String ERROR_CANNOT_BE_CHANGE_STATUS = "error.cannot.be.change.status";
-    public static final String ERROR_ORDER_IS_NOT_DRAFT_TO_CHANE = "error.order.is.not.draft.to.change";
+    public static final String ERROR_ORDER_IS_NOT_DRAFT_TO_CHANGE = "error.order.is.not.draft.to.change";
+    public static final String ERROR_AGENDA_IS_NOT_DRAFT_TO_CHANGE = "error.agenda.is.not.draft.to.change";
     public static final String ERROR_SCHEDULING_IS_NOT_DRAFT_TO_CHANE = "error.scheduling.is.not.draft.to.change";
     public static final String ERROR_ORDER_ITEM_NOT_FOUND = "error.order.item.not.found";
     public static final String ERROR_SCHEDULING_ITEM_NOT_FOUND = "error.scheduling.item.not.found";
@@ -26,6 +27,7 @@ public class MessageCode {
     public static final String ERROR_WORKING_HOURS_CANNOT_BE_LESS_THAN_ONE = "working.hours.cannot.be.less.than.one";
     public static final String ERROR_START_TIME_CANNOT_BE_GREATER_THAN_OR_EQUALS_END_TIME = "start.time.cannot.be.greater.than.or.equals.end.time";
     public static final String ERROR_DATE_TIME_MUST_BE_LATTER_THAN_NOW = "error.date.time.must.be.latter.than.now";
+    public static final String ERROR_DATE_MUST_BE_LATTER_THAN_NOW = "error.date.must.be.latter.than.now";
     public static final String ERROR_CANNOT_CHANGE_SCHEDULING_AT = "error.cannot.change.scheduling.at";
 
 }

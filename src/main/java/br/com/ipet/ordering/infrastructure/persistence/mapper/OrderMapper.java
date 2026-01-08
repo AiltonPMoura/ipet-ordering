@@ -5,7 +5,7 @@ import br.com.ipet.ordering.domain.model.entity.OrderItem;
 import br.com.ipet.ordering.domain.model.entity.OrderStatus;
 import br.com.ipet.ordering.domain.model.entity.PaymentMethod;
 import br.com.ipet.ordering.domain.model.valueobject.CompanyId;
-import br.com.ipet.ordering.domain.model.valueobject.CustumerId;
+import br.com.ipet.ordering.domain.model.valueobject.CustomerId;
 import br.com.ipet.ordering.domain.model.valueobject.Money;
 import br.com.ipet.ordering.domain.model.valueobject.OrderId;
 import br.com.ipet.ordering.domain.model.valueobject.OrderItemId;
@@ -27,7 +27,7 @@ public class OrderMapper {
     public Order toDomainEntity(OrderPersistenceEntity persistenceEntity) {
         return Order.existing()
                 .id(new OrderId(persistenceEntity.getId()))
-                .custumerId(new CustumerId(persistenceEntity.getCustomerId()))
+                .customerId(new CustomerId(persistenceEntity.getCustomerId()))
                 .companyId(new CompanyId(persistenceEntity.getCompanyId()))
                 .totalAmount(new Money(persistenceEntity.getTotalAmount()))
                 .totalItems(new Quantity(persistenceEntity.getTotalItems()))

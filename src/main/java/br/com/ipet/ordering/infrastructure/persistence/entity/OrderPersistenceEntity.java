@@ -30,7 +30,7 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = false)
 @ToString(of = "id")
 @Entity
-@Table(name = "\"ORDER\"")
+@Table(name = "\"order\"")
 public class OrderPersistenceEntity {
 
     @Id
@@ -47,8 +47,6 @@ public class OrderPersistenceEntity {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderItemPersistenceEntity> items = new HashSet<>();
-
-    //private Set<OrderService> services;
 
     private BigDecimal totalAmount;
     private Integer totalItems;

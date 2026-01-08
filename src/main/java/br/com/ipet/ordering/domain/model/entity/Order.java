@@ -7,7 +7,7 @@ import br.com.ipet.ordering.domain.model.exception.OrderItemNotFoundException;
 import br.com.ipet.ordering.domain.model.util.FieldValidator;
 
 import br.com.ipet.ordering.domain.model.valueobject.CompanyId;
-import br.com.ipet.ordering.domain.model.valueobject.CustumerId;
+import br.com.ipet.ordering.domain.model.valueobject.CustomerId;
 import br.com.ipet.ordering.domain.model.valueobject.Money;
 import br.com.ipet.ordering.domain.model.valueobject.OrderId;
 import br.com.ipet.ordering.domain.model.valueobject.OrderItemId;
@@ -25,7 +25,7 @@ import java.util.Set;
 
 public class Order implements AggregateRoot<OrderId> {
     private OrderId id;
-    private CustumerId custumerId;
+    private CustomerId customerId;
     private CompanyId companyId;
     private Set<OrderItem> items;
     private Money totalAmount;
@@ -39,8 +39,8 @@ public class Order implements AggregateRoot<OrderId> {
     private LocalDateTime deliveryAt;
     private LocalDateTime cancelAt;
 
-    public static Order draft(CustumerId custumerId, CompanyId companyId) {
-        return new Order(new OrderId(), custumerId, companyId,
+    public static Order draft(CustomerId customerId, CompanyId companyId) {
+        return new Order(new OrderId(), customerId, companyId,
                 new HashSet<>(), Money.ZERO, Quantity.ZERO,
                 null, OrderStatus.DRAFT,
                 null, null, null,
@@ -49,14 +49,14 @@ public class Order implements AggregateRoot<OrderId> {
     }
 
     @Builder(builderClassName = "ExistingOrderBuilder", builderMethodName = "existing")
-    private Order(OrderId id, CustumerId custumerId, CompanyId companyId,
+    private Order(OrderId id, CustomerId customerId, CompanyId companyId,
                   Set<OrderItem> items, Money totalAmount, Quantity totalItems,
                   PaymentMethod paymentMethod, OrderStatus status,
                   OffsetDateTime placedAt, OffsetDateTime readyAt, OffsetDateTime paidAt,
                   LocalDateTime deliveringAt, LocalDateTime deliveryAt, LocalDateTime cancelAt) {
         this.setId(id);
         this.setCompanyId(companyId);
-        this.setCustomrtId(custumerId);
+        this.setCustomrtId(customerId);
         this.setItems(items);
         this.setTotalAmount(totalAmount);
         this.setTotalItems(totalItems);
@@ -89,13 +89,6 @@ public class Order implements AggregateRoot<OrderId> {
         var orderItem = findOrderItem(itemId);
         orderItem.changeQuantity(quantity);
         recalculateTotals();
-    }
-
-    private void changeStatus(OrderStatus newStatus) {
-        if (this.status.canNotChange(newStatus))
-            throw new CannotBeChangeStatusException(this.status.name(), newStatus.name());
-
-        setStatus(status);
     }
 
     public void changePaymentMethod(PaymentMethod paymentMethod) {
@@ -139,8 +132,8 @@ public class Order implements AggregateRoot<OrderId> {
         return id;
     }
 
-    public CustumerId custumerId() {
-        return custumerId;
+    public CustomerId custumerId() {
+        return customerId;
     }
 
     public CompanyId ccompanyId() {
@@ -191,6 +184,13 @@ public class Order implements AggregateRoot<OrderId> {
         return cancelAt;
     }
 
+    private void changeStatus(OrderStatus newStatus) {
+        if (this.status.canNotChange(newStatus))
+            throw new CannotBeChangeStatusException(this.status.name(), newStatus.name());
+
+        setStatus(status);
+    }
+
     private void verifyIfCanChangeToPlaced() {
         if (this.items == null || this.items.isEmpty())
             throw OrderCannotBePlacedException.noItems(this.id.toString());
@@ -227,9 +227,9 @@ public class Order implements AggregateRoot<OrderId> {
         this.id = id;
     }
 
-    private void setCustomrtId(CustumerId custumerId) {
-        FieldValidator.requiresNonNull("customerId", custumerId);
-        this.custumerId = custumerId;
+    private void setCustomrtId(CustomerId customerId) {
+        FieldValidator.requiresNonNull("customerId", customerId);
+        this.customerId = customerId;
     }
 
     private void setCompanyId(CompanyId companyId) {

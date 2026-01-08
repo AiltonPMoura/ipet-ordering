@@ -50,6 +50,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AgendaIsNotDraftToChangeException.class)
+    public ResponseEntity<ExceptionResponse> agendaIsNotDraftToChangeExceptionHandler(AgendaIsNotDraftToChangeException ex, WebRequest request) {
+        return new ResponseEntity<>(
+                getMessageResponse(ex.getMessage(), request, ex.getAgendaId()),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(SchedulingIsNotDraftToChangeException.class)
     public ResponseEntity<ExceptionResponse> schedulingIsNotDraftToChangeExceptionHandler(SchedulingIsNotDraftToChangeException ex, WebRequest request) {
         return new ResponseEntity<>(
@@ -109,7 +116,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EndDateOrTimeMustBeLaterThanStartException.class)
     public ResponseEntity<ExceptionResponse> endDateOrTimeMustBeLaterThanStartHandler(EndDateOrTimeMustBeLaterThanStartException ex, WebRequest request) {
         return new ResponseEntity<>(
-                getMessageResponse(ex.getMessage(), request, ex.getFields()),
+                getMessageResponse(ex.getMessage(), request, ex.getValues()),
                 HttpStatus.BAD_REQUEST);
     }
 

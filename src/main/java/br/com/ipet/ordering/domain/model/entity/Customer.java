@@ -4,7 +4,7 @@ import br.com.ipet.ordering.domain.model.exception.PetNotFoundException;
 import br.com.ipet.ordering.domain.model.util.FieldValidator;
 import br.com.ipet.ordering.domain.model.valueobject.Address;
 import br.com.ipet.ordering.domain.model.valueobject.CelPhone;
-import br.com.ipet.ordering.domain.model.valueobject.CustumerId;
+import br.com.ipet.ordering.domain.model.valueobject.CustomerId;
 import br.com.ipet.ordering.domain.model.valueobject.Document;
 import br.com.ipet.ordering.domain.model.valueobject.Email;
 import br.com.ipet.ordering.domain.model.valueobject.FullName;
@@ -18,8 +18,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Customer implements AggregateRoot<CustumerId> {
-    private CustumerId id;
+public class Customer implements AggregateRoot<CustomerId> {
+    private CustomerId id;
     private FullName fullName;
     private Email email;
     private CelPhone celPhone;
@@ -31,12 +31,12 @@ public class Customer implements AggregateRoot<CustumerId> {
     @Builder(builderClassName = "CreateNewCustomerBuild", builderMethodName = "createNew")
     private static Customer create(FullName fullName, Email email,
                                    CelPhone celPhone, Document document, Address address) {
-        return new Customer(new CustumerId(), fullName, email, celPhone,
+        return new Customer(new CustomerId(), fullName, email, celPhone,
                 document, address, OffsetDateTime.now(), new HashSet<>());
     }
 
     @Builder(builderClassName = "CreateExistingCustomerBuild", builderMethodName = "existing")
-    private Customer(CustumerId id, FullName fullName, Email email, CelPhone celPhone, Document document,
+    private Customer(CustomerId id, FullName fullName, Email email, CelPhone celPhone, Document document,
                      Address address, OffsetDateTime registerAt, Set<Pet> pets) {
         this.setId(id);
         this.setFullName(fullName);
@@ -51,7 +51,7 @@ public class Customer implements AggregateRoot<CustumerId> {
     public void addPet(PetName petName, Type type, Breed breed,
                        Gender gender, Size size, Weight weight) {
         var pet = Pet.createNew()
-                .custumerId(this.id)
+                .customerId(this.id)
                 .name(petName)
                 .type(type)
                 .breed(breed)
@@ -113,7 +113,7 @@ public class Customer implements AggregateRoot<CustumerId> {
         pet.changeWeight(weight);
     }
 
-    public CustumerId id() {
+    public CustomerId id() {
         return id;
     }
 
@@ -152,7 +152,7 @@ public class Customer implements AggregateRoot<CustumerId> {
                 .orElseThrow(() -> new PetNotFoundException(this.id.value().toString(), id.toString()));
     }
 
-    private void setId(CustumerId id) {
+    private void setId(CustomerId id) {
         FieldValidator.requiresNonNull("customer id", id);
         this.id = id;
     }

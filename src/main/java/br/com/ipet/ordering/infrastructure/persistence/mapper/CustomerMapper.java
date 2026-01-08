@@ -7,7 +7,7 @@ import br.com.ipet.ordering.domain.model.entity.Pet;
 import br.com.ipet.ordering.domain.model.entity.Size;
 import br.com.ipet.ordering.domain.model.valueobject.Address;
 import br.com.ipet.ordering.domain.model.valueobject.CelPhone;
-import br.com.ipet.ordering.domain.model.valueobject.CustumerId;
+import br.com.ipet.ordering.domain.model.valueobject.CustomerId;
 import br.com.ipet.ordering.domain.model.valueobject.Document;
 import br.com.ipet.ordering.domain.model.valueobject.Email;
 import br.com.ipet.ordering.domain.model.valueobject.FullName;
@@ -25,7 +25,7 @@ public class CustomerMapper {
 
     public Customer toDomainEntity(CustomerPersistenceEntity persistenceEntity) {
         return Customer.existing()
-                .id(new CustumerId(persistenceEntity.getId()))
+                .id(new CustomerId(persistenceEntity.getId()))
                 .fullName(this.toFullName(persistenceEntity))
                 .email(new Email(persistenceEntity.getEmail()))
                 .celPhone(new CelPhone(persistenceEntity.getCelPhone()))
@@ -38,7 +38,7 @@ public class CustomerMapper {
     private Set<Pet> toDomainEntity(Set<PetPersistenceEntity> petsPersistenceEntity) {
         return petsPersistenceEntity.stream().map(petPersistenceEntity -> Pet.existing()
                 .id(new PetId(petPersistenceEntity.getId()))
-                .custumerId(new CustumerId(petPersistenceEntity.getCustomerId()))
+                .customerId(new CustomerId(petPersistenceEntity.getCustomerId()))
                 .name(new PetName(petPersistenceEntity.getName()))
                 .breed(Breed.valueOf(petPersistenceEntity.getBreed()))
                 .gender(Gender.valueOf(petPersistenceEntity.getGender()))
@@ -50,8 +50,8 @@ public class CustomerMapper {
 
     private FullName toFullName(CustomerPersistenceEntity persistenceEntity) {
         return FullName.builder()
-                .firstName(persistenceEntity.getFullName().getFirstName())
-                .lastName(persistenceEntity.getFullName().getLastName())
+                .firstName(persistenceEntity.getFirstName())
+                .lastName(persistenceEntity.getLastName())
                 .build();
     }
 

@@ -5,13 +5,13 @@ import br.com.ipet.ordering.domain.model.util.IdGenerator;
 
 import java.util.UUID;
 
-public record CustumerId(UUID value) {
+public record CustomerId(UUID value) {
 
-    public CustumerId {
+    public CustomerId {
         FieldValidator.requiresNonNull("customerId value", value);
     }
 
-    public CustumerId() {
+    public CustomerId() {
         this(IdGenerator.generateTimeBasedEpochRandomGenerator());
     }
 

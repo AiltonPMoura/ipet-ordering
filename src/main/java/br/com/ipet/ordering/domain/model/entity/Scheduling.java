@@ -20,7 +20,7 @@ import static br.com.ipet.ordering.domain.model.entity.SchedulingStatus.*;
 
 public class Scheduling {
     private SchedulingId id;
-    private CustumerId custumerId;
+    private CustomerId customerId;
     private CompanyId companyId;
     private Quantity totalItems;
     private Money totalAmount;
@@ -32,20 +32,20 @@ public class Scheduling {
     private OffsetDateTime cancelAt;
 
     @Builder(builderClassName = "CreateSchedulingBuilder", builderMethodName = "createNew")
-    private static Scheduling create(CustumerId custumerId, CompanyId companyId) {
+    private static Scheduling create(CustomerId customerId, CompanyId companyId) {
         return new Scheduling(
-                new SchedulingId(), custumerId, companyId, OffsetDateTime.now(), null, null,
+                new SchedulingId(), customerId, companyId, OffsetDateTime.now(), null, null,
                 Quantity.ZERO, Money.ZERO, DRAFT, new HashSet<>()
         );
     }
 
     @Builder(builderClassName = "ExistingSchedulingBuilder", builderMethodName = "existing")
-    public Scheduling(SchedulingId id, CustumerId custumerId, CompanyId companyId,
+    public Scheduling(SchedulingId id, CustomerId customerId, CompanyId companyId,
                       OffsetDateTime createdAt, OffsetDateTime schedulingAt, OffsetDateTime cancelAt,
                       Quantity totalItems, Money totalAmount, SchedulingStatus status,
                       Set<SchedulingItem> items) {
         this.setId(id);
-        this.setCustumerId(custumerId);
+        this.setCustomerId(customerId);
         this.setCompanyId(companyId);
         this.setCreatedAt(createdAt);
         this.setSchedulingAt(schedulingAt);
@@ -126,8 +126,8 @@ public class Scheduling {
         return id;
     }
 
-    public CustumerId custumerId() {
-        return custumerId;
+    public CustomerId custumerId() {
+        return customerId;
     }
 
     public CompanyId companyId() {
@@ -210,9 +210,9 @@ public class Scheduling {
         this.id = id;
     }
 
-    private void setCustumerId(CustumerId custumerId) {
-        FieldValidator.requiresNonNull("Scheduling custumerId", custumerId);
-        this.custumerId = custumerId;
+    private void setCustomerId(CustomerId customerId) {
+        FieldValidator.requiresNonNull("Scheduling custumerId", customerId);
+        this.customerId = customerId;
     }
 
     private void setCompanyId(CompanyId companyId) {

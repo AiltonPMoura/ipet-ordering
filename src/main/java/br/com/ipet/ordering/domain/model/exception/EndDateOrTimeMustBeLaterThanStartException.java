@@ -6,11 +6,11 @@ import lombok.Getter;
 @Getter
 public class EndDateOrTimeMustBeLaterThanStartException extends DomainException {
 
-    private final String[] fields;
+    private final String[] values;
 
-    public EndDateOrTimeMustBeLaterThanStartException(String... fields) {
+    public EndDateOrTimeMustBeLaterThanStartException(String... values) {
         super(MessageCode.ERROR_START_TIME_CANNOT_BE_GREATER_THAN_OR_EQUALS_END_TIME);
-        this.fields = fields;
+        this.values = values;
     }
 
 }

@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.domain.model.entity;
 
 import br.com.ipet.ordering.domain.model.util.FieldValidator;
-import br.com.ipet.ordering.domain.model.valueobject.CustumerId;
+import br.com.ipet.ordering.domain.model.valueobject.CustomerId;
 import br.com.ipet.ordering.domain.model.valueobject.PetName;
 import br.com.ipet.ordering.domain.model.valueobject.PetId;
 import br.com.ipet.ordering.domain.model.valueobject.Weight;
@@ -9,7 +9,7 @@ import lombok.Builder;
 
 public class Pet {
     private PetId id;
-    private CustumerId custumerId;
+    private CustomerId customerId;
     private PetName name;
     private Type type;
     private Breed breed;
@@ -18,18 +18,18 @@ public class Pet {
     private Weight weight;
 
     @Builder(builderClassName = "createNewPetBuilder", builderMethodName = "createNew")
-    private static Pet create(PetName name, CustumerId custumerId,
+    private static Pet create(PetName name, CustomerId customerId,
                               Type type, Breed breed, Gender gender,
                               Size size, Weight weight) {
-        return new Pet(new PetId(), custumerId, name, type, breed, gender, size, weight);
+        return new Pet(new PetId(), customerId, name, type, breed, gender, size, weight);
     }
 
     @Builder(builderClassName = "createExistingPetBuilder", builderMethodName = "existing")
-    private Pet(PetId id, CustumerId custumerId,
+    private Pet(PetId id, CustomerId customerId,
                 PetName name, Type type, Breed breed,
                 Gender gender, Size size, Weight weight) {
         this.setId(id);
-        this.setCustumerId(custumerId);
+        this.setCustomerId(customerId);
         this.setName(name);
         this.setType(type);
         this.setBreed(breed);
@@ -66,8 +66,8 @@ public class Pet {
         return id;
     }
 
-    public CustumerId custumerId() {
-        return custumerId;
+    public CustomerId custumerId() {
+        return customerId;
     }
 
     public PetName name() {
@@ -99,9 +99,9 @@ public class Pet {
         this.id = id;
     }
 
-    private void setCustumerId(CustumerId custumerId) {
-        FieldValidator.requiresNonNull("customerId", custumerId);
-        this.custumerId = custumerId;
+    private void setCustomerId(CustomerId customerId) {
+        FieldValidator.requiresNonNull("customerId", customerId);
+        this.customerId = customerId;
     }
 
     private void setName(PetName name) {
