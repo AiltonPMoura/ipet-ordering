@@ -4,6 +4,7 @@ import br.com.ipet.ordering.domain.model.exception.AgendaIsNotDraftToChangeExcep
 import br.com.ipet.ordering.domain.model.util.FieldValidator;
 import br.com.ipet.ordering.domain.model.valueobject.AgendaId;
 import br.com.ipet.ordering.domain.model.valueobject.AgendaName;
+import br.com.ipet.ordering.domain.model.valueobject.AvailableDateTimes;
 import br.com.ipet.ordering.domain.model.valueobject.BookingBy;
 import br.com.ipet.ordering.domain.model.valueobject.CompanyId;
 import br.com.ipet.ordering.domain.model.valueobject.DayTime;
@@ -89,13 +90,8 @@ public class Agenda implements AggregateRoot<AgendaId> {
         FieldValidator.requiresNonEmpty("workingDays", workingDays);
         FieldValidator.requiresNonNull("bookingBy", bookingBy);
 
-        if (this.status == AgendaStatus.STAND_BY)
-            this.setStandByDates(null);
-
+        this.currentStandBy().ifPresent(dates -> this.standByDates.remove(dates));
         this.changeStatus(AgendaStatus.ACTIVED);
-
-
-
         this.setActivedAt(OffsetDateTime.now());
     }
 
@@ -141,11 +137,13 @@ public class Agenda implements AggregateRoot<AgendaId> {
             throw new RuntimeException();
     }
 
-    public List<LocalDate> bookingByDates() {
+    public List<AvailableDateTimes> avaliableDatesTimes() {
         var date = LocalDate.now().plusDays(1);
 
         return IntStream.range(0, this.bookingBy.value())
-                .mapToObj(date::plusDays)
+                .mapToObj(i -> this.filterWorkingDay(date.plusDays(i)))
+                .map(workingDay -> new AvailableDateTimes(date, workingDay.dayTime().availableTimes()))
+                .filter(availableDateTimes -> this.isNotStandBy(availableDateTimes.date()))
                 .toList();
     }
 
@@ -165,8 +163,11 @@ public class Agenda implements AggregateRoot<AgendaId> {
         return AgendaStatus.BLOCKED.equals(this.status);
     }
 
-    public boolean isWorkingDay(LocalDate date) {
-        return workingDays.stream().anyMatch(workingDay -> workingDay.isWorkingDay(date));
+    public WorkingDay filterWorkingDay(LocalDate date) {
+        return workingDays.stream()
+                .filter(workingDay -> workingDay.isWorkingDay(date))
+                .findFirst()
+                .orElse(null);
     }
 
     public boolean isNotStandBy(LocalDate date) {

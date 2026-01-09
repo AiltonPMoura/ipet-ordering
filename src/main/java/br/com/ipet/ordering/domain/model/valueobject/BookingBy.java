@@ -2,10 +2,6 @@ package br.com.ipet.ordering.domain.model.valueobject;
 
 import br.com.ipet.ordering.domain.model.util.FieldValidator;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.IntStream;
-
 public record BookingBy(Integer value) {
 
     private static final Integer MINIMUM_BOOKING_BY = 7;

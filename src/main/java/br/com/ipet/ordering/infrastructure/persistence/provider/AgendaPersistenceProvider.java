@@ -4,12 +4,14 @@ import br.com.ipet.ordering.domain.model.entity.Agenda;
 import br.com.ipet.ordering.domain.model.repository.Agendas;
 import br.com.ipet.ordering.domain.model.valueobject.AgendaId;
 import br.com.ipet.ordering.infrastructure.persistence.repository.AgendaPersistenceEntityRepository;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class AgendaPersistenceProvider implements Agendas {
 
-    private AgendaPersistenceEntityRepository repository;
+    private final AgendaPersistenceEntityRepository repository;
 
     @Override
     public Optional<Agenda> ofId(AgendaId id) {

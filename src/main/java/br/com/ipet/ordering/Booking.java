@@ -1,5 +1,6 @@
 package br.com.ipet.ordering;
 
+import br.com.ipet.ordering.domain.model.entity.AggregateRoot;
 import br.com.ipet.ordering.domain.model.valueobject.AgendaId;
 import br.com.ipet.ordering.domain.model.valueobject.BookingId;
 import br.com.ipet.ordering.domain.model.valueobject.CustomerId;
@@ -8,7 +9,7 @@ import lombok.Builder;
 import java.time.LocalDate;
 import java.time.OffsetTime;
 
-public class Booking {
+public class Booking implements AggregateRoot<BookingId> {
     private BookingId id;
     private AgendaId agendaId;
     private CustomerId customerId;
