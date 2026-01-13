@@ -7,8 +7,13 @@ import br.com.ipet.ordering.domain.model.valueobject.LockedTime;
 import br.com.ipet.ordering.domain.model.valueobject.WorkingDayId;
 import lombok.Builder;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class WorkingDay {
@@ -40,18 +45,43 @@ public class WorkingDay {
         this.lockedTimes.remove(lockedTime);
     }
 
-    private void verifyExistingLockedTime(LockedTime lockedTimeNew) {
-        var existingLockedTime = this.lockedTimes.stream().anyMatch(lockedTime ->
-                (lockedTime.startTime().isBefore(lockedTimeNew.startTime()) && lockedTime.endTime().isAfter(lockedTimeNew.startTime()))
-                        || (lockedTime.startTime().isBefore(lockedTimeNew.endTime()) && lockedTime.endTime().isAfter(lockedTimeNew.endTime()))
-        );
-
-        if (existingLockedTime)
-            throw new RuntimeException();
+    protected boolean isWorkingDay(LocalDate date) {
+        return this.dayTime.isSameDayOfWeek(date.getDayOfWeek());
     }
 
-    public boolean isWorkingDay(LocalDate date) {
-        return this.dayTime.isSameDayOfWeek(date.getDayOfWeek());
+    protected Map<Integer, List<Integer>> availableTimes() {
+        var availableTimes = new HashMap<Integer, List<Integer>>();
+        var timeOfWork = Duration.between(this.dayTime.startTime(), this.dayTime.endTime()).toMinutes();
+        var currentTime = this.dayTime.startTime();
+
+        for (var i = 0; i < timeOfWork; i += this.dayTime.minuteInterval()) {
+            var hour = currentTime.getHour();
+            var minute = currentTime.getMinute();
+
+            availableTimes.computeIfAbsent(hour, k -> new ArrayList<>()).add(minute);
+            currentTime = currentTime.plusMinutes(this.dayTime.minuteInterval());
+        }
+
+        lockedTimes.forEach(lockedTime -> {
+            var timeOfLocked = Duration.between(lockedTime.startTime(), lockedTime.endTime()).toMinutes();
+            var currentLockedTime = lockedTime.startTime();
+
+            for (var i = 0; i < timeOfLocked; i++) {
+                var hour = currentLockedTime.getHour();
+                var minute = currentLockedTime.getMinute();
+
+                availableTimes.computeIfPresent(hour, (k, v) -> {
+                    v.remove(Integer.valueOf(minute));
+                    return v.isEmpty() ? null : v;
+                });
+
+                currentLockedTime = currentLockedTime.plusMinutes(1);
+            }
+
+        });
+
+
+        return availableTimes;
     }
 
     public WorkingDayId id() {
@@ -68,6 +98,16 @@ public class WorkingDay {
 
     public Set<LockedTime> lockedTimes() {
         return lockedTimes;
+    }
+
+    private void verifyExistingLockedTime(LockedTime lockedTimeNew) {
+        var existingLockedTime = this.lockedTimes.stream().anyMatch(lockedTime ->
+                (lockedTime.startTime().isBefore(lockedTimeNew.startTime()) && lockedTime.endTime().isAfter(lockedTimeNew.startTime()))
+                        || (lockedTime.startTime().isBefore(lockedTimeNew.endTime()) && lockedTime.endTime().isAfter(lockedTimeNew.endTime()))
+        );
+
+        if (existingLockedTime)
+            throw new RuntimeException();
     }
 
     private void setId(WorkingDayId id) {

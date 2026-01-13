@@ -141,9 +141,12 @@ public class Agenda implements AggregateRoot<AgendaId> {
         var date = LocalDate.now().plusDays(1);
 
         return IntStream.range(0, this.bookingBy.value())
-                .mapToObj(i -> this.filterWorkingDay(date.plusDays(i)))
-                .map(workingDay -> new AvailableDateTimes(date, workingDay.dayTime().availableTimes()))
-                .filter(availableDateTimes -> this.isNotStandBy(availableDateTimes.date()))
+                .mapToObj(date::plusDays)
+                .filter(this::isNotStandBy)
+                .map(this::filterWorkingDay)
+                .filter(Optional::isPresent)
+                .map(workingDay ->
+                        new AvailableDateTimes(date, workingDay.get().availableTimes()))
                 .toList();
     }
 
@@ -163,12 +166,13 @@ public class Agenda implements AggregateRoot<AgendaId> {
         return AgendaStatus.BLOCKED.equals(this.status);
     }
 
-    public WorkingDay filterWorkingDay(LocalDate date) {
-        return workingDays.stream()
+    private Optional<WorkingDay> filterWorkingDay(LocalDate date) {
+        return this.workingDays.stream()
                 .filter(workingDay -> workingDay.isWorkingDay(date))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
+
+
 
     public boolean isNotStandBy(LocalDate date) {
         return this.standByDates.stream().allMatch(dates -> dates.isNotBetween(date));
