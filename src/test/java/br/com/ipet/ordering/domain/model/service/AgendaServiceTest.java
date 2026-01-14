@@ -23,7 +23,7 @@ class AgendaServiceTest {
     private AgendaService agendaService;
 
     @Test
-    public void givenAvaliableDatesDays_whenCreateCalendar_thenReturnCalendarDatesTimesStartingTomorrow() {
+    public void givenAvaliableDatesDays_whenCreateCalendar_thenReturnAvaliableTimesDatesTimesStartingTomorrow() {
 
         Agenda agenda = Agenda.createNew().companyId(new CompanyId()).name(new AgendaName("teste")).build();
         agenda.changeBookingBy(new BookingBy(7));
@@ -34,7 +34,7 @@ class AgendaServiceTest {
 
         agenda.active();
 
-        var result = agendaService.calendar(agenda);
+        var result = agendaService.avaliableTimes(agenda);
 
         Assertions.assertThat(result).isNotEmpty();
         Assertions.assertThat(result.getFirst()).isEqualTo(LocalDate.now().plusDays(7));

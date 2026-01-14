@@ -51,18 +51,15 @@ public class WorkingDay {
 
     protected Map<Integer, List<Integer>> availableTimes() {
         var availableTimes = new HashMap<Integer, List<Integer>>();
-        var timeOfWork = Duration.between(this.dayTime.startTime(), this.dayTime.endTime()).toMinutes();
-        var currentTime = this.dayTime.startTime();
 
-        for (var i = 0; i < timeOfWork; i += this.dayTime.minuteInterval()) {
-            var hour = currentTime.getHour();
-            var minute = currentTime.getMinute();
+        addAvailableTimes(availableTimes);
+        removeLockedTimes(availableTimes);
 
-            availableTimes.computeIfAbsent(hour, k -> new ArrayList<>()).add(minute);
-            currentTime = currentTime.plusMinutes(this.dayTime.minuteInterval());
-        }
+        return availableTimes;
+    }
 
-        lockedTimes.forEach(lockedTime -> {
+    private void removeLockedTimes(HashMap<Integer, List<Integer>> availableTimes) {
+        this.lockedTimes.forEach(lockedTime -> {
             var timeOfLocked = Duration.between(lockedTime.startTime(), lockedTime.endTime()).toMinutes();
             var currentLockedTime = lockedTime.startTime();
 
@@ -77,11 +74,20 @@ public class WorkingDay {
 
                 currentLockedTime = currentLockedTime.plusMinutes(1);
             }
-
         });
+    }
 
+    private void addAvailableTimes(HashMap<Integer, List<Integer>> availableTimes) {
+        var timeOfWork = Duration.between(this.dayTime.startTime(), this.dayTime.endTime()).toMinutes();
+        var currentTime = this.dayTime.startTime();
 
-        return availableTimes;
+        for (var i = 0; i < timeOfWork; i += this.dayTime.minuteInterval()) {
+            var hour = currentTime.getHour();
+            var minute = currentTime.getMinute();
+
+            availableTimes.computeIfAbsent(hour, k -> new ArrayList<>()).add(minute);
+            currentTime = currentTime.plusMinutes(this.dayTime.minuteInterval());
+        }
     }
 
     public WorkingDayId id() {

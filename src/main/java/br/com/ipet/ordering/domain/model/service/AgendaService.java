@@ -1,12 +1,12 @@
 package br.com.ipet.ordering.domain.model.service;
 
-import br.com.ipet.ordering.Booking;
 import br.com.ipet.ordering.domain.model.entity.Agenda;
 import br.com.ipet.ordering.domain.model.repository.Bookings;
 import br.com.ipet.ordering.domain.model.util.FieldValidator;
 import br.com.ipet.ordering.domain.model.valueobject.AvailableDateTimes;
 import lombok.RequiredArgsConstructor;
 
+import java.time.Duration;
 import java.time.Period;
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class AgendaService {
 
     private final Bookings bookingRepository;
 
-    public List<AvailableDateTimes> calendar(Agenda agenda) {
+    public List<AvailableDateTimes> avaliableTimes(Agenda agenda) {
         FieldValidator.requiresNonNull("agenda", agenda);
 
         if (!agenda.isActived() && !agenda.isStantBy()) {
@@ -24,29 +24,33 @@ public class AgendaService {
 
         var bookings = bookingRepository.ofAgendaId(agenda.id());
 
-
-
         var avaliableDatesTimes = agenda.avaliableDatesTimes();
 
-        avaliableDatesTimes.stream().map(availableDateTimes -> {
+        avaliableDatesTimes.forEach(availableDateTimes ->
             bookings.stream()
                     .filter(booking -> booking.date().equals(availableDateTimes.date()))
-                    .findFirst()
-                    .ifPresent(booking -> );
+                    .forEach(booking -> {
+                        var timeOfBooking = Duration.between(booking.startTime(), booking.endTime()).toMinutes();
+                        var currentBookingTime = booking.startTime();
 
-            avaliableDatesTimes
-        })
+                        for (var i = 0; i < timeOfBooking; i++) {
+                            var hour = currentBookingTime.getHour();
+                            var minute = currentBookingTime.getMinute();
 
-        return avaliableDatesTimes;
+                            availableDateTimes.availableTimes().computeIfPresent(hour, (k, v) -> {
+                                v.remove((Integer) minute);
+                                return v.isEmpty() ? null : v;
+                            });
+
+                            currentBookingTime = currentBookingTime.plusMinutes(1);
+                        }
+                    })
+        );
+
+        return avaliableDatesTimes.stream()
+                .filter(availableDateTimes -> !availableDateTimes.availableTimes().isEmpty())
+                .toList();
 
     }
-
-    public void subtractBookingTimes(AvailableDateTimes availableDateTimes, Book ing booking) {
-        Period.
-        var bookingTime = booking.startTime()
-        var times = availableDateTimes.availableTimes().get(booking.)
-    }
-
-
 
 }
