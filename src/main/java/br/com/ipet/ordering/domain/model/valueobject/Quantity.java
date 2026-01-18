@@ -10,4 +10,18 @@ public record Quantity(Integer value) {
         FieldValidator.requiresNonNull("quantity value", value);
     }
 
+    public Quantity sum(Quantity quantity) {
+        if (quantity.value < 1)
+            throw new RuntimeException();
+
+        return new Quantity(value + quantity.value);
+    }
+
+    public Quantity subtract(Quantity quantity) {
+        if (quantity.value < 1)
+            throw new RuntimeException();
+
+        return new Quantity(value - quantity.value);
+    }
+
 }

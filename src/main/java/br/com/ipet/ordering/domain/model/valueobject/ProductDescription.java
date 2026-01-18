@@ -7,6 +7,7 @@ public record ProductDescription(String value) {
 
     public ProductDescription {
         FieldValidator.requiresNonBlank("product description", value);
+
         if (value.length() < 4)
             throw new ProductDescriptionCannotBeVerySmallException();
     }

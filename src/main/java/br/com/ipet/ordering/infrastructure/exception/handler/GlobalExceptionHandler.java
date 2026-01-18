@@ -135,6 +135,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(StockCannotBeNegativeException.class)
+    public ResponseEntity<ExceptionResponse> stockCannotBeNegativeHandler(StockCannotBeNegativeException ex, WebRequest request) {
+        return new ResponseEntity<>(
+                getMessageResponse(ex.getMessage(), request, ""),
+                HttpStatus.BAD_REQUEST);
+    }
+
     private ExceptionResponse getMessageResponse(String message, WebRequest request, String... params) {
         return new ExceptionResponse(
                 messageSource.getMessage(message, params, Locale.getDefault()),

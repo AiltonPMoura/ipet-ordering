@@ -6,6 +6,7 @@ import br.com.ipet.ordering.domain.model.valueobject.Money;
 import br.com.ipet.ordering.domain.model.valueobject.ProductDescription;
 import br.com.ipet.ordering.domain.model.valueobject.ProductId;
 import br.com.ipet.ordering.domain.model.valueobject.ProductName;
+import br.com.ipet.ordering.domain.model.valueobject.Quantity;
 import lombok.Builder;
 
 public class Product {
@@ -14,23 +15,29 @@ public class Product {
     private ProductName name;
     private ProductDescription description;
     private Money price;
+    private Quantity totalStock;
 
     @Builder(builderClassName = "CreateNewProductBuilder", builderMethodName = "createNew")
-    private static Product create(CompanyId companyId, ProductName name, ProductDescription description, Money price) {
-        return new Product(new ProductId(), companyId, name, description, price);
+    private static Product create(CompanyId companyId,
+                                  ProductName name, ProductDescription description,
+                                  Money price, Quantity totalStock) {
+        return new Product(new ProductId(), companyId, name, description, price, totalStock);
     }
 
     @Builder(builderClassName = "CreateExistingProductBuilder", builderMethodName = "existing")
-    private Product(ProductId id, CompanyId companyId, ProductName name, ProductDescription description, Money price) {
+    private Product(ProductId id, CompanyId companyId,
+                    ProductName name, ProductDescription description,
+                    Money price, Quantity stock) {
         this.setId(id);
         this.setCompanyId(companyId);
-        this.setProductName(name);
+        this.setName(name);
         this.setDescription(description);
         this.setPrice(price);
+        this.setTotalStock(totalStock);
     }
 
     void changeName(ProductName name) {
-        this.setProductName(name);
+        this.setName(name);
     }
 
     void changeDescription(ProductDescription description) {
@@ -40,6 +47,24 @@ public class Product {
 
     void changePrice(Money price) {
         this.setPrice(price);
+    }
+
+    void addTotalStock(Quantity quantity) {
+        FieldValidator.requiresNonNull("quantity", quantity);
+        this.setTotalStock(this.totalStock.sum(quantity));
+    }
+
+    void subtractTotalStock(Quantity quantity) {
+        FieldValidator.requiresNonNull("quantity", quantity);
+
+        if (quantity.value() > this.totalStock.value())
+            throw new RuntimeException();
+
+        this.setTotalStock(this.totalStock.subtract(quantity));
+    }
+
+    public boolean availableStock() {
+        return this.totalStock.value() > 0;
     }
 
     public ProductId id() {
@@ -62,6 +87,10 @@ public class Product {
         return price;
     }
 
+    public Quantity totalStock() {
+        return totalStock;
+    }
+
     private void setId(ProductId id) {
         FieldValidator.requiresNonNull("productId", id);
         this.id = id;
@@ -72,18 +101,21 @@ public class Product {
         this.companyId = companyId;
     }
 
-    private void setProductName(ProductName name) {
+    private void setName(ProductName name) {
         FieldValidator.requiresNonNull("product name", name);
         this.name = name;
     }
 
     private void setDescription(ProductDescription description) {
-        FieldValidator.requiresNonNull("product description", price);
         this.description = description;
     }
 
     private void setPrice(Money price) {
         FieldValidator.requiresNonNull("product price", price);
         this.price = price;
+    }
+
+    private void setTotalStock(Quantity totalStock) {
+        this.totalStock = totalStock;
     }
 }

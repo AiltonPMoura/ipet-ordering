@@ -29,5 +29,6 @@ public class MessageCode {
     public static final String ERROR_DATE_TIME_MUST_BE_LATTER_THAN_NOW = "error.date.time.must.be.latter.than.now";
     public static final String ERROR_DATE_MUST_BE_LATTER_THAN_NOW = "error.date.must.be.latter.than.now";
     public static final String ERROR_CANNOT_CHANGE_SCHEDULING_AT = "error.cannot.change.scheduling.at";
+    public static final String ERROR_STOCK_CANNOT_BE_NEGATIVE = "error.stock.cannot.be.negative";
 
 }
