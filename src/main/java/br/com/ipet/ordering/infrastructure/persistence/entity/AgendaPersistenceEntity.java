@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.entity;
 
-import br.com.ipet.ordering.domain.model.entity.Company;
+import br.com.ipet.ordering.domain.model.company.Company;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

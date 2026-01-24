@@ -1,13 +1,14 @@
 package br.com.ipet.ordering.infrastructure.persistence.provider;
 
 import br.com.ipet.ordering.Booking;
-import br.com.ipet.ordering.domain.model.repository.Bookings;
-import br.com.ipet.ordering.domain.model.valueobject.AgendaId;
-import br.com.ipet.ordering.domain.model.valueobject.BookingId;
+import br.com.ipet.ordering.domain.model.booking.Bookings;
+import br.com.ipet.ordering.domain.model.commons.AgendaId;
+import br.com.ipet.ordering.domain.model.commons.BookingId;
 import br.com.ipet.ordering.infrastructure.persistence.mapper.BookingMapper;
 import br.com.ipet.ordering.infrastructure.persistence.repository.BookingPersistenceEntityRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,8 +40,8 @@ public class BookingPersistenceProvider implements Bookings {
     }
 
     @Override
-    public Set<Booking> ofAgendaId(AgendaId agendaId) {
-        var booknigs = repository.findByAgendaId(agendaId.value());
+    public Set<Booking> ofAgendaIdGreaterThanNow(AgendaId agendaId) {
+        var booknigs = repository.findByAgendaIdAndDateGreaterThan(agendaId.value(), LocalDate.now());
 
         return booknigs.stream().map(bookingMapper::toDomainEntity)
                 .collect(Collectors.toUnmodifiableSet());

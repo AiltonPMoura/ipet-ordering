@@ -1,10 +1,11 @@
 package br.com.ipet.ordering.infrastructure.persistence.provider;
 
-import br.com.ipet.ordering.domain.model.entity.Company;
-import br.com.ipet.ordering.domain.model.repository.Companies;
-import br.com.ipet.ordering.domain.model.valueobject.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.Email;
+import br.com.ipet.ordering.domain.model.company.Company;
+import br.com.ipet.ordering.domain.model.company.Companies;
+import br.com.ipet.ordering.domain.model.commons.CompanyId;
 import br.com.ipet.ordering.infrastructure.persistence.mapper.CompanyMapper;
-import br.com.ipet.ordering.infrastructure.persistence.repository.CompanyPersistenceEntityRepository;
+import br.com.ipet.ordering.infrastructure.persistence.repository.CompanyPersistenceRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
@@ -12,12 +13,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CompanyPersistenceProvider implements Companies {
 
-    private final CompanyPersistenceEntityRepository repository;
+    private final CompanyPersistenceRepository persistenceRepository;
     private final CompanyMapper mapper;
 
     @Override
     public Optional<Company> ofId(CompanyId companyId) {
-        var companyPersistenceEntity = repository.findById(companyId.value()).orElseThrow();
+        var companyPersistenceEntity = persistenceRepository.findById(companyId.value()).orElseThrow();
         return Optional.ofNullable(mapper.toDomainEntity(companyPersistenceEntity));
     }
 
@@ -34,5 +35,10 @@ public class CompanyPersistenceProvider implements Companies {
     @Override
     public int count() {
         return 0;
+    }
+
+    @Override
+    public boolean isEmailUnique(Email email, CompanyId excepedCompanyId) {
+        return !persistenceRepository.existsByEmailAndIdNot(email.value(), excepedCompanyId.value());
     }
 }

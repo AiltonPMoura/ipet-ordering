@@ -6,11 +6,11 @@ import lombok.Getter;
 @Getter
 public class ProductNotFoundException extends DomainException {
 
-    private final String[] fields;
+    private final String value;
 
-    public ProductNotFoundException(String... fields) {
+    public ProductNotFoundException(String value) {
         super(MessageCode.ERROR_PRODUCT_NOT_FOUND);
-        this.fields = fields;
+        this.value = value;
     }
 
 }

@@ -1,22 +1,22 @@
 package br.com.ipet.ordering.infrastructure.persistence.mapper;
 
-import br.com.ipet.ordering.domain.model.entity.Company;
+import br.com.ipet.ordering.domain.model.company.Company;
 import br.com.ipet.ordering.domain.model.entity.Product;
 import br.com.ipet.ordering.domain.model.entity.Service;
-import br.com.ipet.ordering.domain.model.valueobject.Address;
-import br.com.ipet.ordering.domain.model.valueobject.CelPhone;
-import br.com.ipet.ordering.domain.model.valueobject.Cnpj;
-import br.com.ipet.ordering.domain.model.valueobject.CompanyId;
-import br.com.ipet.ordering.domain.model.valueobject.CompanyName;
-import br.com.ipet.ordering.domain.model.valueobject.Email;
-import br.com.ipet.ordering.domain.model.valueobject.Money;
-import br.com.ipet.ordering.domain.model.valueobject.ProductDescription;
-import br.com.ipet.ordering.domain.model.valueobject.ProductId;
-import br.com.ipet.ordering.domain.model.valueobject.ProductName;
-import br.com.ipet.ordering.domain.model.valueobject.ServiceDescription;
-import br.com.ipet.ordering.domain.model.valueobject.ServiceId;
-import br.com.ipet.ordering.domain.model.valueobject.ServiceName;
-import br.com.ipet.ordering.domain.model.valueobject.ZipCode;
+import br.com.ipet.ordering.domain.model.commons.Address;
+import br.com.ipet.ordering.domain.model.commons.CelPhone;
+import br.com.ipet.ordering.domain.model.commons.Cnpj;
+import br.com.ipet.ordering.domain.model.commons.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.CompanyName;
+import br.com.ipet.ordering.domain.model.commons.Email;
+import br.com.ipet.ordering.domain.model.commons.Money;
+import br.com.ipet.ordering.domain.model.commons.ProductDescription;
+import br.com.ipet.ordering.domain.model.commons.ProductId;
+import br.com.ipet.ordering.domain.model.commons.ProductName;
+import br.com.ipet.ordering.domain.model.commons.ServiceDescription;
+import br.com.ipet.ordering.domain.model.commons.ServiceId;
+import br.com.ipet.ordering.domain.model.commons.ServiceName;
+import br.com.ipet.ordering.domain.model.commons.ZipCode;
 import br.com.ipet.ordering.infrastructure.persistence.embedded.AddressEmbeddable;
 import br.com.ipet.ordering.infrastructure.persistence.entity.CompanyPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.entity.ProductPersistenceEntity;
@@ -32,13 +32,11 @@ public class CompanyMapper {
     public Company toDomainEntity(CompanyPersistenceEntity companyPersistenceEntity) {
         return Company.existing()
                 .id(new CompanyId(companyPersistenceEntity.getId()))
-                .companyName(new CompanyName(companyPersistenceEntity.getCompanyName()))
+                .companyName(new CompanyName(companyPersistenceEntity.getName()))
                 .cnpj(new Cnpj(companyPersistenceEntity.getCnpj()))
                 .email(new Email(companyPersistenceEntity.getEmail()))
                 .celPhone(new CelPhone(companyPersistenceEntity.getCelPhone()))
                 .address(toAddressValueObject(companyPersistenceEntity.getAddress()))
-                .products(toProductDomainEntity(companyPersistenceEntity.getProducts()))
-                .services(toServiceDomainEntity(companyPersistenceEntity.getServices()))
                 .build();
     }
 

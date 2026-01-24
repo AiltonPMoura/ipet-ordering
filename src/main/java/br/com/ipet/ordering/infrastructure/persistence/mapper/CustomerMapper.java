@@ -1,20 +1,20 @@
 package br.com.ipet.ordering.infrastructure.persistence.mapper;
 
-import br.com.ipet.ordering.domain.model.entity.Breed;
-import br.com.ipet.ordering.domain.model.entity.Customer;
-import br.com.ipet.ordering.domain.model.entity.Gender;
-import br.com.ipet.ordering.domain.model.entity.Pet;
-import br.com.ipet.ordering.domain.model.entity.Size;
-import br.com.ipet.ordering.domain.model.valueobject.Address;
-import br.com.ipet.ordering.domain.model.valueobject.CelPhone;
-import br.com.ipet.ordering.domain.model.valueobject.CustomerId;
-import br.com.ipet.ordering.domain.model.valueobject.Document;
-import br.com.ipet.ordering.domain.model.valueobject.Email;
-import br.com.ipet.ordering.domain.model.valueobject.FullName;
-import br.com.ipet.ordering.domain.model.valueobject.PetId;
-import br.com.ipet.ordering.domain.model.valueobject.PetName;
-import br.com.ipet.ordering.domain.model.valueobject.Weight;
-import br.com.ipet.ordering.domain.model.valueobject.ZipCode;
+import br.com.ipet.ordering.domain.model.pet.Breed;
+import br.com.ipet.ordering.domain.model.customer.Customer;
+import br.com.ipet.ordering.domain.model.pet.Gender;
+import br.com.ipet.ordering.domain.model.pet.Pet;
+import br.com.ipet.ordering.domain.model.pet.Size;
+import br.com.ipet.ordering.domain.model.commons.Address;
+import br.com.ipet.ordering.domain.model.commons.CelPhone;
+import br.com.ipet.ordering.domain.model.commons.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.Document;
+import br.com.ipet.ordering.domain.model.commons.Email;
+import br.com.ipet.ordering.domain.model.commons.FullName;
+import br.com.ipet.ordering.domain.model.commons.PetId;
+import br.com.ipet.ordering.domain.model.commons.PetName;
+import br.com.ipet.ordering.domain.model.commons.Weight;
+import br.com.ipet.ordering.domain.model.commons.ZipCode;
 import br.com.ipet.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.entity.PetPersistenceEntity;
 

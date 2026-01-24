@@ -1,9 +1,5 @@
 package br.com.ipet.ordering.infrastructure.persistence.entity;
 
-import br.com.ipet.ordering.domain.model.entity.Agenda;
-import br.com.ipet.ordering.domain.model.entity.Customer;
-import br.com.ipet.ordering.domain.model.valueobject.AgendaId;
-import br.com.ipet.ordering.domain.model.valueobject.CustomerId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;

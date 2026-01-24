@@ -1,11 +1,12 @@
 package br.com.ipet.ordering.domain.model.service;
 
-import br.com.ipet.ordering.domain.model.entity.Agenda;
-import br.com.ipet.ordering.domain.model.valueobject.AgendaName;
-import br.com.ipet.ordering.domain.model.valueobject.BookingBy;
-import br.com.ipet.ordering.domain.model.valueobject.CompanyId;
-import br.com.ipet.ordering.domain.model.valueobject.DayTime;
-import br.com.ipet.ordering.domain.model.valueobject.StandByDates;
+import br.com.ipet.ordering.domain.model.agenda.Agenda;
+import br.com.ipet.ordering.domain.model.agenda.AgendaService;
+import br.com.ipet.ordering.domain.model.commons.AgendaName;
+import br.com.ipet.ordering.domain.model.commons.BookingWindow;
+import br.com.ipet.ordering.domain.model.commons.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.DayTime;
+import br.com.ipet.ordering.domain.model.commons.StandByDates;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +27,7 @@ class AgendaServiceTest {
     public void givenAvaliableDatesDays_whenCreateCalendar_thenReturnAvaliableTimesDatesTimesStartingTomorrow() {
 
         Agenda agenda = Agenda.createNew().companyId(new CompanyId()).name(new AgendaName("teste")).build();
-        agenda.changeBookingBy(new BookingBy(7));
+        agenda.changeBookingBy(new BookingWindow(7));
         agenda.addWorkingDay(new DayTime(DayOfWeek.THURSDAY, OffsetTime.now(), OffsetTime.now().plusHours(1)));
         agenda.addWorkingDay(new DayTime(DayOfWeek.WEDNESDAY, OffsetTime.now(), OffsetTime.now().plusHours(1)));
         agenda.addWorkingDay(new DayTime(DayOfWeek.FRIDAY, OffsetTime.now(), OffsetTime.now().plusHours(1)));

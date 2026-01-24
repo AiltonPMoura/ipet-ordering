@@ -102,7 +102,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ExceptionResponse> productNotFoundExceptionHandler(ProductNotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(
-                getMessageResponse(ex.getMessage(), request, ex.getFields()),
+                getMessageResponse(ex.getMessage(), request, ex.getValue()),
                 HttpStatus.BAD_REQUEST);
     }
 

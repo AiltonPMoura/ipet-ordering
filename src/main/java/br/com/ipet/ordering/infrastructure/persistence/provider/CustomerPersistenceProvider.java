@@ -1,8 +1,8 @@
 package br.com.ipet.ordering.infrastructure.persistence.provider;
 
-import br.com.ipet.ordering.domain.model.entity.Customer;
-import br.com.ipet.ordering.domain.model.repository.Customers;
-import br.com.ipet.ordering.domain.model.valueobject.CustomerId;
+import br.com.ipet.ordering.domain.model.customer.Customer;
+import br.com.ipet.ordering.domain.model.customer.Customers;
+import br.com.ipet.ordering.domain.model.commons.CustomerId;
 import br.com.ipet.ordering.infrastructure.persistence.mapper.CustomerMapper;
 import br.com.ipet.ordering.infrastructure.persistence.repository.CustomerPersistenceEntityRepository;
 import lombok.RequiredArgsConstructor;

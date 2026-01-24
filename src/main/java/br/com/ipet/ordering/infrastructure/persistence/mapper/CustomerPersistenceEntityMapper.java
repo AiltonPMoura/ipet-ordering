@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.mapper;
 
-import br.com.ipet.ordering.domain.model.entity.Customer;
-import br.com.ipet.ordering.domain.model.entity.Pet;
+import br.com.ipet.ordering.domain.model.customer.Customer;
+import br.com.ipet.ordering.domain.model.pet.Pet;
 import br.com.ipet.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.entity.PetPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.repository.CustomerPersistenceEntityRepository;
