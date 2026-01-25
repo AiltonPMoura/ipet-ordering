@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.infrastructure.persistence.entity;
+package br.com.ipet.ordering.infrastructure.persistence.company;
 
 import br.com.ipet.ordering.infrastructure.persistence.embedded.AddressEmbeddable;
 import jakarta.persistence.Embedded;
@@ -23,7 +23,7 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "company")
-public class CompanyPersistenceEntity {
+public class CompanyPersistence {
 
     @Id
     private UUID id;

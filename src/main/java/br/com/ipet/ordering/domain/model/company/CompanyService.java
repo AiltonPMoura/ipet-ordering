@@ -25,14 +25,25 @@ public class CompanyService {
                 .build();
 
         verifyEmailIsUnique(company.email(), company.id());
+        verifyCnpjIsUnique(company.cnpj(), company.id());
 
         return company;
-
     }
 
     public void changeEmail(Company company, Email newEmail) {
         verifyEmailIsUnique(newEmail, company.id());
         company.changeEmail(newEmail);
+    }
+
+    public void changeCnpj(Company company, Cnpj newCnpj) {
+        verifyCnpjIsUnique(newCnpj, company.id());
+        company.changeCnpj(newCnpj);
+    }
+
+    private void verifyCnpjIsUnique(Cnpj cnpj, CompanyId companyId) {
+        if (!companies.isCnpjUnique(cnpj, companyId)) {
+            throw new CompanyCnpjIsInUseException();
+        }
     }
 
     private void verifyEmailIsUnique(Email email, CompanyId companyId) {

@@ -66,7 +66,7 @@ public class Company implements AggregateRoot<CompanyId> {
         this.setName(companyName);
     }
 
-    public void changeCnpj(Cnpj cnpj) {
+    void changeCnpj(Cnpj cnpj) {
         this.setCnpj(cnpj);
     }
 
@@ -74,7 +74,7 @@ public class Company implements AggregateRoot<CompanyId> {
         this.setCelPhone(celPhone);
     }
 
-    public void changeEmail(Email email) {
+    void changeEmail(Email email) {
         this.setEmail(email);
     }
 
@@ -116,7 +116,7 @@ public class Company implements AggregateRoot<CompanyId> {
         return id;
     }
 
-    public CompanyName companyName() {
+    public CompanyName name() {
         return name;
     }
 
