@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface CustomerPersistenceEntityRepository extends JpaRepository<CustomerPersistenceEntity, UUID> {
+public interface CustomerPersistenceRepository extends JpaRepository<CustomerPersistenceEntity, UUID> {
 }

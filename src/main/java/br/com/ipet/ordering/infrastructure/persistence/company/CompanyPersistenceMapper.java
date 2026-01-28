@@ -9,17 +9,20 @@ import lombok.RequiredArgsConstructor;
 public class CompanyPersistenceMapper {
 
     public CompanyPersistence toPersistence(Company company) {
-        return CompanyPersistence.builder()
-                .id(company.id().value())
-                .name(company.name().value())
-                .cnpj(company.cnpj().value())
-                .email(company.email().value())
-                .celPhone(company.celPhone().value())
-                .address(fromAdressValueObject(company.address()))
-                .build();
+        return merge(new CompanyPersistence(), company);
     }
 
-    private AddressEmbeddable fromAdressValueObject(Address address) {
+    public CompanyPersistence merge(CompanyPersistence companyPersistence, Company company) {
+        companyPersistence.setId(company.id().value());
+        companyPersistence.setName(company.name().value());
+        companyPersistence.setCnpj(company.cnpj().value());
+        companyPersistence.setEmail(company.email().value());
+        companyPersistence.setCelPhone(company.celPhone().value());
+        companyPersistence.setAddress(toAdressEmbeddable(company.address()));
+        return companyPersistence;
+    }
+
+    private AddressEmbeddable toAdressEmbeddable(Address address) {
         return AddressEmbeddable.builder()
                 .street(address.street())
                 .number(address.number())

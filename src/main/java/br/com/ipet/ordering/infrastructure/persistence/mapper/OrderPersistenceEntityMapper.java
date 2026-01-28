@@ -5,8 +5,8 @@ import br.com.ipet.ordering.domain.model.order.OrderItem;
 import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddable;
 import br.com.ipet.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
-import br.com.ipet.ordering.infrastructure.persistence.repository.CompanyPersistenceRepository;
-import br.com.ipet.ordering.infrastructure.persistence.repository.CustomerPersistenceEntityRepository;
+import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceRepository;
+import br.com.ipet.ordering.infrastructure.persistence.repository.CustomerPersistenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderPersistenceEntityMapper {
 
-    private final CustomerPersistenceEntityRepository customerPersistenceEntityRepository;
+    private final CustomerPersistenceRepository customerPersistenceRepository;
     private final CompanyPersistenceRepository companyPersistenceRepository;
 
     public OrderPersistenceEntity fromDomain(Order order) {
@@ -26,7 +26,7 @@ public class OrderPersistenceEntityMapper {
 
     public OrderPersistenceEntity merge(OrderPersistenceEntity orderPersistenceEntity, Order order) {
         orderPersistenceEntity.setId(order.id().value());
-        orderPersistenceEntity.setCustomer(customerPersistenceEntityRepository.getReferenceById(order.custumerId().value()));
+        orderPersistenceEntity.setCustomer(customerPersistenceRepository.getReferenceById(order.custumerId().value()));
         orderPersistenceEntity.setCompany(companyPersistenceRepository.getReferenceById(order.ccompanyId().value()));
         orderPersistenceEntity.setTotalAmount(order.totalAmount().value());
         orderPersistenceEntity.setTotalItems(order.totalItems().value());

@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.entity;
 
+import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistence;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -43,7 +44,7 @@ public class OrderPersistenceEntity {
 
     @JoinColumn
     @ManyToOne(optional = false)
-    private CompanyPersistenceEntity company;
+    private CompanyPersistence company;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderItemPersistenceEntity> items = new HashSet<>();

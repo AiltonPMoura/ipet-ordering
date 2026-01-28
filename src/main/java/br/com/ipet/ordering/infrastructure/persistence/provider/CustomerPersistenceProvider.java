@@ -4,7 +4,8 @@ import br.com.ipet.ordering.domain.model.customer.Customer;
 import br.com.ipet.ordering.domain.model.customer.Customers;
 import br.com.ipet.ordering.domain.model.commons.CustomerId;
 import br.com.ipet.ordering.infrastructure.persistence.mapper.CustomerMapper;
-import br.com.ipet.ordering.infrastructure.persistence.repository.CustomerPersistenceEntityRepository;
+import br.com.ipet.ordering.infrastructure.persistence.mapper.CustomerPersistenceMapper;
+import br.com.ipet.ordering.infrastructure.persistence.repository.CustomerPersistenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -14,14 +15,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomerPersistenceProvider implements Customers {
 
-    private final CustomerPersistenceEntityRepository repository;
+    private final CustomerPersistenceRepository persistenceRepository;
     private final CustomerMapper customerMapper;
+    private final CustomerPersistenceMapper customerPersistenceMapper;
 
     @Override
     public Optional<Customer> ofId(CustomerId customerId) {
-        var customerPersistenceEntity = repository.findById(customerId.value());
-        return Optional.empty();
-        //return customerMapper.toDomainEntity(customerPersistenceEntity);
+        return persistenceRepository.findById(customerId.value())
+                .map(customerMapper::toDomainEntity);
     }
 
     @Override
@@ -30,8 +31,9 @@ public class CustomerPersistenceProvider implements Customers {
     }
 
     @Override
-    public void add(Customer aggregateRoot) {
-
+    public void add(Customer customer) {
+        var customerPersistence = customerPersistenceMapper.toPersistence(customer);
+        persistenceRepository.saveAndFlush(customerPersistence);
     }
 
     @Override

@@ -65,6 +65,8 @@ public class CompanyApplicationService {
                         .zipCode(new ZipCode(address.getZipCode()))
                 .build());
 
+        companies.add(company);
+
         return company.id().value();
     }
 
