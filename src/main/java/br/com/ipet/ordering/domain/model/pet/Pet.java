@@ -1,13 +1,14 @@
 package br.com.ipet.ordering.domain.model.pet;
 
-import br.com.ipet.ordering.domain.model.util.FieldValidator;
+import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.commons.CustomerId;
-import br.com.ipet.ordering.domain.model.commons.PetName;
 import br.com.ipet.ordering.domain.model.commons.PetId;
+import br.com.ipet.ordering.domain.model.commons.PetName;
 import br.com.ipet.ordering.domain.model.commons.Weight;
+import br.com.ipet.ordering.domain.model.util.FieldValidator;
 import lombok.Builder;
 
-public class Pet {
+public class Pet implements AggregateRoot<PetId> {
     private PetId id;
     private CustomerId customerId;
     private PetName name;

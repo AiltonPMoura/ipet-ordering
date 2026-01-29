@@ -27,7 +27,7 @@ public class CustomerPersistenceProvider implements Customers {
 
     @Override
     public boolean exists(CustomerId customerId) {
-        return false;
+        return persistenceRepository.existsById(customerId.value());
     }
 
     @Override

@@ -7,7 +7,7 @@ public record Weight(Double value) {
 
     public Weight {
         FieldValidator.requiresNonNull("pet weight value", value);
-        if (value <= 0) throw new NumberCannotBeNegativeException("pet weight value");
+        if (value < 1) throw new NumberCannotBeNegativeException("pet weight value");
     }
 
 }
