@@ -1,11 +1,8 @@
 package br.com.ipet.ordering.domain.model.pet;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
-import br.com.ipet.ordering.domain.model.commons.CustomerId;
-import br.com.ipet.ordering.domain.model.commons.PetId;
-import br.com.ipet.ordering.domain.model.commons.PetName;
-import br.com.ipet.ordering.domain.model.commons.Weight;
-import br.com.ipet.ordering.domain.model.util.FieldValidator;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.Builder;
 
 public class Pet implements AggregateRoot<PetId> {
@@ -16,19 +13,20 @@ public class Pet implements AggregateRoot<PetId> {
     private Breed breed;
     private Gender gender;
     private Size size;
-    private Weight weight;
+    private PetWeight weight;
+    private PetAge age;
 
     @Builder(builderClassName = "createNewPetBuilder", builderMethodName = "createNew")
     private static Pet create(PetName name, CustomerId customerId,
                               Type type, Breed breed, Gender gender,
-                              Size size, Weight weight) {
-        return new Pet(new PetId(), customerId, name, type, breed, gender, size, weight);
+                              Size size, PetWeight weight, PetAge age) {
+        return new Pet(new PetId(), customerId, name, type, breed, gender, size, weight, age);
     }
 
     @Builder(builderClassName = "createExistingPetBuilder", builderMethodName = "existing")
     private Pet(PetId id, CustomerId customerId,
                 PetName name, Type type, Breed breed,
-                Gender gender, Size size, Weight weight) {
+                Gender gender, Size size, PetWeight weight, PetAge age) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.setName(name);
@@ -37,6 +35,7 @@ public class Pet implements AggregateRoot<PetId> {
         this.setGender(gender);
         this.setSize(size);
         this.setWeight(weight);
+        this.setAge(age);
     }
 
     void changeName(PetName name) {
@@ -59,15 +58,21 @@ public class Pet implements AggregateRoot<PetId> {
         this.setSize(size);
     }
 
-    void changeWeight(Weight weight) {
-        FieldValidator.requiresNonNull("pet wheight", weight);
+    void changeWeight(PetWeight weight) {
+        FieldValidator.requiresNonNull("pet weight", weight);
+        this.setWeight(weight);
+    }
+
+    void changeAge(PetAge age) {
+        FieldValidator.requiresNonNull("pet age", age);
+        this.setAge(age);
     }
 
     public PetId id() {
         return id;
     }
 
-    public CustomerId custumerId() {
+    public CustomerId customerId() {
         return customerId;
     }
 
@@ -91,17 +96,21 @@ public class Pet implements AggregateRoot<PetId> {
         return size;
     }
 
-    public Weight weight() {
+    public PetWeight weight() {
         return weight;
     }
 
+    public PetAge age() {
+        return age;
+    }
+
     private void setId(PetId id) {
-        FieldValidator.requiresNonNull("petId", id);
+        FieldValidator.requiresNonNull("pet id", id);
         this.id = id;
     }
 
     private void setCustomerId(CustomerId customerId) {
-        FieldValidator.requiresNonNull("customerId", customerId);
+        FieldValidator.requiresNonNull("customer id", customerId);
         this.customerId = customerId;
     }
 
@@ -130,7 +139,11 @@ public class Pet implements AggregateRoot<PetId> {
         this.size = size;
     }
 
-    private void setWeight(Weight weight) {
+    private void setWeight(PetWeight weight) {
         this.weight = weight;
+    }
+
+    private void setAge(PetAge age) {
+        this.age = age;
     }
 }

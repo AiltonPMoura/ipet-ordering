@@ -1,11 +1,6 @@
 package br.com.ipet.ordering.domain.model.agenda;
 
-import br.com.ipet.ordering.domain.model.util.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.AgendaId;
-import br.com.ipet.ordering.domain.model.commons.DayTime;
-import br.com.ipet.ordering.domain.model.commons.LockedTime;
-import br.com.ipet.ordering.domain.model.commons.MinuteInterval;
-import br.com.ipet.ordering.domain.model.commons.WorkingDayId;
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.Builder;
 
 import java.time.Duration;

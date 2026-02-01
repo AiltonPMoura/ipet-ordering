@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.entity;
 
-import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistence;
+import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -31,7 +31,7 @@ public class ServicePersistenceEntity {
 
     @JoinColumn
     @ManyToOne(optional = false)
-    private CompanyPersistence company;
+    private CompanyPersistenceEntity company;
 
     private String name;
     private String description;

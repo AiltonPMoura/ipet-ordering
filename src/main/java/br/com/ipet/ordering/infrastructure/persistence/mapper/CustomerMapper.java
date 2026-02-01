@@ -1,25 +1,14 @@
 package br.com.ipet.ordering.infrastructure.persistence.mapper;
 
-import br.com.ipet.ordering.domain.model.pet.Breed;
 import br.com.ipet.ordering.domain.model.customer.Customer;
-import br.com.ipet.ordering.domain.model.pet.Gender;
-import br.com.ipet.ordering.domain.model.pet.Pet;
-import br.com.ipet.ordering.domain.model.pet.Size;
 import br.com.ipet.ordering.domain.model.commons.Address;
 import br.com.ipet.ordering.domain.model.commons.CelPhone;
-import br.com.ipet.ordering.domain.model.commons.CustomerId;
-import br.com.ipet.ordering.domain.model.commons.Cpf;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.customer.Cpf;
 import br.com.ipet.ordering.domain.model.commons.Email;
 import br.com.ipet.ordering.domain.model.commons.FullName;
-import br.com.ipet.ordering.domain.model.commons.PetId;
-import br.com.ipet.ordering.domain.model.commons.PetName;
-import br.com.ipet.ordering.domain.model.commons.Weight;
 import br.com.ipet.ordering.domain.model.commons.ZipCode;
 import br.com.ipet.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
-import br.com.ipet.ordering.infrastructure.persistence.pet.PetPersistenceEntity;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CustomerMapper {
 

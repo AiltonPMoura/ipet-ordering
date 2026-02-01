@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.domain.model.scheduling;
 
-import br.com.ipet.ordering.domain.model.commons.CompanyId;
-import br.com.ipet.ordering.domain.model.commons.CustomerId;
+import br.com.ipet.ordering.domain.model.customer.CompanyId;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.commons.Money;
 import br.com.ipet.ordering.domain.model.commons.Quantity;
 import br.com.ipet.ordering.domain.model.commons.SchedulingId;
@@ -10,7 +10,7 @@ import br.com.ipet.ordering.domain.model.exception.CanNotChangeSchedulingAtExcep
 import br.com.ipet.ordering.domain.model.exception.CannotBeChangeStatusException;
 import br.com.ipet.ordering.domain.model.exception.SchedulingIsNotDraftToChangeException;
 import br.com.ipet.ordering.domain.model.exception.SchedulingItemNotFoundException;
-import br.com.ipet.ordering.domain.model.util.FieldValidator;
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.Pet;
 import br.com.ipet.ordering.domain.model.commons.Service;
 import lombok.Builder;

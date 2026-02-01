@@ -3,11 +3,9 @@ package br.com.ipet.ordering.domain.model.customer;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.commons.Address;
 import br.com.ipet.ordering.domain.model.commons.CelPhone;
-import br.com.ipet.ordering.domain.model.commons.Cpf;
-import br.com.ipet.ordering.domain.model.commons.CustomerId;
 import br.com.ipet.ordering.domain.model.commons.Email;
 import br.com.ipet.ordering.domain.model.commons.FullName;
-import br.com.ipet.ordering.domain.model.util.FieldValidator;
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.Builder;
 
 import java.time.OffsetDateTime;

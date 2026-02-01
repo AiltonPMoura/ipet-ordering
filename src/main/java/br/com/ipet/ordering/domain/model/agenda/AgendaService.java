@@ -1,8 +1,7 @@
 package br.com.ipet.ordering.domain.model.agenda;
 
 import br.com.ipet.ordering.domain.model.booking.Bookings;
-import br.com.ipet.ordering.domain.model.util.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.AvailableDateTimes;
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;

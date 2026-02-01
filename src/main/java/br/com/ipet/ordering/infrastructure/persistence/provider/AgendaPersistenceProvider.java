@@ -2,7 +2,7 @@ package br.com.ipet.ordering.infrastructure.persistence.provider;
 
 import br.com.ipet.ordering.domain.model.agenda.Agenda;
 import br.com.ipet.ordering.domain.model.agenda.Agendas;
-import br.com.ipet.ordering.domain.model.commons.AgendaId;
+import br.com.ipet.ordering.domain.model.agenda.AgendaId;
 import br.com.ipet.ordering.infrastructure.persistence.repository.AgendaPersistenceEntityRepository;
 import lombok.RequiredArgsConstructor;
 

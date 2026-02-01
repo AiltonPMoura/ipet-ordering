@@ -1,9 +1,6 @@
 package br.com.ipet.ordering.domain.model.pet;
 
-import br.com.ipet.ordering.domain.model.commons.CustomerId;
-import br.com.ipet.ordering.domain.model.commons.PetId;
-import br.com.ipet.ordering.domain.model.commons.PetName;
-import br.com.ipet.ordering.domain.model.commons.Weight;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
 import br.com.ipet.ordering.domain.model.customer.Customers;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +11,9 @@ public class PetService {
     private final Customers customers;
     private final Pets pets;
 
-    public Pet register(PetName name, CustomerId customerId,
+    public Pet register(CustomerId customerId, PetName name,
                          Type type, Breed breed, Gender gender,
-                         Size size, Weight weight) {
+                         Size size, PetWeight weight, PetAge age) {
 
         verifyCustomerExists(customerId);
 
@@ -28,12 +25,13 @@ public class PetService {
                 .gender(gender)
                 .size(size)
                 .weight(weight)
+                .age(age)
                 .build();
     }
 
     public Pet change(PetId id, CustomerId customerId,
-                      PetName name, Type type, Breed breed,
-                      Gender gender, Size size, Weight weight) {
+                      PetName name, Type type, Breed breed, Gender gender,
+                      Size size, PetWeight weight, PetAge age) {
 
         verifyCustomerExists(customerId);
 
@@ -46,6 +44,7 @@ public class PetService {
         pet.changeGender(gender);
         pet.changeSize(size);
         pet.changeWeight(weight);
+        pet.changeAge(age);
 
         return pet;
     }

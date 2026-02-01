@@ -2,8 +2,8 @@ package br.com.ipet.ordering.infrastructure.persistence.provider;
 
 import br.com.ipet.ordering.Booking;
 import br.com.ipet.ordering.domain.model.booking.Bookings;
-import br.com.ipet.ordering.domain.model.commons.AgendaId;
-import br.com.ipet.ordering.domain.model.commons.BookingId;
+import br.com.ipet.ordering.domain.model.agenda.AgendaId;
+import br.com.ipet.ordering.domain.model.booking.BookingId;
 import br.com.ipet.ordering.infrastructure.persistence.mapper.BookingMapper;
 import br.com.ipet.ordering.infrastructure.persistence.repository.BookingPersistenceEntityRepository;
 import lombok.RequiredArgsConstructor;

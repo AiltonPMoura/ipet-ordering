@@ -2,7 +2,7 @@ package br.com.ipet.ordering.infrastructure.persistence.provider;
 
 import br.com.ipet.ordering.domain.model.order.Order;
 import br.com.ipet.ordering.domain.model.order.Orders;
-import br.com.ipet.ordering.domain.model.commons.OrderId;
+import br.com.ipet.ordering.domain.model.order.OrderId;
 import br.com.ipet.ordering.infrastructure.persistence.mapper.OrderMapper;
 import br.com.ipet.ordering.infrastructure.persistence.mapper.OrderPersistenceEntityMapper;
 import br.com.ipet.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;

@@ -8,18 +8,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CompanyPersistenceMapper {
 
-    public CompanyPersistence toPersistence(Company company) {
-        return merge(new CompanyPersistence(), company);
+    public CompanyPersistenceEntity toPersistence(Company company) {
+        return merge(new CompanyPersistenceEntity(), company);
     }
 
-    public CompanyPersistence merge(CompanyPersistence companyPersistence, Company company) {
-        companyPersistence.setId(company.id().value());
-        companyPersistence.setName(company.name().value());
-        companyPersistence.setCnpj(company.cnpj().value());
-        companyPersistence.setEmail(company.email().value());
-        companyPersistence.setCelPhone(company.celPhone().value());
-        companyPersistence.setAddress(toAdressEmbeddable(company.address()));
-        return companyPersistence;
+    public CompanyPersistenceEntity merge(CompanyPersistenceEntity companyPersistenceEntity, Company company) {
+        companyPersistenceEntity.setId(company.id().value());
+        companyPersistenceEntity.setName(company.name().value());
+        companyPersistenceEntity.setCnpj(company.cnpj().value());
+        companyPersistenceEntity.setEmail(company.email().value());
+        companyPersistenceEntity.setCelPhone(company.celPhone().value());
+        companyPersistenceEntity.setAddress(toAdressEmbeddable(company.address()));
+        return companyPersistenceEntity;
     }
 
     private AddressEmbeddable toAdressEmbeddable(Address address) {

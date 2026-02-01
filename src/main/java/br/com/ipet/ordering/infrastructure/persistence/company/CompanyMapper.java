@@ -2,9 +2,9 @@ package br.com.ipet.ordering.infrastructure.persistence.company;
 
 import br.com.ipet.ordering.domain.model.commons.Address;
 import br.com.ipet.ordering.domain.model.commons.CelPhone;
-import br.com.ipet.ordering.domain.model.commons.Cnpj;
-import br.com.ipet.ordering.domain.model.commons.CompanyId;
-import br.com.ipet.ordering.domain.model.commons.CompanyName;
+import br.com.ipet.ordering.domain.model.customer.Cnpj;
+import br.com.ipet.ordering.domain.model.customer.CompanyId;
+import br.com.ipet.ordering.domain.model.customer.CompanyName;
 import br.com.ipet.ordering.domain.model.commons.Email;
 import br.com.ipet.ordering.domain.model.commons.ZipCode;
 import br.com.ipet.ordering.domain.model.company.Company;
@@ -14,15 +14,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class CompanyMapper {
 
-    public Company toDomain(CompanyPersistence companyPersistence) {
+    public Company toDomain(CompanyPersistenceEntity companyPersistenceEntity) {
         return Company.existing()
-                .id(new CompanyId(companyPersistence.getId()))
-                .name(new CompanyName(companyPersistence.getName()))
-                .cnpj(new Cnpj(companyPersistence.getCnpj()))
-                .email(new Email(companyPersistence.getEmail()))
-                .celPhone(new CelPhone(companyPersistence.getCelPhone()))
-                .address(toAddress(companyPersistence.getAddress()))
-                .registeredAt(companyPersistence.getRegisteredAt())
+                .id(new CompanyId(companyPersistenceEntity.getId()))
+                .name(new CompanyName(companyPersistenceEntity.getName()))
+                .cnpj(new Cnpj(companyPersistenceEntity.getCnpj()))
+                .email(new Email(companyPersistenceEntity.getEmail()))
+                .celPhone(new CelPhone(companyPersistenceEntity.getCelPhone()))
+                .address(toAddress(companyPersistenceEntity.getAddress()))
+                .registeredAt(companyPersistenceEntity.getRegisteredAt())
                 .build();
     }
 

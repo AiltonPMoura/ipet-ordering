@@ -1,8 +1,8 @@
 package br.com.ipet.ordering.domain.model.commons;
 
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.entity.ServiceType;
 import br.com.ipet.ordering.domain.model.exception.ServiceNameCannotBeVerySmallException;
-import br.com.ipet.ordering.domain.model.util.FieldValidator;
 
 public record ServiceName(String value) {
 

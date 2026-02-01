@@ -1,6 +1,9 @@
 package br.com.ipet.ordering.infrastructure.exception.handler;
 
+import br.com.ipet.ordering.application.commons.NumberCannotBeNegativeException;
 import br.com.ipet.ordering.domain.model.exception.*;
+import br.com.ipet.ordering.domain.model.order.OrderCannotBePlacedException;
+import br.com.ipet.ordering.domain.model.order.OrderIsNotDraftToChangeException;
 import br.com.ipet.ordering.infrastructure.exception.response.ExceptionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;

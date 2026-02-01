@@ -1,8 +1,7 @@
 package br.com.ipet.ordering.domain.model.pet;
 
 import br.com.ipet.ordering.domain.model.Repository;
-import br.com.ipet.ordering.domain.model.commons.CustomerId;
-import br.com.ipet.ordering.domain.model.commons.PetId;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
 
 import java.util.Optional;
 

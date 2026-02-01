@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.domain.model.commons;
 
-import br.com.ipet.ordering.domain.model.util.FieldValidator;
-import br.com.ipet.ordering.domain.model.util.IdGenerator;
+import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.IdGenerator;
 
 import java.util.UUID;
 

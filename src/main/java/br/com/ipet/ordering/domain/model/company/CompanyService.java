@@ -2,9 +2,9 @@ package br.com.ipet.ordering.domain.model.company;
 
 import br.com.ipet.ordering.domain.model.commons.Address;
 import br.com.ipet.ordering.domain.model.commons.CelPhone;
-import br.com.ipet.ordering.domain.model.commons.Cnpj;
-import br.com.ipet.ordering.domain.model.commons.CompanyId;
-import br.com.ipet.ordering.domain.model.commons.CompanyName;
+import br.com.ipet.ordering.domain.model.customer.Cnpj;
+import br.com.ipet.ordering.domain.model.customer.CompanyId;
+import br.com.ipet.ordering.domain.model.customer.CompanyName;
 import br.com.ipet.ordering.domain.model.commons.Email;
 import lombok.RequiredArgsConstructor;
 

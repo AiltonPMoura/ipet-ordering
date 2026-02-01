@@ -1,9 +1,9 @@
 package br.com.ipet.ordering.infrastructure.persistence.pet;
 
-import br.com.ipet.ordering.domain.model.commons.CustomerId;
-import br.com.ipet.ordering.domain.model.commons.PetId;
-import br.com.ipet.ordering.domain.model.commons.PetName;
-import br.com.ipet.ordering.domain.model.commons.Weight;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.pet.PetId;
+import br.com.ipet.ordering.domain.model.pet.PetName;
+import br.com.ipet.ordering.domain.model.pet.PetWeight;
 import br.com.ipet.ordering.domain.model.pet.Breed;
 import br.com.ipet.ordering.domain.model.pet.Gender;
 import br.com.ipet.ordering.domain.model.pet.Pet;
@@ -23,7 +23,7 @@ public class PetMapper {
                 .breed(Breed.valueOf(petPersistence.getBreed()))
                 .size(Size.valueOf(petPersistence.getSize()))
                 .gender(Gender.valueOf(petPersistence.getGender()))
-                .weight(new Weight(petPersistence.getWeight()))
+                .weight(new PetWeight(petPersistence.getWeight()))
                 .build();
     }
 

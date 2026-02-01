@@ -1,9 +1,9 @@
 package br.com.ipet.ordering;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
-import br.com.ipet.ordering.domain.model.commons.AgendaId;
-import br.com.ipet.ordering.domain.model.commons.BookingId;
-import br.com.ipet.ordering.domain.model.commons.CustomerId;
+import br.com.ipet.ordering.domain.model.agenda.AgendaId;
+import br.com.ipet.ordering.domain.model.booking.BookingId;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import lombok.Builder;
 
 import java.time.LocalDate;

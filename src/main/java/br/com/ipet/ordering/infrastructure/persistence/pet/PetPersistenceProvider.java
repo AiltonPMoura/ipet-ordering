@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.pet;
 
-import br.com.ipet.ordering.domain.model.commons.CustomerId;
-import br.com.ipet.ordering.domain.model.commons.PetId;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.pet.PetId;
 import br.com.ipet.ordering.domain.model.pet.Pet;
 import br.com.ipet.ordering.domain.model.pet.Pets;
 import lombok.RequiredArgsConstructor;

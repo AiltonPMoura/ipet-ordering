@@ -2,11 +2,11 @@ package br.com.ipet.ordering.domain.model.service;
 
 import br.com.ipet.ordering.domain.model.agenda.Agenda;
 import br.com.ipet.ordering.domain.model.agenda.AgendaService;
-import br.com.ipet.ordering.domain.model.commons.AgendaName;
-import br.com.ipet.ordering.domain.model.commons.BookingWindow;
-import br.com.ipet.ordering.domain.model.commons.CompanyId;
-import br.com.ipet.ordering.domain.model.commons.DayTime;
-import br.com.ipet.ordering.domain.model.commons.StandByDates;
+import br.com.ipet.ordering.domain.model.agenda.AgendaName;
+import br.com.ipet.ordering.domain.model.booking.BookingWindow;
+import br.com.ipet.ordering.domain.model.customer.CompanyId;
+import br.com.ipet.ordering.domain.model.agenda.DayTime;
+import br.com.ipet.ordering.domain.model.agenda.StandByDates;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

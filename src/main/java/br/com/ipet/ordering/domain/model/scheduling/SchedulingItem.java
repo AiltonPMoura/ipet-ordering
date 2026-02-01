@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.domain.model.scheduling;
 
-import br.com.ipet.ordering.domain.model.util.FieldValidator;
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.Money;
 import br.com.ipet.ordering.domain.model.commons.Pet;
 import br.com.ipet.ordering.domain.model.commons.Quantity;

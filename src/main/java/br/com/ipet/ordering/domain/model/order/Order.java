@@ -2,16 +2,11 @@ package br.com.ipet.ordering.domain.model.order;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.exception.CannotBeChangeStatusException;
-import br.com.ipet.ordering.domain.model.exception.OrderCannotBePlacedException;
-import br.com.ipet.ordering.domain.model.exception.OrderIsNotDraftToChangeException;
-import br.com.ipet.ordering.domain.model.exception.OrderItemNotFoundException;
-import br.com.ipet.ordering.domain.model.util.FieldValidator;
+import br.com.ipet.ordering.domain.model.FieldValidator;
 
-import br.com.ipet.ordering.domain.model.commons.CompanyId;
-import br.com.ipet.ordering.domain.model.commons.CustomerId;
+import br.com.ipet.ordering.domain.model.customer.CompanyId;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.commons.Money;
-import br.com.ipet.ordering.domain.model.commons.OrderId;
-import br.com.ipet.ordering.domain.model.commons.OrderItemId;
 import br.com.ipet.ordering.domain.model.commons.Product;
 import br.com.ipet.ordering.domain.model.commons.Quantity;
 import lombok.Builder;

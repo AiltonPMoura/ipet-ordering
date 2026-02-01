@@ -1,6 +1,7 @@
 package br.com.ipet.ordering.domain.model.exception;
 
-import br.com.ipet.ordering.domain.model.exception.message.MessageCode;
+import br.com.ipet.ordering.domain.model.DomainException;
+import br.com.ipet.ordering.domain.model.MessageCode;
 import lombok.Getter;
 @Getter
 public class EmailValidatorException extends DomainException {

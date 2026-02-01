@@ -2,17 +2,9 @@ package br.com.ipet.ordering.domain.model.agenda;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.exception.AgendaIsNotDraftToChangeException;
-import br.com.ipet.ordering.domain.model.util.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.AgendaId;
-import br.com.ipet.ordering.domain.model.commons.AgendaName;
-import br.com.ipet.ordering.domain.model.commons.AvailableDateTimes;
-import br.com.ipet.ordering.domain.model.commons.BookingWindow;
-import br.com.ipet.ordering.domain.model.commons.CompanyId;
-import br.com.ipet.ordering.domain.model.commons.DayTime;
-import br.com.ipet.ordering.domain.model.commons.MinuteInterval;
-import br.com.ipet.ordering.domain.model.commons.StandByDates;
-import br.com.ipet.ordering.domain.model.commons.LockedTime;
-import br.com.ipet.ordering.domain.model.commons.WorkingDayId;
+import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.booking.BookingWindow;
+import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import lombok.Builder;
 
 import java.time.LocalDate;

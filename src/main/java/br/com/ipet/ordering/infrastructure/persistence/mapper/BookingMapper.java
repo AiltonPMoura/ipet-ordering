@@ -1,9 +1,9 @@
 package br.com.ipet.ordering.infrastructure.persistence.mapper;
 
 import br.com.ipet.ordering.Booking;
-import br.com.ipet.ordering.domain.model.commons.AgendaId;
-import br.com.ipet.ordering.domain.model.commons.BookingId;
-import br.com.ipet.ordering.domain.model.commons.CustomerId;
+import br.com.ipet.ordering.domain.model.agenda.AgendaId;
+import br.com.ipet.ordering.domain.model.booking.BookingId;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.infrastructure.persistence.entity.BookingPersistenceEntity;
 import org.springframework.stereotype.Component;
 
