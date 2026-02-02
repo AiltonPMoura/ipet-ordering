@@ -11,7 +11,6 @@ public class ModelMapperConfig {
     @Bean
     public Mapper modelMapper() {
         var modelMapper = new ModelMapper();
-
         return new Mapper() {
             @Override
             public <T> T convert(Object source, Class<T> destinationType) {

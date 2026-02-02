@@ -1,18 +1,15 @@
-package br.com.ipet.ordering.application.pet;
+package br.com.ipet.ordering.application.pet.management;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PetInput {
-    private UUID customerId;
+public class PetUpdateInput {
     private String name;
     private String type;
     private String size;

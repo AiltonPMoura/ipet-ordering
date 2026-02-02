@@ -1,7 +1,8 @@
-package br.com.ipet.ordering.application.company;
+package br.com.ipet.ordering.application.company.management;
 
 import br.com.ipet.ordering.domain.model.commons.Address;
 import br.com.ipet.ordering.domain.model.commons.CelPhone;
+import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
 import br.com.ipet.ordering.domain.model.customer.Cnpj;
 import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CompanyName;

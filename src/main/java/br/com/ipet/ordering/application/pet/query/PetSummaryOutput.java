@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.application.pet;
+package br.com.ipet.ordering.application.pet.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,14 +11,11 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PetOutput {
+public class PetSummaryOutput {
     private UUID petId;
-    private UUID customerId;
     private String name;
     private String type;
     private String size;
     private String breed;
     private String gender;
-    private Double weight;
-    private Integer age;
 }

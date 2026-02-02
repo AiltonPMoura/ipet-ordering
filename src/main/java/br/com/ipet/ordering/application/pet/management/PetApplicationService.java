@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.application.pet;
+package br.com.ipet.ordering.application.pet.management;
 
 import br.com.ipet.ordering.application.util.Mapper;
 import br.com.ipet.ordering.domain.model.FieldValidator;
@@ -8,7 +8,6 @@ import br.com.ipet.ordering.domain.model.pet.Gender;
 import br.com.ipet.ordering.domain.model.pet.PetAge;
 import br.com.ipet.ordering.domain.model.pet.PetId;
 import br.com.ipet.ordering.domain.model.pet.PetName;
-import br.com.ipet.ordering.domain.model.pet.PetNotFoundException;
 import br.com.ipet.ordering.domain.model.pet.PetService;
 import br.com.ipet.ordering.domain.model.pet.PetWeight;
 import br.com.ipet.ordering.domain.model.pet.Pets;
@@ -60,14 +59,6 @@ public class PetApplicationService {
                 new PetAge(input.getAge()));
 
         pets.add(pet);
-    }
-
-    @Transactional(readOnly = true)
-    public PetOutput findById(UUID petId) {
-        var pet = pets.ofId(new PetId(petId))
-                .orElseThrow(PetNotFoundException::new);
-
-        return mapper.convert(pet, PetOutput.class);
     }
 
 }
