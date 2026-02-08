@@ -49,6 +49,10 @@ public class PetApplicationService {
 
     @Transactional
     public void update(UUID petId, UUID customerId, PetUpdateInput input) {
+        FieldValidator.requiresNonNull("petId", petId);
+        FieldValidator.requiresNonNull("customerId", customerId);
+        FieldValidator.requiresNonNull("petUpdateInput", input);
+
         var pet = petService.change(new PetId(petId), new CustomerId(customerId),
                 new PetName(input.getName()),
                 Type.valueOf(input.getType()),

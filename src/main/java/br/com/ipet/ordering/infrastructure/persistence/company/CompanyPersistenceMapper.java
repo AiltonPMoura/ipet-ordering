@@ -2,7 +2,7 @@ package br.com.ipet.ordering.infrastructure.persistence.company;
 
 import br.com.ipet.ordering.domain.model.commons.Address;
 import br.com.ipet.ordering.domain.model.company.Company;
-import br.com.ipet.ordering.infrastructure.persistence.embedded.AddressEmbeddable;
+import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

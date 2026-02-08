@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.application.company.management;
 
-import br.com.ipet.ordering.application.commons.AdressData;
+import br.com.ipet.ordering.application.commons.AddressData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 public class CompanyUpdate {
     private String name;
     private Integer celPhone;
-    private AdressData address;
+    private AddressData address;
 }

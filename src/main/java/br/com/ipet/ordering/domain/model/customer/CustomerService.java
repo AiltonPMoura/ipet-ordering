@@ -1,0 +1,39 @@
+package br.com.ipet.ordering.domain.model.customer;
+
+import br.com.ipet.ordering.domain.model.commons.Address;
+import br.com.ipet.ordering.domain.model.commons.CelPhone;
+import br.com.ipet.ordering.domain.model.commons.Email;
+import br.com.ipet.ordering.domain.model.commons.FullName;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public class CustomerService {
+
+    private final Customers customers;
+
+    public Customer register(FullName fullName, Email email,
+                             CelPhone celPhone, Cpf cpf, Address address) {
+
+        var customer = Customer.createNew()
+                .fullName(fullName)
+                .email(email)
+                .cpf(cpf)
+                .celPhone(celPhone)
+                .address(address)
+                .build();
+
+        verifyIfEmailIsUnique(customer.email(), customer.id());
+
+        return customer;
+    }
+
+    public void changeEmail(Customer customer, Email newEmail) {
+        verifyIfEmailIsUnique(newEmail, customer.id());
+        customer.changeEmail(newEmail);
+    }
+
+    private void verifyIfEmailIsUnique(Email email, CustomerId customerId) {
+        if (!customers.isEmailUnique(email, customerId))
+            throw new CustomerEmailInUseException();
+    }
+}

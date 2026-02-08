@@ -8,7 +8,7 @@ import br.com.ipet.ordering.domain.model.customer.CompanyName;
 import br.com.ipet.ordering.domain.model.commons.Email;
 import br.com.ipet.ordering.domain.model.commons.ZipCode;
 import br.com.ipet.ordering.domain.model.company.Company;
-import br.com.ipet.ordering.infrastructure.persistence.embedded.AddressEmbeddable;
+import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
 import org.springframework.stereotype.Component;
 
 @Component

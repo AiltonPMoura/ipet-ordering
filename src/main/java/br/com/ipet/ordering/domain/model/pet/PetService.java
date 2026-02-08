@@ -29,14 +29,13 @@ public class PetService {
                 .build();
     }
 
-    public Pet change(PetId id, CustomerId customerId,
+    public Pet change(PetId petId, CustomerId customerId,
                       PetName name, Type type, Breed breed, Gender gender,
                       Size size, PetWeight weight, PetAge age) {
 
-        verifyCustomerExists(customerId);
+        var pet = pets.ofId(petId).orElseThrow(PetNotFoundException::new);
 
-        var pet = pets.ofCustomer(id, customerId)
-                .orElseThrow(PetDoesNotBelongToTheCustomer::new);
+        verifyIfBelongsToTheCustomer(customerId, pet);
 
         pet.changeName(name);
         pet.changeType(type);
@@ -47,6 +46,17 @@ public class PetService {
         pet.changeAge(age);
 
         return pet;
+    }
+
+    private void verifyIfBelongsToTheCustomer(CustomerId customerId, Pet pet) {
+        verifyCustomerExists(customerId);
+
+        var doesNottBelongsToTheCustomer = pets.ofCustomer(customerId)
+                .stream()
+                .noneMatch(pet::equals);
+
+        if (doesNottBelongsToTheCustomer)
+            throw new PetDoesNotBelongToTheCustomer();
     }
 
     private void verifyCustomerExists(CustomerId customerId) {

@@ -1,7 +1,6 @@
-package br.com.ipet.ordering.infrastructure.persistence.mapper;
+package br.com.ipet.ordering.infrastructure.persistence.customer;
 
 import br.com.ipet.ordering.domain.model.customer.Customer;
-import br.com.ipet.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.entity;
 
+import br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;

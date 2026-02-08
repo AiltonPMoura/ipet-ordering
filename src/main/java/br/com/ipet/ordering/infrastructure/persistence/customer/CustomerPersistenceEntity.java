@@ -1,6 +1,6 @@
-package br.com.ipet.ordering.infrastructure.persistence.entity;
+package br.com.ipet.ordering.infrastructure.persistence.customer;
 
-import br.com.ipet.ordering.infrastructure.persistence.embedded.AddressEmbeddable;
+import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

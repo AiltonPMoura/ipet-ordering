@@ -4,7 +4,8 @@ import br.com.ipet.ordering.domain.model.Repository;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface Pets extends Repository<Pet, PetId> {
-    Optional<Pet> ofCustomer(PetId id, CustomerId customerId);
+    Set<Pet> ofCustomer(CustomerId customerId);
 }

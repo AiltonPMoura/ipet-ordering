@@ -7,7 +7,7 @@ import org.springframework.util.StringUtils;
 import java.util.UUID;
 
 @UtilityClass
-public class PetSpecification {
+public class PetPersistenceSpecification {
 
     public static Specification<PetPersistenceEntity> customerId(UUID customerId) {
         return (root, query, criteriaBuilder) ->

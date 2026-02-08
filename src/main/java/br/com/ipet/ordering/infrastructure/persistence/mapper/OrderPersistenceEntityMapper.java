@@ -6,7 +6,7 @@ import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddabl
 import br.com.ipet.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceRepository;
-import br.com.ipet.ordering.infrastructure.persistence.repository.CustomerPersistenceRepository;
+import br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

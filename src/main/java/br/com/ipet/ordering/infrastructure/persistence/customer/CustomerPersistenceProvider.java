@@ -1,11 +1,9 @@
-package br.com.ipet.ordering.infrastructure.persistence.provider;
+package br.com.ipet.ordering.infrastructure.persistence.customer;
 
+import br.com.ipet.ordering.domain.model.commons.Email;
 import br.com.ipet.ordering.domain.model.customer.Customer;
 import br.com.ipet.ordering.domain.model.customer.Customers;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.infrastructure.persistence.mapper.CustomerMapper;
-import br.com.ipet.ordering.infrastructure.persistence.mapper.CustomerPersistenceMapper;
-import br.com.ipet.ordering.infrastructure.persistence.repository.CustomerPersistenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -39,5 +37,10 @@ public class CustomerPersistenceProvider implements Customers {
     @Override
     public int count() {
         return 0;
+    }
+
+    @Override
+    public boolean isEmailUnique(Email email, CustomerId customerId) {
+        return !persistenceRepository.existsByEmailAndIdNot(email.value(), customerId.value());
     }
 }

@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.infrastructure.persistence.mapper;
+package br.com.ipet.ordering.infrastructure.persistence.customer;
 
 import br.com.ipet.ordering.domain.model.customer.Customer;
 import br.com.ipet.ordering.domain.model.commons.Address;
@@ -8,7 +8,6 @@ import br.com.ipet.ordering.domain.model.customer.Cpf;
 import br.com.ipet.ordering.domain.model.commons.Email;
 import br.com.ipet.ordering.domain.model.commons.FullName;
 import br.com.ipet.ordering.domain.model.commons.ZipCode;
-import br.com.ipet.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
 
 public class CustomerMapper {
 

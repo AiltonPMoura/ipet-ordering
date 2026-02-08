@@ -1,6 +1,5 @@
-package br.com.ipet.ordering.infrastructure.persistence.embedded;
+package br.com.ipet.ordering.application.commons;
 
-import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Embeddable
-public class AddressEmbeddable {
+public class AddressData {
     private String street;
     private Integer number;
     private String neighborhood;

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import static br.com.ipet.ordering.infrastructure.persistence.pet.PetSpecification.*;
+import static br.com.ipet.ordering.infrastructure.persistence.pet.PetPersistenceSpecification.*;
 
 @Component
 @RequiredArgsConstructor
@@ -39,12 +39,12 @@ public class PetQueryServiceImpl implements PetQueryService {
     }
 
     private static Specification<PetPersistenceEntity> toSpecification(PetFilter petFilter) {
-        return customerId(petFilter.getCustomerId()).and(
-                name(petFilter.getName())
+        return customerId(petFilter.getCustomerId())
+                .and(name(petFilter.getName())
                         .or(type(petFilter.getType()))
                         .or(size(petFilter.getSize()))
                         .or(breed(petFilter.getBreed()))
-        ) ;
+                );
     }
 
 

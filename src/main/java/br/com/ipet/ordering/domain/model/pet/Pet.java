@@ -5,6 +5,8 @@ import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.Builder;
 
+import java.util.Objects;
+
 public class Pet implements AggregateRoot<PetId> {
     private PetId id;
     private CustomerId customerId;
@@ -145,5 +147,16 @@ public class Pet implements AggregateRoot<PetId> {
 
     private void setAge(PetAge age) {
         this.age = age;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof Pet pet)) return false;
+        return Objects.equals(id, pet.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

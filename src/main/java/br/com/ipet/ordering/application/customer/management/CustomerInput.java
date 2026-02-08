@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.application.company.management;
+package br.com.ipet.ordering.application.customer.management;
 
 import br.com.ipet.ordering.application.commons.AddressData;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanyInput {
-    private String name;
+public class CustomerInput {
+    private String firstName;
+    private String lastName;
     private String email;
     private Integer celPhone;
-    private String cnpj;
-    private AddressData address;
+    private String cpf;
+    private AddressData addressData;
 }

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -37,8 +39,10 @@ public class PetPersistenceProvider implements Pets {
     }
 
     @Override
-    public Optional<Pet> ofCustomer(PetId id, CustomerId customerId) {
-        return persistenceRepository.findByIdAndCustomerId(id.value(), customerId.value())
-                .map(petMapper::toDomain);
+    public Set<Pet> ofCustomer(CustomerId customerId) {
+        return persistenceRepository.findByCustomerId(customerId.value())
+                .stream()
+                .map(petMapper::toDomain)
+                .collect(Collectors.toSet());
     }
 }

@@ -36,11 +36,11 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.setRegisterAt(registerAt);
     }
 
-    public void changeFullName(FullName fullName) {
+    public void changeName(FullName fullName) {
         this.setFullName(fullName);
     }
 
-    public void changeEmail(Email email) {
+    void changeEmail(Email email) {
         this.setEmail(email);
     }
 
@@ -48,7 +48,7 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.setCelPhone(celPhone);
     }
 
-    public void changeDocument(Cpf cpf) {
+    public void changeCpf(Cpf cpf) {
         this.setCpf(cpf);
     }
 
