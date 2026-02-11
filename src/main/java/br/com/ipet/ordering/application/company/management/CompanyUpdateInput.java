@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanyUpdate {
-    private String name;
+public class CompanyUpdateInput {
+    private String companyName;
     private Integer celPhone;
     private AddressData address;
 }

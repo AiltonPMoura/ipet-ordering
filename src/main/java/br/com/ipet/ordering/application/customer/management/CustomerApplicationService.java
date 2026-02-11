@@ -1,6 +1,5 @@
 package br.com.ipet.ordering.application.customer.management;
 
-import br.com.ipet.ordering.application.company.management.CustomerUpdateInput;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.Address;
 import br.com.ipet.ordering.domain.model.commons.CelPhone;

@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.application.company.management;
+package br.com.ipet.ordering.application.customer.management;
 
 import br.com.ipet.ordering.application.commons.AddressData;
 import lombok.AllArgsConstructor;

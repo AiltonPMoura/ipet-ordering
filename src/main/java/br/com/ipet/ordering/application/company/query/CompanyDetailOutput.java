@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.application.company.management;
+package br.com.ipet.ordering.application.company.query;
 
 import br.com.ipet.ordering.application.commons.AddressData;
 import lombok.AllArgsConstructor;
@@ -6,14 +6,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanyInput {
+public class CompanyDetailOutput {
+    private UUID id;
     private String companyName;
-    private String email;
-    private Integer celPhone;
     private String cnpj;
+    private Integer celPhone;
+    private String email;
     private AddressData address;
+    private OffsetDateTime registeredAt;
 }

@@ -21,13 +21,12 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PetApplicationService {
-
     private final PetService petService;
     private final Pets pets;
     private final Mapper mapper;
 
-    @Transactional
     public UUID create(PetInput input) {
         FieldValidator.requiresNonNull("pet input", input);
 
@@ -47,7 +46,6 @@ public class PetApplicationService {
         return pet.id().value();
     }
 
-    @Transactional
     public void update(UUID petId, UUID customerId, PetUpdateInput input) {
         FieldValidator.requiresNonNull("petId", petId);
         FieldValidator.requiresNonNull("customerId", customerId);

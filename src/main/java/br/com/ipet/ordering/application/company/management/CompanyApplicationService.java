@@ -14,11 +14,13 @@ import br.com.ipet.ordering.domain.model.company.CompanyService;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CompanyApplicationService {
 
     private final CompanyService companyService;
@@ -29,7 +31,7 @@ public class CompanyApplicationService {
         var address = input.getAddress();
 
         var company = companyService.register(
-                new CompanyName(input.getName()),
+                new CompanyName(input.getCompanyName()),
                 new Cnpj(input.getCnpj()),
                 new CelPhone(input.getCelPhone()),
                 new Email(input.getEmail()),
@@ -49,12 +51,15 @@ public class CompanyApplicationService {
         return company.id().value();
     }
 
-    public UUID update(CompanyUpdate update, UUID companyId) {
-        var company = findCompanyById(companyId);
-        var address = update.getAddress();
+    public void update(CompanyUpdateInput input, UUID companyId) {
+        FieldValidator.requiresNonNull("company input", input);
+        FieldValidator.requiresNonNull("company id", companyId);
 
-        company.changeCompanyName(new CompanyName(update.getName()));
-        company.changeCelPhone(new CelPhone(update.getCelPhone()));
+        var company = findCompanyById(companyId);
+        var address = input.getAddress();
+
+        company.changeCompanyName(new CompanyName(input.getCompanyName()));
+        company.changeCelPhone(new CelPhone(input.getCelPhone()));
         company.changeAddress(Address.builder()
                         .street(address.getStreet())
                         .number(address.getNumber())
@@ -66,20 +71,24 @@ public class CompanyApplicationService {
                 .build());
 
         companies.add(company);
-
-        return company.id().value();
     }
 
-    public UUID changeEmail(String newEmail, UUID companyId) {
+    public void changeEmail(String newEmail, UUID companyId) {
+        FieldValidator.requiresNonNull("email", newEmail);
+        FieldValidator.requiresNonNull("companyId", companyId);
+
         var company = findCompanyById(companyId);
         companyService.changeEmail(company, new Email(newEmail));
-        return company.id().value();
+        companies.add(company);
     }
 
-    public UUID changeCnpj(String newCnpj, UUID companyId) {
+    public void changeCnpj(String newCnpj, UUID companyId) {
+        FieldValidator.requiresNonNull("cnpj", newCnpj);
+        FieldValidator.requiresNonNull("companyId", companyId);
+
         var company = findCompanyById(companyId);
         companyService.changeCnpj(company, new Cnpj(newCnpj));
-        return company.id().value();
+        companies.add(company);
     }
 
     private Company findCompanyById(UUID companyId) {

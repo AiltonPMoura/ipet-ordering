@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ import static br.com.ipet.ordering.infrastructure.persistence.customer.CustomerP
 
 @Component
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CustomerQueryServiceImpl implements CustomerQueryService {
 
     private final CustomerPersistenceRepository repository;
