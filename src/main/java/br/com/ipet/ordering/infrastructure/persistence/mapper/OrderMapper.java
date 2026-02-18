@@ -6,14 +6,14 @@ import br.com.ipet.ordering.domain.model.order.OrderStatus;
 import br.com.ipet.ordering.domain.model.order.PaymentMethod;
 import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.commons.Money;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.order.OrderId;
 import br.com.ipet.ordering.domain.model.order.OrderItemId;
-import br.com.ipet.ordering.domain.model.commons.Product;
-import br.com.ipet.ordering.domain.model.commons.ProductDescription;
-import br.com.ipet.ordering.domain.model.commons.ProductName;
-import br.com.ipet.ordering.domain.model.commons.Quantity;
-import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddable;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Product;
+import br.com.ipet.ordering.domain.model.product.ProductDescription;
+import br.com.ipet.ordering.domain.model.product.ProductName;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
+//import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddable;
 import br.com.ipet.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Component
 public class OrderMapper {
 
-    public Order toDomainEntity(OrderPersistenceEntity persistenceEntity) {
+    /*public Order toDomainEntity(OrderPersistenceEntity persistenceEntity) {
         return Order.existing()
                 .id(new OrderId(persistenceEntity.getId()))
                 .customerId(new CustomerId(persistenceEntity.getCustomerId()))
@@ -60,6 +60,6 @@ public class OrderMapper {
                 .description(new ProductDescription(productEmbeddable.getDescription()))
                 .price(new Money(productEmbeddable.getPrice()))
                 .build();
-    }
+    }*/
 
 }

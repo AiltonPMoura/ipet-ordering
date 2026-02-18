@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AgendaService {
 
-    private final Bookings bookingRepository;
+    /*private final Bookings bookingRepository;
 
     public List<AvailableDateTimes> avaliableTimes(Agenda agenda) {
         FieldValidator.requiresNonNull("agenda", agenda);
@@ -58,6 +58,6 @@ public class AgendaService {
                                 && availableDateTimes.availableTimes().containsKey(startTime.getHour())
                                 && availableDateTimes.availableTimes().get(startTime.getHour()).contains(startTime.getMinute())
                                 && )
-    }
+    }*/
 
 }

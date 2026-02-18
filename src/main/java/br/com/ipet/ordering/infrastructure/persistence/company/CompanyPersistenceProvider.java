@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.company;
 
 import br.com.ipet.ordering.domain.model.customer.Cnpj;
-import br.com.ipet.ordering.domain.model.commons.Email;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.company.Company;
 import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.customer.CompanyId;

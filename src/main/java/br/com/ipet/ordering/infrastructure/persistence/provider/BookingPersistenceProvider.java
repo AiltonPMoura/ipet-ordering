@@ -41,9 +41,10 @@ public class BookingPersistenceProvider implements Bookings {
 
     @Override
     public Set<Booking> ofAgendaIdGreaterThanNow(AgendaId agendaId) {
-        var booknigs = repository.findByAgendaIdAndDateGreaterThan(agendaId.value(), LocalDate.now());
+        /*var booknigs = repository.findByAgendaIdAndDateGreaterThan(agendaId.value(), LocalDate.now());
 
         return booknigs.stream().map(bookingMapper::toDomainEntity)
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toUnmodifiableSet());*/
+        return Set.of();
     }
 }

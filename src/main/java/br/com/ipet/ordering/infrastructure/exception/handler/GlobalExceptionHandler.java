@@ -1,9 +1,18 @@
 package br.com.ipet.ordering.infrastructure.exception.handler;
 
-import br.com.ipet.ordering.application.commons.NumberCannotBeNegativeException;
-import br.com.ipet.ordering.domain.model.exception.*;
+import br.com.ipet.ordering.domain.model.agenda.AgendaIsNotDraftToChangeException;
+import br.com.ipet.ordering.domain.model.commons.exception.CannotBeChangeStatusException;
+import br.com.ipet.ordering.domain.model.commons.exception.DateTimeMustBeLaterThanNowException;
+import br.com.ipet.ordering.domain.model.commons.exception.EmailValidatorException;
+import br.com.ipet.ordering.domain.model.commons.exception.EndDateOrTimeMustBeLaterThanStartException;
+import br.com.ipet.ordering.domain.model.commons.exception.FieldCannotBeEmptyException;
+import br.com.ipet.ordering.domain.model.commons.exception.NumberCannotBeNegativeException;
+import br.com.ipet.ordering.domain.model.commons.exception.QuantityGreaterThanZeroException;
 import br.com.ipet.ordering.domain.model.order.OrderCannotBePlacedException;
 import br.com.ipet.ordering.domain.model.order.OrderIsNotDraftToChangeException;
+import br.com.ipet.ordering.domain.model.scheduling.CanNotChangeSchedulingAtException;
+import br.com.ipet.ordering.domain.model.scheduling.SchedulingIsNotDraftToChangeException;
+import br.com.ipet.ordering.domain.model.scheduling.SchedulingItemNotFoundException;
 import br.com.ipet.ordering.infrastructure.exception.response.ExceptionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -13,6 +22,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.management.ServiceNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 
@@ -95,19 +105,19 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ServiceNotFoundException.class)
+    /*@ExceptionHandler(ServiceNotFoundException.class)
     public ResponseEntity<ExceptionResponse> serviceNotFoundExceptionHandler(ServiceNotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(
                 getMessageResponse(ex.getMessage(), request, ex.getFields()),
                 HttpStatus.BAD_REQUEST);
-    }
+    }*/
 
-    @ExceptionHandler(ProductNotFoundException.class)
+    /*@ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ExceptionResponse> productNotFoundExceptionHandler(ProductNotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(
                 getMessageResponse(ex.getMessage(), request, ex.getValue()),
                 HttpStatus.BAD_REQUEST);
-    }
+    }*/
 
     @ExceptionHandler(SchedulingItemNotFoundException.class)
     public ResponseEntity<ExceptionResponse> schedulingItemNotFoundExceptionHandler(SchedulingItemNotFoundException ex, WebRequest request) {
@@ -138,12 +148,12 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(StockCannotBeNegativeException.class)
+    /*@ExceptionHandler(StockCannotBeNegativeException.class)
     public ResponseEntity<ExceptionResponse> stockCannotBeNegativeHandler(StockCannotBeNegativeException ex, WebRequest request) {
         return new ResponseEntity<>(
                 getMessageResponse(ex.getMessage(), request, ""),
                 HttpStatus.BAD_REQUEST);
-    }
+    }*/
 
     private ExceptionResponse getMessageResponse(String message, WebRequest request, String... params) {
         return new ExceptionResponse(

@@ -1,14 +1,16 @@
 package br.com.ipet.ordering.infrastructure.persistence.customer;
 
 import br.com.ipet.ordering.domain.model.customer.Customer;
-import br.com.ipet.ordering.domain.model.commons.Address;
-import br.com.ipet.ordering.domain.model.commons.CelPhone;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
+import br.com.ipet.ordering.domain.model.commons.valueobject.CelPhone;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.Cpf;
-import br.com.ipet.ordering.domain.model.commons.Email;
-import br.com.ipet.ordering.domain.model.commons.FullName;
-import br.com.ipet.ordering.domain.model.commons.ZipCode;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
+import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
+import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CustomerMapper {
 
     public Customer toDomainEntity(CustomerPersistenceEntity persistenceEntity) {

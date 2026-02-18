@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.customer;
 
-import br.com.ipet.ordering.domain.model.commons.Email;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.customer.Customer;
 import br.com.ipet.ordering.domain.model.customer.Customers;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;

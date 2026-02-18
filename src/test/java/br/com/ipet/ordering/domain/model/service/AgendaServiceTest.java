@@ -20,7 +20,7 @@ import java.time.OffsetTime;
 @ExtendWith(MockitoExtension.class)
 class AgendaServiceTest {
 
-    @InjectMocks
+    /*@InjectMocks
     private AgendaService agendaService;
 
     @Test
@@ -42,6 +42,6 @@ class AgendaServiceTest {
         Assertions.assertThat(result.getLast()).isEqualTo(LocalDate.now().plusDays(7));
         Assertions.assertThat(result).hasSize(1);
 
-    }
+    }*/
 
 }

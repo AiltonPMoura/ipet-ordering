@@ -1,0 +1,16 @@
+package br.com.ipet.ordering.domain.model.scheduling;
+
+import br.com.ipet.ordering.domain.model.DomainException;
+import br.com.ipet.ordering.domain.model.MessageCode;
+import lombok.Getter;
+
+@Getter
+public class SchedulingIsNotDraftToChangeException extends DomainException {
+
+    private final String schedulingId;
+
+    public SchedulingIsNotDraftToChangeException(String schedulingId) {
+        super(MessageCode.ERROR_SCHEDULING_IS_NOT_DRAFT_TO_CHANE);
+        this.schedulingId = schedulingId;
+    }
+}

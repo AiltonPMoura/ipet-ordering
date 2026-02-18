@@ -1,11 +1,13 @@
 package br.com.ipet.ordering.infrastructure.persistence.company;
 
-import br.com.ipet.ordering.domain.model.commons.Address;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.company.Company;
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
+@Component
 public class CompanyPersistenceMapper {
 
     public CompanyPersistenceEntity toPersistence(Company company) {

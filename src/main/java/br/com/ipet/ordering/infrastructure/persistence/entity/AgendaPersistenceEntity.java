@@ -1,6 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.entity;
 
 import br.com.ipet.ordering.domain.model.company.Company;
+import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -36,7 +37,7 @@ public class AgendaPersistenceEntity {
     private UUID id;
 
     @ManyToOne(optional = false)
-    private Company company;
+    private CompanyPersistenceEntity company;
 
     @OneToMany(mappedBy = "agenda", cascade = CascadeType.ALL)
     private Set<WorkingDayPersistenceEntity> workingDays;

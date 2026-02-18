@@ -7,5 +7,5 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface PetPersistenceRepository extends JpaRepository<PetPersistenceEntity, UUID>, JpaSpecificationExecutor<PetPersistenceEntity> {
-    Set<PetPersistenceEntity> findByCustomerId(UUID customerId);
+    Set<PetPersistenceEntity> findByCustomer_Id(UUID customerId);
 }

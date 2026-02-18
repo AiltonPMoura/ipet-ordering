@@ -14,8 +14,27 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Component
 public class OrdersPersistenceProvider implements Orders {
+    @Override
+    public Optional<Order> ofId(OrderId id) {
+        return Optional.empty();
+    }
 
-    private final OrderPersistenceEntityRepository repository;
+    @Override
+    public boolean exists(OrderId id) {
+        return false;
+    }
+
+    @Override
+    public void add(Order aggregateRoot) {
+
+    }
+
+    @Override
+    public int count() {
+        return 0;
+    }
+
+    /*private final OrderPersistenceEntityRepository repository;
     private final OrderMapper orderMapper;
     private final OrderPersistenceEntityMapper orderPersistenceEntityMapper;
 
@@ -39,5 +58,5 @@ public class OrdersPersistenceProvider implements Orders {
     @Override
     public int count() {
         return 0;
-    }
+    }*/
 }

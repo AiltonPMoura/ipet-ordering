@@ -1,10 +1,10 @@
 package br.com.ipet.ordering.domain.model;
 
-import br.com.ipet.ordering.domain.model.exception.DateMustBeLaterThanNowException;
-import br.com.ipet.ordering.domain.model.exception.DateTimeMustBeLaterThanNowException;
-import br.com.ipet.ordering.domain.model.exception.EmailValidatorException;
-import br.com.ipet.ordering.domain.model.exception.FieldCannotBeEmptyException;
-import br.com.ipet.ordering.domain.model.exception.EndDateOrTimeMustBeLaterThanStartException;
+import br.com.ipet.ordering.domain.model.commons.exception.DateMustBeLaterThanNowException;
+import br.com.ipet.ordering.domain.model.commons.exception.DateTimeMustBeLaterThanNowException;
+import br.com.ipet.ordering.domain.model.commons.exception.EmailValidatorException;
+import br.com.ipet.ordering.domain.model.commons.exception.EndDateOrTimeMustBeLaterThanStartException;
+import br.com.ipet.ordering.domain.model.commons.exception.FieldCannotBeEmptyException;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.util.StringUtils;
 

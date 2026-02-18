@@ -9,6 +9,6 @@ import java.util.UUID;
 
 public interface BookingPersistenceEntityRepository extends JpaRepository<BookingPersistenceEntity, UUID> {
 
-    Set<BookingPersistenceEntity> findByAgendaIdAndDateGreaterThan(UUID id, LocalDate date);
+    //Set<BookingPersistenceEntity> findByAgendaIdAndDateGreaterThan(UUID id, LocalDate date);
 
 }

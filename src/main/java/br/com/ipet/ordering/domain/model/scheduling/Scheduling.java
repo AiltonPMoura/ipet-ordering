@@ -1,18 +1,15 @@
 package br.com.ipet.ordering.domain.model.scheduling;
 
+import br.com.ipet.ordering.domain.model.commons.exception.CannotBeChangeStatusException;
 import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.commons.Money;
-import br.com.ipet.ordering.domain.model.commons.Quantity;
-import br.com.ipet.ordering.domain.model.commons.SchedulingId;
-import br.com.ipet.ordering.domain.model.commons.SchedulingItemId;
-import br.com.ipet.ordering.domain.model.exception.CanNotChangeSchedulingAtException;
-import br.com.ipet.ordering.domain.model.exception.CannotBeChangeStatusException;
-import br.com.ipet.ordering.domain.model.exception.SchedulingIsNotDraftToChangeException;
-import br.com.ipet.ordering.domain.model.exception.SchedulingItemNotFoundException;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
+import br.com.ipet.ordering.domain.model.commons.valueobject.SchedulingId;
+import br.com.ipet.ordering.domain.model.commons.valueobject.SchedulingItemId;
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.Pet;
-import br.com.ipet.ordering.domain.model.commons.Service;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Pet;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Service;
 import lombok.Builder;
 
 import java.math.BigDecimal;

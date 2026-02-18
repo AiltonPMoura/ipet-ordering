@@ -40,7 +40,7 @@ public class PetPersistenceProvider implements Pets {
 
     @Override
     public Set<Pet> ofCustomer(CustomerId customerId) {
-        return persistenceRepository.findByCustomerId(customerId.value())
+        return persistenceRepository.findByCustomer_Id(customerId.value())
                 .stream()
                 .map(petMapper::toDomain)
                 .collect(Collectors.toSet());

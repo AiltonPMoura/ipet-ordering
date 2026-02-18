@@ -1,7 +1,6 @@
 package br.com.ipet.ordering.domain.model.agenda;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
-import br.com.ipet.ordering.domain.model.exception.AgendaIsNotDraftToChangeException;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.booking.BookingWindow;
 import br.com.ipet.ordering.domain.model.customer.CompanyId;

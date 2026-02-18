@@ -1,12 +1,12 @@
 package br.com.ipet.ordering.infrastructure.persistence.company;
 
-import br.com.ipet.ordering.domain.model.commons.Address;
-import br.com.ipet.ordering.domain.model.commons.CelPhone;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
+import br.com.ipet.ordering.domain.model.commons.valueobject.CelPhone;
 import br.com.ipet.ordering.domain.model.customer.Cnpj;
 import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CompanyName;
-import br.com.ipet.ordering.domain.model.commons.Email;
-import br.com.ipet.ordering.domain.model.commons.ZipCode;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
+import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.Company;
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
 import org.springframework.stereotype.Component;

@@ -1,12 +1,14 @@
 package br.com.ipet.ordering.domain.model.customer;
 
-import br.com.ipet.ordering.domain.model.commons.Address;
-import br.com.ipet.ordering.domain.model.commons.CelPhone;
-import br.com.ipet.ordering.domain.model.commons.Email;
-import br.com.ipet.ordering.domain.model.commons.FullName;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
+import br.com.ipet.ordering.domain.model.commons.valueobject.CelPhone;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
+import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@Service
 public class CustomerService {
 
     private final Customers customers;

@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.entity;
 
-import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddable;
+//import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -35,8 +35,8 @@ public class OrderItemPersistenceEntity {
     @ManyToOne(optional = false)
     private OrderPersistenceEntity order;
 
-    @Embedded
-    private ProductEmbeddable product;
+    /*@Embedded
+    private ProductEmbeddable product;*/
 
     private Integer quantity;
     private BigDecimal totalAmount;

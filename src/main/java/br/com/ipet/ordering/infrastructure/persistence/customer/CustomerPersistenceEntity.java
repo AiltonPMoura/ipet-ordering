@@ -1,9 +1,12 @@
 package br.com.ipet.ordering.infrastructure.persistence.customer;
 
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
+import br.com.ipet.ordering.infrastructure.persistence.pet.PetPersistenceEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data

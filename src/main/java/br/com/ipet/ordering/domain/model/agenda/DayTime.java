@@ -1,7 +1,6 @@
 package br.com.ipet.ordering.domain.model.agenda;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.exception.WorkingHoursCanNotBeLessThanOneException;
 
 import java.time.DayOfWeek;
 import java.time.Duration;

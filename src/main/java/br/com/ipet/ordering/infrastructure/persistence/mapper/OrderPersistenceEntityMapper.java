@@ -2,7 +2,7 @@ package br.com.ipet.ordering.infrastructure.persistence.mapper;
 
 import br.com.ipet.ordering.domain.model.order.Order;
 import br.com.ipet.ordering.domain.model.order.OrderItem;
-import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddable;
+//import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddable;
 import br.com.ipet.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceRepository;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderPersistenceEntityMapper {
 
-    private final CustomerPersistenceRepository customerPersistenceRepository;
+    /*private final CustomerPersistenceRepository customerPersistenceRepository;
     private final CompanyPersistenceRepository companyPersistenceRepository;
 
     public OrderPersistenceEntity fromDomain(Order order) {
@@ -77,6 +77,6 @@ public class OrderPersistenceEntityMapper {
         orderItemPersistenceEntity.setTotalAmount(orderItem.totalAmount().value());
 
         return orderItemPersistenceEntity;
-    }
+    }*/
 
 }
