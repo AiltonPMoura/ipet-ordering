@@ -7,7 +7,7 @@ import java.time.OffsetTime;
 
 public record LockedTime(OffsetTime startTime, OffsetTime endTime) {
 
-    private static final int MINIMUM_LOCKED_TIME = 30;
+    private static final int MINIMUM_LOCKED_TIME = 15;
 
     public LockedTime {
         FieldValidator.requiresNonNull("start locked time", startTime);

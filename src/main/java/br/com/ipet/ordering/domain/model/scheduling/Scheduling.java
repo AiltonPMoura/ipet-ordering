@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model.scheduling;
 
+import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotBeChangeStatusException;
 import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
@@ -20,7 +21,7 @@ import java.util.Set;
 
 import static br.com.ipet.ordering.domain.model.scheduling.SchedulingStatus.*;
 
-public class Scheduling {
+public class Scheduling implements AggregateRoot<SchedulingId> {
     private SchedulingId id;
     private CustomerId customerId;
     private CompanyId companyId;

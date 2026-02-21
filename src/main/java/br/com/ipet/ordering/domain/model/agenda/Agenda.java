@@ -6,6 +6,7 @@ import br.com.ipet.ordering.domain.model.booking.BookingWindow;
 import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import lombok.Builder;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ public class Agenda implements AggregateRoot<AgendaId> {
     private AgendaId id;
     private CompanyId companyId;
     private AgendaName name;
+    private AgendaSubCategory subCategory;
     private AgendaStatus status;
     private Set<WorkingDay> workingDays;
     private OffsetDateTime activedAt;
@@ -28,18 +30,21 @@ public class Agenda implements AggregateRoot<AgendaId> {
     private MinuteInterval minuteInterval;
 
     @Builder(builderClassName = "CreateNewAgendaBuilder", builderMethodName = "createNew")
-    private static Agenda create(CompanyId companyId, AgendaName name, MinuteInterval minuteInterval) {
-        return new Agenda(new AgendaId(), companyId, name, AgendaStatus.DRAFT, new HashSet<>(),
+    private static Agenda create(CompanyId companyId, AgendaName name,
+                                 AgendaSubCategory subCategory, MinuteInterval minuteInterval) {
+        return new Agenda(new AgendaId(), companyId, name, subCategory, AgendaStatus.DRAFT, new HashSet<>(),
                 null, null, null, new BookingWindow(7), new HashSet<>(), minuteInterval);
     }
 
     @Builder(builderClassName = "ExistingAgendaBuilder", builderMethodName = "existing")
-    public Agenda(AgendaId id, CompanyId companyId, AgendaName name, AgendaStatus status, Set<WorkingDay> workingDays,
+    public Agenda(AgendaId id, CompanyId companyId, AgendaName name, AgendaSubCategory subCategory,
+                  AgendaStatus status, Set<WorkingDay> workingDays,
                   OffsetDateTime activedAt, OffsetDateTime standByAt, OffsetDateTime blockedAt,
                   BookingWindow bookingWindow, Set<StandByDates> standByDates, MinuteInterval minuteInterval) {
         this.setId(id);
         this.setCompanyId(companyId);
         this.setName(name);
+        this.setSubcategory(subCategory);
         this.setStatus(status);
         this.setWorkingDays(workingDays);
         this.setActivedAt(activedAt);
@@ -50,27 +55,27 @@ public class Agenda implements AggregateRoot<AgendaId> {
         this.setMinuteInterval(minuteInterval);
     }
 
-    private void setMinuteInterval(MinuteInterval minuteInterval) {
-        FieldValidator.requiresNonNull("minuteInterval", minuteInterval);
-        this.minuteInterval = minuteInterval;
-    }
-
-    public void changeName(AgendaName name) {
+    void changeName(AgendaName name) {
         this.setName(name);
     }
 
-    public void changeBookingBy(BookingWindow bookingWindow) {
+    void changeSubCategory(AgendaSubCategory subCategory) {
+        this.setSubcategory(subCategory);
+    }
+
+    void changeBookingBy(BookingWindow bookingWindow) {
         this.setBookingWindow(bookingWindow);
     }
 
-    public void addWorkingDay(DayTime dayTime) {
-        FieldValidator.requiresNonNull("dayTime", dayTime);
+    void addWorkingDay(DayOfWeek dayOfWeek, WorkingHours workingHours) {
+        FieldValidator.requiresNonNull("dayTime", workingHours);
 
-        verifyExistingWorkingDay(dayTime);
+        verifyExistingWorkingDay(dayOfWeek);
 
         var workingDay = WorkingDay.createNew()
                 .agendaId(this.id)
-                .dayTime(dayTime)
+                .dayOfWeek(dayOfWeek)
+                .workingHours(workingHours)
                 .build();
 
         this.workingDays.add(workingDay);
@@ -128,9 +133,9 @@ public class Agenda implements AggregateRoot<AgendaId> {
                 });
     }
 
-    public void verifyExistingWorkingDay(DayTime dayTime) {
+    public void verifyExistingWorkingDay(DayOfWeek dayOfWeek) {
         var workingDayExisting = this.workingDays.stream().filter(workingDay ->
-                        workingDay.dayTime().dayOfWeek().equals(dayTime.dayOfWeek()))
+                        workingDay.dayOfWeek().equals(dayOfWeek))
                 .findFirst();
 
         if (workingDayExisting.isPresent())
@@ -256,6 +261,11 @@ public class Agenda implements AggregateRoot<AgendaId> {
         this.name = name;
     }
 
+    private void setSubcategory(AgendaSubCategory subCategory) {
+        FieldValidator.requiresNonNull("subCategory", subCategory);
+        this.subCategory = subCategory;
+    }
+
     private void setStatus(AgendaStatus status) {
         FieldValidator.requiresNonNull("Agenda status", status);
         this.status = status;
@@ -284,6 +294,11 @@ public class Agenda implements AggregateRoot<AgendaId> {
     private void setBookingWindow(BookingWindow bookingWindow) {
         FieldValidator.requiresNonNull("bookingWindow", bookingWindow);
         this.bookingWindow = bookingWindow;
+    }
+
+    private void setMinuteInterval(MinuteInterval minuteInterval) {
+        FieldValidator.requiresNonNull("minuteInterval", minuteInterval);
+        this.minuteInterval = minuteInterval;
     }
 
 }

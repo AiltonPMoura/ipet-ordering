@@ -3,6 +3,7 @@ package br.com.ipet.ordering.domain.model.agenda;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.Builder;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,37 +16,47 @@ import java.util.Set;
 public class WorkingDay {
     private WorkingDayId id;
     private AgendaId agendaId;
-    private DayTime dayTime;
+    private DayOfWeek dayOfWeek;
+    private WorkingHours workingHours;
     private Set<LockedTime> lockedTimes;
 
     @Builder(builderClassName = "CreateNewWorkingDay", builderMethodName = "createNew")
-    private static WorkingDay create(AgendaId agendaId, DayTime dayTime) {
-        return new WorkingDay(new WorkingDayId(), agendaId, dayTime, new HashSet<>());
+    private static WorkingDay create(AgendaId agendaId, DayOfWeek dayOfWeek, WorkingHours workingHours) {
+        return new WorkingDay(new WorkingDayId(), agendaId, dayOfWeek, workingHours, new HashSet<>());
     }
 
     @Builder(builderClassName = "ExistingWorkingDayBuilder", builderMethodName = "existing")
-    private WorkingDay(WorkingDayId id, AgendaId agendaId,
-                       DayTime dayTime, Set<LockedTime> lockedTimes) {
+    private WorkingDay(WorkingDayId id, AgendaId agendaId, DayOfWeek dayOfWeek,
+                       WorkingHours workingHours, Set<LockedTime> lockedTimes) {
         this.setId(id);
         this.setAgendaId(agendaId);
-        this.setDayTime(dayTime);
+        this.setDayOfWeek(dayOfWeek);
+        this.setWorkingHours(workingHours);
         this.setLockedTimes(lockedTimes);
     }
 
-    protected void addLockedTime(LockedTime lockedTime) {
+    void changeDayOfWeek(DayOfWeek dayOfWeek) {
+        this.setDayOfWeek(dayOfWeek);
+    }
+
+    void changeWorkingHours(WorkingHours workingHours) {
+        this.setWorkingHours(workingHours);
+    }
+
+    void addLockedTime(LockedTime lockedTime) {
         verifyExistingLockedTime(lockedTime);
         this.lockedTimes.add(lockedTime);
     }
 
-    protected void removeLockedTime(LockedTime lockedTime) {
+    void removeLockedTime(LockedTime lockedTime) {
         this.lockedTimes.remove(lockedTime);
     }
 
-    protected boolean isWorkingDay(LocalDate date) {
-        return this.dayTime.isSameDayOfWeek(date.getDayOfWeek());
+    boolean isWorkingDay(LocalDate date) {
+        return this.dayOfWeek.equals(date.getDayOfWeek());
     }
 
-    protected Map<Integer, List<Integer>> availableTimes(MinuteInterval minuteInterval) {
+    Map<Integer, List<Integer>> availableTimes(MinuteInterval minuteInterval) {
         var availableTimes = new HashMap<Integer, List<Integer>>();
 
         addAvailableTimes(availableTimes,minuteInterval);
@@ -74,8 +85,8 @@ public class WorkingDay {
     }
 
     private void addAvailableTimes(HashMap<Integer, List<Integer>> availableTimes, MinuteInterval minuteInterval) {
-        var timeOfWork = Duration.between(this.dayTime.startTime(), this.dayTime.endTime()).toMinutes();
-        var currentTime = this.dayTime.startTime();
+        var timeOfWork = Duration.between(this.workingHours.startTime(), this.workingHours.endTime()).toMinutes();
+        var currentTime = this.workingHours.startTime();
 
         for (var i = 0; i < timeOfWork; i += minuteInterval.value()) {
             var hour = currentTime.getHour();
@@ -84,22 +95,6 @@ public class WorkingDay {
             availableTimes.computeIfAbsent(hour, k -> new ArrayList<>()).add(minute);
             currentTime = currentTime.plusMinutes(minuteInterval.value());
         }
-    }
-
-    public WorkingDayId id() {
-        return id;
-    }
-
-    public AgendaId agendaId() {
-        return agendaId;
-    }
-
-    public DayTime dayTime() {
-        return dayTime;
-    }
-
-    public Set<LockedTime> lockedTimes() {
-        return lockedTimes;
     }
 
     private void verifyExistingLockedTime(LockedTime lockedTimeNew) {
@@ -112,6 +107,26 @@ public class WorkingDay {
             throw new RuntimeException();
     }
 
+    public WorkingDayId id() {
+        return id;
+    }
+
+    public AgendaId agendaId() {
+        return agendaId;
+    }
+
+    public DayOfWeek dayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public WorkingHours workingHours() {
+        return workingHours;
+    }
+
+    public Set<LockedTime> lockedTimes() {
+        return lockedTimes;
+    }
+
     private void setId(WorkingDayId id) {
         FieldValidator.requiresNonNull("WorkingDayId", id);
         this.id = id;
@@ -122,9 +137,14 @@ public class WorkingDay {
         this.agendaId = agendaId;
     }
 
-    private void setDayTime(DayTime dayTime) {
-        FieldValidator.requiresNonNull("dayTime", dayTime);
-        this.dayTime = dayTime;
+    private void setDayOfWeek(DayOfWeek dayOfWeek) {
+        FieldValidator.requiresNonNull("dayOfWeek", dayOfWeek);
+        this.dayOfWeek = dayOfWeek;
+    }
+
+    private void setWorkingHours(WorkingHours workingHours) {
+        FieldValidator.requiresNonNull("workingHours", workingHours);
+        this.workingHours = workingHours;
     }
 
     private void setLockedTimes(Set<LockedTime> lockedTimes) {
