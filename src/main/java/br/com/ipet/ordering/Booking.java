@@ -1,7 +1,7 @@
 package br.com.ipet.ordering;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
-import br.com.ipet.ordering.domain.model.agenda.AgendaId;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import br.com.ipet.ordering.domain.model.booking.BookingId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import lombok.Builder;
@@ -11,23 +11,23 @@ import java.time.OffsetTime;
 
 public class Booking implements AggregateRoot<BookingId> {
     private BookingId id;
-    private AgendaId agendaId;
+    private ScheduleId scheduleId;
     private CustomerId customerId;
     private LocalDate date;
     private OffsetTime startTime;
     private OffsetTime endTime;
 
     @Builder(builderClassName = "CreateNewBookingBuilder", builderMethodName = "createNew")
-    private static Booking create(AgendaId agendaId, CustomerId customerId, LocalDate date,
+    private static Booking create(ScheduleId scheduleId, CustomerId customerId, LocalDate date,
                                   OffsetTime startTime, OffsetTime endTime) {
-        return new Booking(new BookingId(), agendaId, customerId, date, startTime, endTime);
+        return new Booking(new BookingId(), scheduleId, customerId, date, startTime, endTime);
     }
 
     @Builder(builderClassName = "ExistingBookingBuilder", builderMethodName = "existing")
-    private Booking(BookingId id, AgendaId agendaId, CustomerId customerId, LocalDate date,
-                   OffsetTime startTime, OffsetTime endTime) {
+    private Booking(BookingId id, ScheduleId scheduleId, CustomerId customerId, LocalDate date,
+                    OffsetTime startTime, OffsetTime endTime) {
         this.setId(id);
-        this.setAgendaId(agendaId);
+        this.setScheduleId(scheduleId);
         this.setCustomerId(customerId);
         this.setDate(date);
         this.setStartTime(startTime);
@@ -38,8 +38,8 @@ public class Booking implements AggregateRoot<BookingId> {
         return id;
     }
 
-    public AgendaId agendaId() {
-        return agendaId;
+    public ScheduleId agendaId() {
+        return scheduleId;
     }
 
     public CustomerId customerId() {
@@ -62,8 +62,8 @@ public class Booking implements AggregateRoot<BookingId> {
         this.id = id;
     }
 
-    private void setAgendaId(AgendaId agendaId) {
-        this.agendaId = agendaId;
+    private void setScheduleId(ScheduleId scheduleId) {
+        this.scheduleId = scheduleId;
     }
 
     private void setCustomerId(CustomerId customerId) {

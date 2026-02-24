@@ -1,8 +1,8 @@
 package br.com.ipet.ordering.infrastructure.persistence.provider;
 
-import br.com.ipet.ordering.domain.model.agenda.Agenda;
-import br.com.ipet.ordering.domain.model.agenda.Agendas;
-import br.com.ipet.ordering.domain.model.agenda.AgendaId;
+import br.com.ipet.ordering.domain.model.schedule.Schedule;
+import br.com.ipet.ordering.domain.model.schedule.Schedules;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import br.com.ipet.ordering.infrastructure.persistence.repository.AgendaPersistenceEntityRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,22 +10,22 @@ import lombok.RequiredArgsConstructor;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class AgendaPersistenceProvider implements Agendas {
+public class AgendaPersistenceProvider implements Schedules {
 
     private final AgendaPersistenceEntityRepository repository;
 
     @Override
-    public Optional<Agenda> ofId(AgendaId id) {
+    public Optional<Schedule> ofId(ScheduleId id) {
         return Optional.empty();
     }
 
     @Override
-    public boolean exists(AgendaId id) {
+    public boolean exists(ScheduleId id) {
         return false;
     }
 
     @Override
-    public void add(Agenda aggregateRoot) {
+    public void add(Schedule aggregateRoot) {
 
     }
 

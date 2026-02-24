@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.domain.model.agenda;
+package br.com.ipet.ordering.domain.model.schedule;
 
 import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import lombok.RequiredArgsConstructor;
@@ -6,23 +6,19 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class AgendaService {
+public class ScheduleService {
 
-    private final Agendas agendas;
+    private final Schedules schedules;
 
-    public Agenda create(CompanyId companyId, AgendaName name, ServiceSubCategory subCategory) {
-        if (agendas.existsByCompanyId(companyId)) {
+    public Schedule create(CompanyId companyId, ScheduleName name, ServiceSubCategory subCategory) {
+        if (schedules.existsByCompanyId(companyId))
             throw new ScheduleAlreadyExistsException();
-        }
 
-        var schedule = Agenda.createNew()
+        return Schedule.createNew()
                 .companyId(companyId)
                 .name(name)
                 .subCategory(subCategory)
                 .build();
-
-        return schedule;
-
     }
 
     /*private final Bookings bookingRepository;

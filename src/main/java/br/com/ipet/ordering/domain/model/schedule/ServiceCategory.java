@@ -1,15 +1,15 @@
-package br.com.ipet.ordering.domain.model.agenda;
+package br.com.ipet.ordering.domain.model.schedule;
 
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import static br.com.ipet.ordering.domain.model.agenda.ServiceSubCategory.CAR_HEALTH;
-import static br.com.ipet.ordering.domain.model.agenda.ServiceSubCategory.CAT_HYGIENE;
-import static br.com.ipet.ordering.domain.model.agenda.ServiceSubCategory.DOG_DAYCARE;
-import static br.com.ipet.ordering.domain.model.agenda.ServiceSubCategory.DOG_HEALTH;
-import static br.com.ipet.ordering.domain.model.agenda.ServiceSubCategory.DOG_HOSTING;
-import static br.com.ipet.ordering.domain.model.agenda.ServiceSubCategory.DOG_HYGIENE;
+import static br.com.ipet.ordering.domain.model.schedule.ServiceSubCategory.CAR_HEALTH;
+import static br.com.ipet.ordering.domain.model.schedule.ServiceSubCategory.CAT_HYGIENE;
+import static br.com.ipet.ordering.domain.model.schedule.ServiceSubCategory.DOG_DAYCARE;
+import static br.com.ipet.ordering.domain.model.schedule.ServiceSubCategory.DOG_HEALTH;
+import static br.com.ipet.ordering.domain.model.schedule.ServiceSubCategory.DOG_HOSTING;
+import static br.com.ipet.ordering.domain.model.schedule.ServiceSubCategory.DOG_HYGIENE;
 
 @RequiredArgsConstructor
 public enum ServiceCategory {

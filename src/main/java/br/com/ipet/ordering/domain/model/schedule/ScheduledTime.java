@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.domain.model.agenda;
+package br.com.ipet.ordering.domain.model.schedule;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.Builder;
@@ -15,21 +15,21 @@ import java.util.Set;
 
 public class ScheduledTime {
     private WorkingDayId id;
-    private AgendaId agendaId;
+    private ScheduleId scheduleId;
     private DayOfWeek dayOfWeek;
     private WorkingHours workingHours;
     private Set<LockedTime> lockedTimes;
 
     @Builder(builderClassName = "CreateNewWorkingDay", builderMethodName = "createNew")
-    private static ScheduledTime create(AgendaId agendaId, DayOfWeek dayOfWeek, WorkingHours workingHours) {
-        return new ScheduledTime(new WorkingDayId(), agendaId, dayOfWeek, workingHours, new HashSet<>());
+    private static ScheduledTime create(ScheduleId scheduleId, DayOfWeek dayOfWeek, WorkingHours workingHours) {
+        return new ScheduledTime(new WorkingDayId(), scheduleId, dayOfWeek, workingHours, new HashSet<>());
     }
 
     @Builder(builderClassName = "ExistingWorkingDayBuilder", builderMethodName = "existing")
-    private ScheduledTime(WorkingDayId id, AgendaId agendaId, DayOfWeek dayOfWeek,
+    private ScheduledTime(WorkingDayId id, ScheduleId scheduleId, DayOfWeek dayOfWeek,
                           WorkingHours workingHours, Set<LockedTime> lockedTimes) {
         this.setId(id);
-        this.setAgendaId(agendaId);
+        this.setScheduleId(scheduleId);
         this.setDayOfWeek(dayOfWeek);
         this.setWorkingHours(workingHours);
         this.setLockedTimes(lockedTimes);
@@ -123,8 +123,8 @@ public class ScheduledTime {
         return id;
     }
 
-    public AgendaId agendaId() {
-        return agendaId;
+    public ScheduleId agendaId() {
+        return scheduleId;
     }
 
     public DayOfWeek dayOfWeek() {
@@ -144,9 +144,9 @@ public class ScheduledTime {
         this.id = id;
     }
 
-    private void setAgendaId(AgendaId agendaId) {
-        FieldValidator.requiresNonNull("agendaId", agendaId);
-        this.agendaId = agendaId;
+    private void setScheduleId(ScheduleId scheduleId) {
+        FieldValidator.requiresNonNull("agendaId", scheduleId);
+        this.scheduleId = scheduleId;
     }
 
     private void setDayOfWeek(DayOfWeek dayOfWeek) {

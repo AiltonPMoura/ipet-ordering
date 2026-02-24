@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.infrastructure.exception.handler;
 
-import br.com.ipet.ordering.domain.model.agenda.AgendaIsNotDraftToChangeException;
+import br.com.ipet.ordering.domain.model.schedule.AgendaIsNotDraftToChangeException;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotBeChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.exception.DateTimeMustBeLaterThanNowException;
 import br.com.ipet.ordering.domain.model.commons.exception.EmailValidatorException;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.management.ServiceNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 

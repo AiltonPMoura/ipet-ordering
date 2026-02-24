@@ -1,18 +1,18 @@
-package br.com.ipet.ordering.domain.model.agenda;
+package br.com.ipet.ordering.domain.model.schedule;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.IdGenerator;
 
 import java.util.UUID;
 
-public record WorkingDayId(UUID value) {
+public record ScheduleId(UUID value) {
 
-    public WorkingDayId() {
+    public ScheduleId() {
         this(IdGenerator.generateTimeBasedEpochRandomGenerator());
     }
 
-    public WorkingDayId {
-        FieldValidator.requiresNonNull("WorkingDayId", value);
+    public ScheduleId {
+        FieldValidator.requiresNonNull("agenda id", value);
     }
 
 }

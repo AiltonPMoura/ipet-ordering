@@ -2,16 +2,14 @@ package br.com.ipet.ordering.infrastructure.persistence.provider;
 
 import br.com.ipet.ordering.Booking;
 import br.com.ipet.ordering.domain.model.booking.Bookings;
-import br.com.ipet.ordering.domain.model.agenda.AgendaId;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import br.com.ipet.ordering.domain.model.booking.BookingId;
 import br.com.ipet.ordering.infrastructure.persistence.mapper.BookingMapper;
 import br.com.ipet.ordering.infrastructure.persistence.repository.BookingPersistenceEntityRepository;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class BookingPersistenceProvider implements Bookings {
@@ -40,7 +38,7 @@ public class BookingPersistenceProvider implements Bookings {
     }
 
     @Override
-    public Set<Booking> ofAgendaIdGreaterThanNow(AgendaId agendaId) {
+    public Set<Booking> ofAgendaIdGreaterThanNow(ScheduleId scheduleId) {
         /*var booknigs = repository.findByAgendaIdAndDateGreaterThan(agendaId.value(), LocalDate.now());
 
         return booknigs.stream().map(bookingMapper::toDomainEntity)

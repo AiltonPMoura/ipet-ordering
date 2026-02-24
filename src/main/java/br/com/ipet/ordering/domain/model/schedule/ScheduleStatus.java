@@ -1,12 +1,12 @@
-package br.com.ipet.ordering.domain.model.agenda;
+package br.com.ipet.ordering.domain.model.schedule;
 
-public enum AgendaStatus {
+public enum ScheduleStatus {
     DRAFT,
     ACTIVED,
     STAND_BY,
     BLOCKED;
 
-    public boolean canChange(AgendaStatus newStatus) {
+    public boolean canChange(ScheduleStatus newStatus) {
          return switch (newStatus) {
              case ACTIVED -> this != ACTIVED;
              case STAND_BY -> this == ACTIVED;
@@ -15,7 +15,7 @@ public enum AgendaStatus {
          };
     }
 
-    public boolean canNotChange(AgendaStatus newStatus) {
+    public boolean canNotChange(ScheduleStatus newStatus) {
         return !canChange(newStatus);
     }
 
