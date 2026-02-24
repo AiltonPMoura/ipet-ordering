@@ -3,6 +3,7 @@ package br.com.ipet.ordering.infrastructure.persistence.provider;
 import br.com.ipet.ordering.domain.model.agenda.Agenda;
 import br.com.ipet.ordering.domain.model.agenda.Agendas;
 import br.com.ipet.ordering.domain.model.agenda.AgendaId;
+import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import br.com.ipet.ordering.infrastructure.persistence.repository.AgendaPersistenceEntityRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -31,5 +32,10 @@ public class AgendaPersistenceProvider implements Agendas {
     @Override
     public int count() {
         return 0;
+    }
+
+    @Override
+    public boolean existsByCompanyId(CompanyId companyId) {
+        return repository.existsByCompanyId(companyId.value());
     }
 }

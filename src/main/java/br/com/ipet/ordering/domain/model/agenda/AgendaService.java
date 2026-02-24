@@ -1,16 +1,29 @@
 package br.com.ipet.ordering.domain.model.agenda;
 
-import br.com.ipet.ordering.domain.model.booking.Bookings;
-import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import lombok.RequiredArgsConstructor;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.OffsetTime;
-import java.util.List;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@Service
 public class AgendaService {
+
+    private final Agendas agendas;
+
+    public Agenda create(CompanyId companyId, AgendaName name, ServiceSubCategory subCategory) {
+        if (agendas.existsByCompanyId(companyId)) {
+            throw new ScheduleAlreadyExistsException();
+        }
+
+        var schedule = Agenda.createNew()
+                .companyId(companyId)
+                .name(name)
+                .subCategory(subCategory)
+                .build();
+
+        return schedule;
+
+    }
 
     /*private final Bookings bookingRepository;
 

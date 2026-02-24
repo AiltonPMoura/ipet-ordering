@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface AgendaPersistenceEntityRepository extends JpaRepository<AgendaPersistenceEntity, UUID> {
+
+    boolean existsByCompanyId(UUID companyId);
 }
