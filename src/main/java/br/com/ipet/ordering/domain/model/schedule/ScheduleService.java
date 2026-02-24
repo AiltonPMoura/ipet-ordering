@@ -10,7 +10,7 @@ public class ScheduleService {
 
     private final Schedules schedules;
 
-    public Schedule create(CompanyId companyId, ScheduleName name, ServiceSubCategory subCategory) {
+    public Schedule generate(CompanyId companyId, ScheduleName name, ServiceSubCategory subCategory) {
         if (schedules.existsByCompanyId(companyId))
             throw new ScheduleAlreadyExistsException();
 
