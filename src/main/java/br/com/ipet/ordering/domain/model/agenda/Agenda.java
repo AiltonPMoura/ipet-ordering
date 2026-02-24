@@ -19,9 +19,9 @@ public class Agenda implements AggregateRoot<AgendaId> {
     private AgendaId id;
     private CompanyId companyId;
     private AgendaName name;
-    private AgendaSubCategory subCategory;
+    private ServiceSubCategory serviceSubCategory;
     private AgendaStatus status;
-    private Set<WorkingDay> workingDays;
+    private OffsetDateTime createdAt;
     private OffsetDateTime activedAt;
     private OffsetDateTime standByAt;
     private OffsetDateTime blockedAt;
@@ -30,23 +30,23 @@ public class Agenda implements AggregateRoot<AgendaId> {
     private MinuteInterval minuteInterval;
 
     @Builder(builderClassName = "CreateNewAgendaBuilder", builderMethodName = "createNew")
-    private static Agenda create(CompanyId companyId, AgendaName name,
-                                 AgendaSubCategory subCategory, MinuteInterval minuteInterval) {
-        return new Agenda(new AgendaId(), companyId, name, subCategory, AgendaStatus.DRAFT, new HashSet<>(),
-                null, null, null, new BookingWindow(7), new HashSet<>(), minuteInterval);
+    private static Agenda create(CompanyId companyId, AgendaName name, ServiceSubCategory subCategory) {
+        return new Agenda(new AgendaId(), companyId, name, subCategory, AgendaStatus.DRAFT,
+                null, null, null, null,
+                new BookingWindow(), new HashSet<>(), new MinuteInterval(15));
     }
 
     @Builder(builderClassName = "ExistingAgendaBuilder", builderMethodName = "existing")
-    public Agenda(AgendaId id, CompanyId companyId, AgendaName name, AgendaSubCategory subCategory,
-                  AgendaStatus status, Set<WorkingDay> workingDays,
+    public Agenda(AgendaId id, CompanyId companyId, AgendaName name, ServiceSubCategory serviceSubCategory,
+                  AgendaStatus status, OffsetDateTime createdAt,
                   OffsetDateTime activedAt, OffsetDateTime standByAt, OffsetDateTime blockedAt,
                   BookingWindow bookingWindow, Set<StandByDates> standByDates, MinuteInterval minuteInterval) {
         this.setId(id);
         this.setCompanyId(companyId);
         this.setName(name);
-        this.setSubcategory(subCategory);
+        this.setServiceSubcategory(serviceSubCategory);
         this.setStatus(status);
-        this.setWorkingDays(workingDays);
+        this.setCreatedAt(createdAt);
         this.setActivedAt(activedAt);
         this.setStandByAt(standByAt);
         this.setBlockedAt(blockedAt);
@@ -59,8 +59,26 @@ public class Agenda implements AggregateRoot<AgendaId> {
         this.setName(name);
     }
 
-    void changeSubCategory(AgendaSubCategory subCategory) {
-        this.setSubcategory(subCategory);
+    void changeServiceSubCategory(ServiceSubCategory serviceSubCategory) {
+        this.setServiceSubcategory(serviceSubCategory);
+    }
+
+    void changeWorkingHours(WorkingDayId workingDayId, WorkingHours workingHours) {
+        var workingDay = findWorkingDay(workingDayId);
+
+        if (serviceSubCategory.isNightShift())
+            throw new NitghShiftCannotHaveTime();
+
+        workingDay.changeWorkingHours(workingHours);
+    }
+
+    void changeLockedTime(WorkingDayId workingDayId, LockedTime lockedTime) {
+        var workingDay = findWorkingDay(workingDayId);
+
+        if (serviceSubCategory.isNightShift())
+            throw new NitghShiftCannotHaveTime();
+
+        workingDay.changeLockedTime(lockedTime);
     }
 
     void changeBookingBy(BookingWindow bookingWindow) {
@@ -68,17 +86,17 @@ public class Agenda implements AggregateRoot<AgendaId> {
     }
 
     void addWorkingDay(DayOfWeek dayOfWeek, WorkingHours workingHours) {
-        FieldValidator.requiresNonNull("dayTime", workingHours);
+        FieldValidator.requiresNonNull("dayOfWeek", dayOfWeek);
 
         verifyExistingWorkingDay(dayOfWeek);
 
-        var workingDay = WorkingDay.createNew()
+        var workingDay = ScheduledTime.createNew()
                 .agendaId(this.id)
                 .dayOfWeek(dayOfWeek)
                 .workingHours(workingHours)
                 .build();
 
-        this.workingDays.add(workingDay);
+        this.scheduledTimes.add(workingDay);
     }
 
     public void addLockedTime(WorkingDayId workingDayId, LockedTime lockedTime) {
@@ -92,7 +110,7 @@ public class Agenda implements AggregateRoot<AgendaId> {
     }
 
     public void active() {
-        FieldValidator.requiresNonEmpty("workingDays", workingDays);
+        FieldValidator.requiresNonEmpty("workingDays", scheduledTimes);
         FieldValidator.requiresNonNull("bookingBy", bookingWindow);
 
         this.currentStandBy().ifPresent(dates -> this.standByDates.remove(dates));
@@ -116,11 +134,11 @@ public class Agenda implements AggregateRoot<AgendaId> {
         changeStatus(AgendaStatus.BLOCKED);
     }
 
-    public WorkingDay findWorkingDay(WorkingDayId workingDayId) {
-        return this.workingDays.stream().filter(workingDay ->
-                workingDay.id().equals(workingDayId))
+    public ScheduledTime findWorkingDay(WorkingDayId workingDayId) {
+        return this.scheduledTimes.stream().filter(scheduledTime ->
+                scheduledTime.id().equals(workingDayId))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new WorkinDayNotFoundException());
     }
 
     public void verifyIsAlreadyStandBy(StandByDates standByDates) {
@@ -134,8 +152,8 @@ public class Agenda implements AggregateRoot<AgendaId> {
     }
 
     public void verifyExistingWorkingDay(DayOfWeek dayOfWeek) {
-        var workingDayExisting = this.workingDays.stream().filter(workingDay ->
-                        workingDay.dayOfWeek().equals(dayOfWeek))
+        var workingDayExisting = this.scheduledTimes.stream().filter(scheduledTime ->
+                        scheduledTime.dayOfWeek().equals(dayOfWeek))
                 .findFirst();
 
         if (workingDayExisting.isPresent())
@@ -171,16 +189,26 @@ public class Agenda implements AggregateRoot<AgendaId> {
         return AgendaStatus.BLOCKED.equals(this.status);
     }
 
-    private Optional<WorkingDay> filterWorkingDay(LocalDate date) {
-        return this.workingDays.stream()
-                .filter(workingDay -> workingDay.isWorkingDay(date))
-                .findFirst();
-    }
-
-
-
     public boolean isNotStandBy(LocalDate date) {
         return this.standByDates.stream().allMatch(dates -> dates.isNotBetween(date));
+    }
+
+    private void changeStatus(AgendaStatus status) {
+        if (this.status.canNotChange(status))
+            throw new RuntimeException();
+
+        this.setStatus(status);
+    }
+
+    private void verifyIfChangeAble() {
+        if (!isDraft())
+            throw new AgendaIsNotDraftToChangeException(this.id.toString());
+    }
+
+    private Optional<ScheduledTime> filterWorkingDay(LocalDate date) {
+        return this.scheduledTimes.stream()
+                .filter(scheduledTime -> scheduledTime.isWorkingDay(date))
+                .findFirst();
     }
 
     @Override
@@ -196,12 +224,20 @@ public class Agenda implements AggregateRoot<AgendaId> {
         return name;
     }
 
+    public ServiceSubCategory serviceSubCategory() {
+        return serviceSubCategory;
+    }
+
     public AgendaStatus status() {
         return status;
     }
 
-    public Set<WorkingDay> workingDays() {
-        return workingDays;
+    public Set<ScheduledTime> workingDays() {
+        return scheduledTimes;
+    }
+
+    public OffsetDateTime createdAt() {
+        return createdAt;
     }
 
     public OffsetDateTime activedAt() {
@@ -228,18 +264,6 @@ public class Agenda implements AggregateRoot<AgendaId> {
         return minuteInterval;
     }
 
-    private void changeStatus(AgendaStatus status) {
-        if (this.status.canNotChange(status))
-            throw new RuntimeException();
-
-        this.setStatus(status);
-    }
-
-    private void verifyIfChangeAble() {
-        if (!isDraft())
-            throw new AgendaIsNotDraftToChangeException(this.id.toString());
-    }
-
     private Optional<StandByDates> currentStandBy() {
         return this.standByDates.stream()
                 .filter(StandByDates::isCurrent)
@@ -261,9 +285,9 @@ public class Agenda implements AggregateRoot<AgendaId> {
         this.name = name;
     }
 
-    private void setSubcategory(AgendaSubCategory subCategory) {
+    private void setServiceSubcategory(ServiceSubCategory subCategory) {
         FieldValidator.requiresNonNull("subCategory", subCategory);
-        this.subCategory = subCategory;
+        this.serviceSubCategory = subCategory;
     }
 
     private void setStatus(AgendaStatus status) {
@@ -271,11 +295,16 @@ public class Agenda implements AggregateRoot<AgendaId> {
         this.status = status;
     }
 
-    private void setWorkingDays(Set<WorkingDay> workingDays) {
-        this.workingDays = workingDays;
+    private void setScheduledTimes(Set<ScheduledTime> scheduledTimes) {
+        this.scheduledTimes = scheduledTimes;
     }
 
-    public void setActivedAt(OffsetDateTime activedAt) {
+    private void setCreatedAt(OffsetDateTime createdAt) {
+        FieldValidator.requiresNonNull("createdAt", createdAt);
+        this.createdAt = createdAt;
+    }
+
+    private void setActivedAt(OffsetDateTime activedAt) {
         this.activedAt = activedAt;
     }
 

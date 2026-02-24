@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class WorkingDay {
+public class ScheduledTime {
     private WorkingDayId id;
     private AgendaId agendaId;
     private DayOfWeek dayOfWeek;
@@ -21,13 +21,13 @@ public class WorkingDay {
     private Set<LockedTime> lockedTimes;
 
     @Builder(builderClassName = "CreateNewWorkingDay", builderMethodName = "createNew")
-    private static WorkingDay create(AgendaId agendaId, DayOfWeek dayOfWeek, WorkingHours workingHours) {
-        return new WorkingDay(new WorkingDayId(), agendaId, dayOfWeek, workingHours, new HashSet<>());
+    private static ScheduledTime create(AgendaId agendaId, DayOfWeek dayOfWeek, WorkingHours workingHours) {
+        return new ScheduledTime(new WorkingDayId(), agendaId, dayOfWeek, workingHours, new HashSet<>());
     }
 
     @Builder(builderClassName = "ExistingWorkingDayBuilder", builderMethodName = "existing")
-    private WorkingDay(WorkingDayId id, AgendaId agendaId, DayOfWeek dayOfWeek,
-                       WorkingHours workingHours, Set<LockedTime> lockedTimes) {
+    private ScheduledTime(WorkingDayId id, AgendaId agendaId, DayOfWeek dayOfWeek,
+                          WorkingHours workingHours, Set<LockedTime> lockedTimes) {
         this.setId(id);
         this.setAgendaId(agendaId);
         this.setDayOfWeek(dayOfWeek);
@@ -40,7 +40,13 @@ public class WorkingDay {
     }
 
     void changeWorkingHours(WorkingHours workingHours) {
+        FieldValidator.requiresNonNull();
         this.setWorkingHours(workingHours);
+    }
+
+    void changeLockedTime(LockedTime lockedTime) {
+        FieldValidator.requiresNonNull("lockedTime", lockedTime);
+        this.setLockedTimes(lockedTimes);
     }
 
     void addLockedTime(LockedTime lockedTime) {
@@ -49,11 +55,17 @@ public class WorkingDay {
     }
 
     void removeLockedTime(LockedTime lockedTime) {
-        this.lockedTimes.remove(lockedTime);
+        this.lockedTimes.remove(findLockedTime(lockedTime));
     }
 
     boolean isWorkingDay(LocalDate date) {
         return this.dayOfWeek.equals(date.getDayOfWeek());
+    }
+
+    private LockedTime findLockedTime(LockedTime lockedTime) {
+        return lockedTimes.stream().filter(lockedTime::equals)
+                .findFirst()
+                .orElseThrow(() -> new LockedTimeNotFoundException());
     }
 
     Map<Integer, List<Integer>> availableTimes(MinuteInterval minuteInterval) {

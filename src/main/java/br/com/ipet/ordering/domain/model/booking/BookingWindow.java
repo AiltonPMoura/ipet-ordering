@@ -4,8 +4,12 @@ import br.com.ipet.ordering.domain.model.FieldValidator;
 
 public record BookingWindow(Integer value) {
 
-    private static final Integer MINIMUM_BOOKING_WINDOW = 7;
+    private static final Integer MINIMUM_BOOKING_WINDOW = 5;
     private static final Integer MAXIMUM_BOOKING_WINDOWS = 60;
+
+    public BookingWindow() {
+        this(MINIMUM_BOOKING_WINDOW);
+    }
 
     public BookingWindow {
         FieldValidator.requiresNonNull("bookingBy value", value);
