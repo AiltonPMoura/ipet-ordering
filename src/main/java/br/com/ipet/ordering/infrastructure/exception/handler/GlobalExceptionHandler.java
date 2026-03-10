@@ -12,7 +12,7 @@ import br.com.ipet.ordering.domain.model.order.OrderCannotBePlacedException;
 import br.com.ipet.ordering.domain.model.order.OrderIsNotDraftToChangeException;
 import br.com.ipet.ordering.domain.model.scheduling.CanNotChangeSchedulingAtException;
 import br.com.ipet.ordering.domain.model.scheduling.SchedulingIsNotDraftToChangeException;
-import br.com.ipet.ordering.domain.model.scheduling.SchedulingItemNotFoundException;
+import br.com.ipet.ordering.domain.model.scheduling.SchedulingPetNotFoundException;
 import br.com.ipet.ordering.infrastructure.exception.response.ExceptionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -118,8 +118,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }*/
 
-    @ExceptionHandler(SchedulingItemNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> schedulingItemNotFoundExceptionHandler(SchedulingItemNotFoundException ex, WebRequest request) {
+    @ExceptionHandler(SchedulingPetNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> schedulingItemNotFoundExceptionHandler(SchedulingPetNotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(
                 getMessageResponse(ex.getMessage(), request, ex.getFields()),
                 HttpStatus.BAD_REQUEST);

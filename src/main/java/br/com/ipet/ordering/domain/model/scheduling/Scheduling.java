@@ -1,100 +1,104 @@
 package br.com.ipet.ordering.domain.model.scheduling;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotBeChangeStatusException;
-import br.com.ipet.ordering.domain.model.customer.CompanyId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.commons.valueobject.SchedulingId;
-import br.com.ipet.ordering.domain.model.commons.valueobject.SchedulingItemId;
-import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Pet;
+import br.com.ipet.ordering.domain.model.commons.valueobject.SchedulingPetId;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Service;
+import br.com.ipet.ordering.domain.model.customer.CompanyId;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.pet.PetId;
 import lombok.Builder;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
-import static br.com.ipet.ordering.domain.model.scheduling.SchedulingStatus.*;
+import static br.com.ipet.ordering.domain.model.scheduling.SchedulingStatus.CANCELED;
+import static br.com.ipet.ordering.domain.model.scheduling.SchedulingStatus.DRAFT;
+import static br.com.ipet.ordering.domain.model.scheduling.SchedulingStatus.PAID;
+import static br.com.ipet.ordering.domain.model.scheduling.SchedulingStatus.PLACED;
+import static br.com.ipet.ordering.domain.model.scheduling.SchedulingStatus.SCHEDULED;
 
 public class Scheduling implements AggregateRoot<SchedulingId> {
     private SchedulingId id;
     private CustomerId customerId;
     private CompanyId companyId;
-    private Quantity totalItems;
+    private Set<SchedulingPet> pets;
+    private Service service;
+    private Quantity totalPets;
     private Money totalAmount;
     private SchedulingStatus status;
-    private Set<SchedulingItem> items;
     private OffsetDateTime createdAt;
     private OffsetDateTime paidAt;
-    private OffsetDateTime schedulingAt;
+    private OffsetDateTime checking;
+    private OffsetDateTime checkout;
     private OffsetDateTime cancelAt;
 
     @Builder(builderClassName = "CreateSchedulingBuilder", builderMethodName = "createNew")
-    private static Scheduling create(CustomerId customerId, CompanyId companyId) {
+    private static Scheduling create(CustomerId customerId, CompanyId companyId, Set<SchedulingPet> pets) {
         return new Scheduling(
-                new SchedulingId(), customerId, companyId, OffsetDateTime.now(), null, null,
-                Quantity.ZERO, Money.ZERO, DRAFT, new HashSet<>()
+                new SchedulingId(), customerId, companyId, pets,
+                Quantity.ZERO, Money.ZERO, DRAFT,
+                null, null, OffsetDateTime.now(), null
         );
     }
 
     @Builder(builderClassName = "ExistingSchedulingBuilder", builderMethodName = "existing")
-    public Scheduling(SchedulingId id, CustomerId customerId, CompanyId companyId,
-                      OffsetDateTime createdAt, OffsetDateTime schedulingAt, OffsetDateTime cancelAt,
-                      Quantity totalItems, Money totalAmount, SchedulingStatus status,
-                      Set<SchedulingItem> items) {
+    public Scheduling(SchedulingId id, CustomerId customerId, CompanyId companyId, Set<SchedulingPet> pets,
+                      Quantity totalPets, Money totalAmount, SchedulingStatus status,
+                      OffsetDateTime checking, OffsetDateTime checkout, OffsetDateTime createdAt, OffsetDateTime cancelAt) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.setCompanyId(companyId);
-        this.setCreatedAt(createdAt);
-        this.setSchedulingAt(schedulingAt);
-        this.setCancelAt(cancelAt);
-        this.setTotalItems(totalItems);
+        this.setPets(pets);
+        this.setTotalPets(totalPets);
         this.setTotalAmount(totalAmount);
         this.setStatus(status);
-        this.setItems(items);
+        this.setChecking(checking);
+        this.setCheckout(checkout);
+        this.setCreatedAt(createdAt);
+        this.setCancelAt(cancelAt);
     }
 
-    public void addItem(Service service, Set<Pet> pets) {
+    public void addPet(PetId petId) {
         this.verifyIfChangeable();
 
-        var item = SchedulingItem.createNew()
+        var pet = SchedulingPet.createNew()
                 .schedulingId(this.id)
-                .service(service)
-                .pets(pets)
+                .petId(petId)
                 .build();
 
-        this.items.add(item);
+        this.pets.add(pet);
 
         this.recalculateTotals();
     }
 
-    public void removeItem(SchedulingItemId id) {
+    public void removePet(SchedulingPetId schedulingPetId) {
         this.verifyIfChangeable();
 
-        var item = this.findISchedulingtemById(id);
+        var schedulingPet = this.findSchedulingPetById(schedulingPetId);
 
-        this.items.remove(item);
+        this.pets.remove(schedulingPet);
 
         this.recalculateTotals();
     }
 
-    public void changeItemService(Service service, SchedulingItemId id) {
+    public void changeService(Service service) {
         this.verifyIfChangeable();
 
-        var item = this.findISchedulingtemById(id);
+        this.setService(service);
 
-        item.changeService(service);
+        recalculateTotals();
     }
 
-    public void changePets(Set<Pet> pets, SchedulingItemId id) {
+    public void changePets(Set<Pet> pets, SchedulingPetId id) {
         this.verifyIfChangeable();
 
-        var item = this.findISchedulingtemById(id);
+        var item = this.findSchedulingPetById(id);
 
         item.changePets(pets);
     }
@@ -104,7 +108,7 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
         FieldValidator.requireDateTimeIsAfterNow("schedulingAt", schedulingAt);
         this.canChangeSchedulingAt();
 
-        this.setSchedulingAt(schedulingAt);
+        this.setChecking(schedulingAt);
     }
 
     public void markToPaid() {
@@ -129,12 +133,28 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
         return id;
     }
 
-    public CustomerId custumerId() {
+    public CustomerId customerId() {
         return customerId;
     }
 
     public CompanyId companyId() {
         return companyId;
+    }
+
+    public Service service() {
+        return service;
+    }
+
+    public Quantity totalPets() {
+        return totalPets;
+    }
+
+    public OffsetDateTime checking() {
+        return checking;
+    }
+
+    public OffsetDateTime checkout() {
+        return checkout;
     }
 
     public OffsetDateTime createdAt() {
@@ -146,7 +166,7 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
     }
 
     public OffsetDateTime schedulingAt() {
-        return schedulingAt;
+        return checking;
     }
 
     public OffsetDateTime cancelAt() {
@@ -154,7 +174,7 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
     }
 
     public Quantity totalItems() {
-        return totalItems;
+        return totalPets;
     }
 
     public Money totalAmount() {
@@ -165,26 +185,23 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
         return status;
     }
 
-    public Set<SchedulingItem> items() {
-        return Collections.unmodifiableSet(items);
+    public Set<SchedulingPet> pets() {
+        return Collections.unmodifiableSet(pets);
     }
 
-    private SchedulingItem findISchedulingtemById(SchedulingItemId id) {
-        return this.items.stream()
-                .filter(item -> item.id().equals(id))
+    private SchedulingPet findSchedulingPetById(SchedulingPetId schedulingPetId) {
+        return this.pets.stream()
+                .filter(schedulingPet -> schedulingPet.id().equals(schedulingPetId))
                 .findFirst()
-                .orElseThrow(() -> new SchedulingItemNotFoundException(this.id.value().toString(), id.value().toString()));
+                .orElseThrow(() -> new SchedulingPetNotFoundException(this.id.value().toString(), id.value().toString()));
     }
 
     private void recalculateTotals() {
-        var total = this.items.stream().map(item -> item.totalAmount().value())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        var quantity = new Quantity(this.pets.size());
+        var total = this.service.price().multiply(quantity);
 
-        var quantity = this.items.stream().map(item -> item.pets().size())
-                .reduce(0, Integer::sum);
-
-        this.setTotalAmount(new Money(total));
-        this.setTotalItems(new Quantity(quantity));
+        this.setTotalAmount(total);
+        this.setTotalPets(quantity);
     }
 
     private void canChangeSchedulingAt() {
@@ -214,17 +231,42 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
     }
 
     private void setCustomerId(CustomerId customerId) {
-        FieldValidator.requiresNonNull("Scheduling custumerId", customerId);
+        FieldValidator.requiresNonNull("custumerId", customerId);
         this.customerId = customerId;
     }
 
     private void setCompanyId(CompanyId companyId) {
-        FieldValidator.requiresNonNull("Scheduling companyId", companyId);
+        FieldValidator.requiresNonNull("companyId", companyId);
         this.companyId = companyId;
     }
 
+    private void setPets(Set<SchedulingPet> pets) {
+        FieldValidator.requiresNonEmpty("pets", pets);
+        this.pets = pets;
+    }
+
+    private void setTotalPets(Quantity totalPets) {
+        FieldValidator.requiresNonNull("totalPets", totalPets);
+        this.totalPets = totalPets;
+    }
+
+    private void setTotalAmount(Money totalAmount) {
+        FieldValidator.requiresNonNull("totalAmount", totalAmount);
+        this.totalAmount = totalAmount;
+    }
+
+    private void setStatus(SchedulingStatus status) {
+        FieldValidator.requiresNonNull("status", status);
+        this.status = status;
+    }
+
+    private void setCheckout(OffsetDateTime checkout) {
+        FieldValidator.requiresNonNull("checkout", checkout);
+        this.checkout = checkout;
+    }
+
     private void setCreatedAt(OffsetDateTime createdAt) {
-        FieldValidator.requiresNonNull("Scheduling, createdAt", createdAt);
+        FieldValidator.requiresNonNull("createdAt", createdAt);
         this.createdAt = createdAt;
     }
 
@@ -232,31 +274,11 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
         this.paidAt = paidAt;
     }
 
-    private void setSchedulingAt(OffsetDateTime schedulingAt) {
-        this.schedulingAt = schedulingAt;
+    private void setChecking(OffsetDateTime checking) {
+        this.checking = checking;
     }
 
     private void setCancelAt(OffsetDateTime cancelAt) {
         this.cancelAt = cancelAt;
-    }
-
-    private void setTotalItems(Quantity totalItems) {
-        FieldValidator.requiresNonNull("Scheduling totalItems", totalItems);
-        this.totalItems = totalItems;
-    }
-
-    private void setTotalAmount(Money totalAmount) {
-        FieldValidator.requiresNonNull("Scheduling totalAmount", totalAmount);
-        this.totalAmount = totalAmount;
-    }
-
-    private void setStatus(SchedulingStatus status) {
-        FieldValidator.requiresNonNull("SchedulingStatus", status);
-        this.status = status;
-    }
-
-    private void setItems(Set<SchedulingItem> items) {
-        FieldValidator.requiresNonNull("SchedulingService", items);
-        this.items = items;
     }
 }

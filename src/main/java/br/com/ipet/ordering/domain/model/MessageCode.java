@@ -15,7 +15,7 @@ public class MessageCode {
     public static final String ERROR_AGENDA_IS_NOT_DRAFT_TO_CHANGE = "error.agenda.is.not.draft.to.change";
     public static final String ERROR_SCHEDULING_IS_NOT_DRAFT_TO_CHANE = "error.scheduling.is.not.draft.to.change";
     public static final String ERROR_ORDER_ITEM_NOT_FOUND = "error.order.item.not.found";
-    public static final String ERROR_SCHEDULING_ITEM_NOT_FOUND = "error.scheduling.item.not.found";
+    public static final String ERROR_SCHEDULING_PET_NOT_FOUND = "error.scheduling.pet.not.found";
     public static final String ERROR_PET_NOT_FOUND = "error.pet.not.found";
     public static final String ERROR_WEIGHT_CANNOT_BE_ZERO_OR_NEGATIVE = "error.cannot.be.zero.or.negative";
     public static final String ERROR_SERVICE_NOT_FOUND = "error.service.not.found";

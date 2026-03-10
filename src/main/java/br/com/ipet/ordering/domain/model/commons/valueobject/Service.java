@@ -1,24 +1,24 @@
 package br.com.ipet.ordering.domain.model.commons.valueobject;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.pet.Size;
+import br.com.ipet.ordering.domain.model.scheduling.PriceCannotIsEmpty;
 import lombok.Builder;
 
-import java.time.OffsetTime;
+import java.util.Map;
 
 @Builder
 public record Service(
-        ServiceName name,
+        ServiceId serviceId,
+        String type,
+        String size,
         ServiceDescription description,
-        Money price,
-        OffsetTime startTime,
-        OffsetTime endTime) {
+        Money price) {
 
     public Service {
-        FieldValidator.requiresNonNull("service name", name);
-        FieldValidator.requiresNonNull("service description", description);
+        FieldValidator.requiresNonNull("serviceId", serviceId);
+        FieldValidator.requiresNonNull("service type", type);
         FieldValidator.requiresNonNull("service price", price);
-        FieldValidator.requiresNonNull("service startTime", startTime);
-        FieldValidator.requiresNonNull("service endTime", endTime);
     }
 
 }

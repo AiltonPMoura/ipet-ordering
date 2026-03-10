@@ -26,7 +26,7 @@ public class CompanyPersistenceProvider implements Companies {
 
     @Override
     public boolean exists(CompanyId companyId) {
-        return false;
+        return companyPersistenceRepository.existsById(companyId.value());
     }
 
     @Override
