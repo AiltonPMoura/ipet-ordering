@@ -13,8 +13,10 @@ import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.pet.PetId;
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import static br.com.ipet.ordering.domain.model.scheduling.SchedulingStatus.CANCELED;
@@ -28,7 +30,6 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
     private CustomerId customerId;
     private CompanyId companyId;
     private Set<SchedulingPet> pets;
-    private Service service;
     private Quantity totalPets;
     private Money totalAmount;
     private SchedulingStatus status;
@@ -39,9 +40,9 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
     private OffsetDateTime cancelAt;
 
     @Builder(builderClassName = "CreateSchedulingBuilder", builderMethodName = "createNew")
-    private static Scheduling create(CustomerId customerId, CompanyId companyId, Set<SchedulingPet> pets) {
+    private static Scheduling create(CustomerId customerId, CompanyId companyId) {
         return new Scheduling(
-                new SchedulingId(), customerId, companyId, pets,
+                new SchedulingId(), customerId, companyId, new HashSet<>(),
                 Quantity.ZERO, Money.ZERO, DRAFT,
                 null, null, OffsetDateTime.now(), null
         );
@@ -64,12 +65,13 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
         this.setCancelAt(cancelAt);
     }
 
-    public void addPet(PetId petId) {
+    void addPet(PetId petId, Service service) {
         this.verifyIfChangeable();
 
         var pet = SchedulingPet.createNew()
                 .schedulingId(this.id)
                 .petId(petId)
+                .service(service)
                 .build();
 
         this.pets.add(pet);
@@ -141,10 +143,6 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
         return companyId;
     }
 
-    public Service service() {
-        return service;
-    }
-
     public Quantity totalPets() {
         return totalPets;
     }
@@ -198,9 +196,11 @@ public class Scheduling implements AggregateRoot<SchedulingId> {
 
     private void recalculateTotals() {
         var quantity = new Quantity(this.pets.size());
-        var total = this.service.price().multiply(quantity);
+        var total = this.pets.stream()
+                .map(pet -> pet.service().price().value())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        this.setTotalAmount(total);
+        this.setTotalAmount(new Money(total));
         this.setTotalPets(quantity);
     }
 

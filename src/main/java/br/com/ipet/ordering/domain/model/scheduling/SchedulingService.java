@@ -12,6 +12,7 @@ import br.com.ipet.ordering.domain.model.pet.Pet;
 import br.com.ipet.ordering.domain.model.pet.PetDoesNotBelongToTheCustomer;
 import br.com.ipet.ordering.domain.model.pet.PetId;
 import br.com.ipet.ordering.domain.model.pet.Pets;
+import br.com.ipet.ordering.domain.model.pet.Size;
 import br.com.ipet.ordering.domain.model.service.ServiceDomain;
 import lombok.RequiredArgsConstructor;
 
@@ -30,41 +31,44 @@ public class SchedulingService {
     public Scheduling generate(CustomerId customerId,
                                CompanyId companyId,
                                Set<PetId> petIds,
-                               Service service) {
-
-        var pets = petsOfCustomer(customerId);
-
+                               String ServiceType) {
         verifyCustomerExists(customerId);
         verifyCompanyExists(companyId);
-        verifyPetsBelongsToTheCustomer(pets, petIds);
-        verifyServiceSuportPetSize(pets, petIds, service);
 
-        //TODO Create PetScheduling
-        return Scheduling.createNew()
+        var scheduling = Scheduling.createNew()
                 .customerId(customerId)
                 .companyId(companyId)
                 .build();
+
+        var petsOfCustomer = petsOfCustomer(customerId, petIds);
+        var services = serviceDomain.findByServiceType(ServiceType);
+
+        petsOfCustomer.forEach(pet -> {
+            var service = serviceBySize(pet.size(), services);
+            scheduling.addPet(pet.id(), service);
+        });
+
+        return scheduling;
     }
 
-    private Set<Pet> petsOfCustomer(CustomerId customerId) {
-        var pets = this.pets.ofCustomer(customerId);
+    private Service serviceBySize(Size size, Set<Service> services) {
+        return services.stream()
+                .filter(service -> size.equals(service.size()))
+                .findFirst()
+                .orElseThrow(() -> new ServiceUnavaliableForThisPetSize());
+    }
 
-        if (pets.isEmpty())
+    private Set<Pet> petsOfCustomer(CustomerId customerId, Set<PetId> petIds) {
+        var petsOfCustomer = this.pets.ofCustomer(customerId);
+
+        if (petsOfCustomer.isEmpty())
             throw new CustomerDoesNotContainAnyPet();
 
-        return pets;
-    }
+        verifyPetsBelongsToTheCustomer(petsOfCustomer, petIds);
 
-    private void verifyServiceSuportPetSize(Set<Pet> pets, Set<PetId> petIds, Service service) {
-        var avaliableSizes = serviceDomain.servicesByServiceType(service.type()).stream()
-                .map(Service::size).collect(Collectors.toSet());
-
-        var unavaliableSize = pets.stream().filter(pet -> petIds.contains(pet.id()))
-                .map(Pet::size)
-                .allMatch(size -> avaliableSizes.contains(size.name()));
-
-        if (unavaliableSize)
-            throw new ServiceUnavaliableForThisPetSize();
+        return petsOfCustomer.stream()
+                .filter(pet -> petIds.contains(pet.id()))
+                .collect(Collectors.toSet());
     }
 
     private void verifyPetsBelongsToTheCustomer(Set<Pet> pets, Set<PetId> petIds) {

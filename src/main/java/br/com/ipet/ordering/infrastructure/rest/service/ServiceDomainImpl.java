@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class ServiceDomainImpl implements ServiceDomain {
     @Override
-    public Set<Service> servicesByServiceType(String type) {
+    public Set<Service> findByServiceType(String type) {
         return Set.of(
                 new Service(
                         new ServiceId(),
@@ -18,6 +18,13 @@ public class ServiceDomainImpl implements ServiceDomain {
                         "SMALL",
                         new ServiceDescription(""),
                         new Money("10")
+                ),
+                new Service(
+                        new ServiceId(),
+                        "DOG_BATH",
+                        "LARGE",
+                        new ServiceDescription(""),
+                        new Money("20")
                 )
         );
     }

@@ -11,7 +11,7 @@ import java.util.Map;
 public record Service(
         ServiceId serviceId,
         String type,
-        String size,
+        Size size,
         ServiceDescription description,
         Money price) {
 
