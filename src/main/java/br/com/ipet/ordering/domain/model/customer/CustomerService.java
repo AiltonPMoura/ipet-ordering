@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model.customer;
 
+import br.com.ipet.ordering.domain.model.commons.Document;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.CelPhone;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
@@ -14,12 +15,12 @@ public class CustomerService {
     private final Customers customers;
 
     public Customer register(FullName fullName, Email email,
-                             CelPhone celPhone, Cpf cpf, Address address) {
+                             CelPhone celPhone, Document document, Address address) {
 
         var customer = Customer.createNew()
                 .fullName(fullName)
                 .email(email)
-                .cpf(cpf)
+                .document(document)
                 .celPhone(celPhone)
                 .address(address)
                 .build();

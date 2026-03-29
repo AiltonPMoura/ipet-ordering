@@ -19,7 +19,6 @@ public record Address(String street,
         FieldValidator.requiresNonBlank("city", city);
         FieldValidator.requiresNonBlank("state", state);
         FieldValidator.requiresNonNull("zipCode", zipCode);
-
     }
 
 }

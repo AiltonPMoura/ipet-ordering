@@ -8,6 +8,7 @@ import br.com.ipet.ordering.domain.model.pet.Gender;
 import br.com.ipet.ordering.domain.model.pet.PetAge;
 import br.com.ipet.ordering.domain.model.pet.PetId;
 import br.com.ipet.ordering.domain.model.pet.PetName;
+import br.com.ipet.ordering.domain.model.pet.PetNotFoundException;
 import br.com.ipet.ordering.domain.model.pet.PetService;
 import br.com.ipet.ordering.domain.model.pet.PetWeight;
 import br.com.ipet.ordering.domain.model.pet.Pets;
@@ -25,7 +26,6 @@ import java.util.UUID;
 public class PetApplicationService {
     private final PetService petService;
     private final Pets pets;
-    private final Mapper mapper;
 
     public UUID create(PetInput input) {
         FieldValidator.requiresNonNull("pet input", input);
@@ -51,14 +51,17 @@ public class PetApplicationService {
         FieldValidator.requiresNonNull("customerId", customerId);
         FieldValidator.requiresNonNull("petUpdateInput", input);
 
-        var pet = petService.change(new PetId(petId), new CustomerId(customerId),
+        var pet = pets.ofId(new PetId(petId)).orElseThrow(PetNotFoundException::new);
+
+        petService.change(pet, new CustomerId(customerId),
                 new PetName(input.getName()),
                 Type.valueOf(input.getType()),
                 Breed.valueOf(input.getBreed()),
                 Gender.valueOf(input.getGender()),
                 Size.valueOf(input.getSize()),
                 new PetWeight(input.getWeight()),
-                new PetAge(input.getAge()));
+                new PetAge(input.getAge())
+        );
 
         pets.add(pet);
     }

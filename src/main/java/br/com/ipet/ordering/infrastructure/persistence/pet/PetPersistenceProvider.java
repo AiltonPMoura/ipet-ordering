@@ -29,8 +29,7 @@ public class PetPersistenceProvider implements Pets {
     }
 
     @Override
-    public void add(Pet aggregateRoot) {
-
+    public void add(Pet pet) {
     }
 
     @Override

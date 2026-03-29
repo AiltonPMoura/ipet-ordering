@@ -7,6 +7,7 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.customer.Cpf;
+import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
 import br.com.ipet.ordering.domain.model.customer.CustomerService;
@@ -34,7 +35,7 @@ public class CustomerApplicationService {
                 new FullName(input.getFirstName(), input.getLastName()),
                 new Email(input.getEmail()),
                 new CelPhone(input.getCelPhone()),
-                new Cpf(input.getCpf()),
+                new Cpf(input.getDocument()),
                 Address.builder()
                         .street(address.getStreet())
                         .number(address.getNumber())
@@ -51,27 +52,32 @@ public class CustomerApplicationService {
         return customer.id().value();
     }
 
-    public void update(UUID customerId, CustomerUpdateInput input) {
+    public void update(UUID customerId, UUID addressId, CustomerUpdateInput input) {
         FieldValidator.requiresNonNull("customerId", customerId);
-        FieldValidator.requiresNonNull("customer update input", input);
+        FieldValidator.requiresNonNull("addressId", addressId);
+        FieldValidator.requiresNonNull("input", input);
 
         var customer = customers.ofId(new CustomerId(customerId))
                 .orElseThrow(CustomerNotFoundException::new);
 
         customer.changeName(new FullName(input.getFirstName(), input.getLastName()));
-        customer.changeCpf(new Cpf(input.getCpf()));
+        customer.changeDocument(new Cpf(input.getDocument()));
         customer.changeCelPhone(new CelPhone(input.getCelPhone()));
 
         var address = input.getAddressData();
-        customer.changeAddress(Address.builder()
-                .street(address.getStreet())
-                .number(address.getNumber())
-                .neighborhood(address.getNeighborhood())
-                .city(address.getCity())
-                .state(address.getState())
-                .complement(address.getComplement())
-                .zipCode(new ZipCode(address.getZipCode()))
-                .build());
+        customer.changeAddress(
+                new CustomerAddressId(addressId),
+                Address.builder()
+                        .street(address.getStreet())
+                        .number(address.getNumber())
+                        .neighborhood(address.getNeighborhood())
+                        .city(address.getCity())
+                        .state(address.getState())
+                        .complement(address.getComplement())
+                        .zipCode(new ZipCode(address.getZipCode()))
+                        .build(),
+                input.isDeliveryAddress()
+        );
 
         customers.add(customer);
     }

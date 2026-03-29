@@ -14,6 +14,7 @@ public class CustomerUpdateInput {
     private String firstName;
     private String lastName;
     private Integer celPhone;
-    private String cpf;
+    private String document;
     private AddressData addressData;
+    private boolean isDeliveryAddress;
 }

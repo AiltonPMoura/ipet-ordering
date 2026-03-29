@@ -1,7 +1,5 @@
 package br.com.ipet.ordering.domain.model.company;
 
-import br.com.ipet.ordering.domain.model.customer.Cnpj;
-import br.com.ipet.ordering.domain.model.customer.CompanyId;
 import br.com.ipet.ordering.domain.model.Repository;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 

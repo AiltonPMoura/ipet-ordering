@@ -4,9 +4,6 @@ import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.CelPhone;
-import br.com.ipet.ordering.domain.model.customer.Cnpj;
-import br.com.ipet.ordering.domain.model.customer.CompanyId;
-import br.com.ipet.ordering.domain.model.customer.CompanyName;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import lombok.Builder;
 

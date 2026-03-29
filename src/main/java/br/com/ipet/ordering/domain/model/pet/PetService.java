@@ -31,13 +31,11 @@ public class PetService {
                 .build();
     }
 
-    public Pet change(PetId petId, CustomerId customerId,
+    public void change(Pet pet, CustomerId customerId,
                       PetName name, Type type, Breed breed, Gender gender,
                       Size size, PetWeight weight, PetAge age) {
 
-        var pet = pets.ofId(petId).orElseThrow(PetNotFoundException::new);
-
-        verifyIfBelongsToTheCustomer(customerId, pet);
+        this.verifyIfBelongsToTheCustomer(customerId, pet);
 
         pet.changeName(name);
         pet.changeType(type);
@@ -46,8 +44,6 @@ public class PetService {
         pet.changeSize(size);
         pet.changeWeight(weight);
         pet.changeAge(age);
-
-        return pet;
     }
 
     private void verifyIfBelongsToTheCustomer(CustomerId customerId, Pet pet) {

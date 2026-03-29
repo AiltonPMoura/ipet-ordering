@@ -15,6 +15,6 @@ public class CustomerInput {
     private String lastName;
     private String email;
     private Integer celPhone;
-    private String cpf;
+    private String document;
     private AddressData addressData;
 }

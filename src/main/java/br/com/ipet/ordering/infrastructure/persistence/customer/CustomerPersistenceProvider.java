@@ -2,6 +2,8 @@ package br.com.ipet.ordering.infrastructure.persistence.customer;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.customer.Customer;
+import br.com.ipet.ordering.domain.model.customer.CustomerAddress;
+import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
 import br.com.ipet.ordering.domain.model.customer.Customers;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import lombok.RequiredArgsConstructor;
@@ -43,4 +45,5 @@ public class CustomerPersistenceProvider implements Customers {
     public boolean isEmailUnique(Email email, CustomerId customerId) {
         return !persistenceRepository.existsByEmailAndIdNot(email.value(), customerId.value());
     }
+
 }

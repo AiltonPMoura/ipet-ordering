@@ -19,7 +19,7 @@ public class CustomerMapper {
                 .fullName(this.toFullName(persistenceEntity))
                 .email(new Email(persistenceEntity.getEmail()))
                 .celPhone(new CelPhone(persistenceEntity.getCelPhone()))
-                .cpf(new Cpf(persistenceEntity.getDocument()))
+                .document(new Cpf(persistenceEntity.getDocument()))
                 .address(this.toAddress(persistenceEntity))
                 .build();
     }

@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.domain.model.customer;
+package br.com.ipet.ordering.domain.model.company;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.IdGenerator;

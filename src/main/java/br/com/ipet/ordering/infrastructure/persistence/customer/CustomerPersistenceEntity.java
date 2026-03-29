@@ -1,9 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.customer;
 
-import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
-import br.com.ipet.ordering.infrastructure.persistence.pet.PetPersistenceEntity;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Embedded;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -16,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,16 +29,23 @@ import java.util.UUID;
 public class CustomerPersistenceEntity {
 
     @Id
+    @EqualsAndHashCode.Include
     private UUID id;
 
+    @Column(name = "first_name")
     private String firstName;
+
+    @Column(name = "last_name")
     private String lastName;
-    private String email;
+
+    @Column(name = "cel_phone")
     private Integer celPhone;
+
+    private String email;
     private String document;
 
-    @Embedded
-    private AddressEmbeddable address;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private Set<CustomerAddressPersistenceEntity> address = new HashSet<>();
 
     private OffsetDateTime registerAt;
 
