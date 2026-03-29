@@ -2,5 +2,6 @@ package br.com.ipet.ordering.domain.model.order;
 
 public enum PaymentMethod {
     CREDIT_CART,
-    PIX
+    PIX,
+    GATEWAY_BALANCE
 }

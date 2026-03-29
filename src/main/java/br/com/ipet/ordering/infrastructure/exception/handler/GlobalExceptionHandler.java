@@ -1,15 +1,15 @@
 package br.com.ipet.ordering.infrastructure.exception.handler;
 
 import br.com.ipet.ordering.domain.model.schedule.AgendaIsNotDraftToChangeException;
-import br.com.ipet.ordering.domain.model.commons.exception.CannotBeChangeStatusException;
+import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.exception.DateTimeMustBeLaterThanNowException;
 import br.com.ipet.ordering.domain.model.commons.exception.EmailValidatorException;
 import br.com.ipet.ordering.domain.model.commons.exception.EndDateOrTimeMustBeLaterThanStartException;
 import br.com.ipet.ordering.domain.model.commons.exception.FieldCannotBeEmptyException;
 import br.com.ipet.ordering.domain.model.commons.exception.NumberCannotBeNegativeException;
-import br.com.ipet.ordering.domain.model.commons.exception.QuantityGreaterThanZeroException;
+import br.com.ipet.ordering.domain.model.commons.exception.QuantityNeedsGreaterThanZeroException;
 import br.com.ipet.ordering.domain.model.order.OrderCannotBePlacedException;
-import br.com.ipet.ordering.domain.model.order.OrderIsNotDraftToChangeException;
+import br.com.ipet.ordering.domain.model.order.OrderCannotBeEditedException;
 import br.com.ipet.ordering.domain.model.scheduling.CanNotChangeSchedulingAtException;
 import br.com.ipet.ordering.domain.model.scheduling.SchedulingIsNotDraftToChangeException;
 import br.com.ipet.ordering.domain.model.scheduling.SchedulingPetNotFoundException;
@@ -55,10 +55,10 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(OrderIsNotDraftToChangeException.class)
-    public ResponseEntity<ExceptionResponse> orderIsNotDraftToChangeExceptionHandler(OrderIsNotDraftToChangeException ex, WebRequest request) {
+    @ExceptionHandler(OrderCannotBeEditedException.class)
+    public ResponseEntity<ExceptionResponse> orderCannotBeEditedExceptionHandler(OrderCannotBeEditedException ex, WebRequest request) {
         return new ResponseEntity<>(
-                getMessageResponse(ex.getMessage(), request, ex.getOrderId()),
+                getMessageResponse(ex.getMessage(), request, ex.getFields()),
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -90,15 +90,15 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(QuantityGreaterThanZeroException.class)
-    public ResponseEntity<ExceptionResponse> quantityGreaterThanZeroExceptionHandler(QuantityGreaterThanZeroException ex, WebRequest request) {
+    @ExceptionHandler(QuantityNeedsGreaterThanZeroException.class)
+    public ResponseEntity<ExceptionResponse> quantityNeedsGreaterThanZeroExceptionHandler(QuantityNeedsGreaterThanZeroException ex, WebRequest request) {
         return new ResponseEntity<>(
                 getMessageResponse(ex.getMessage(), request, ""),
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(CannotBeChangeStatusException.class)
-    public ResponseEntity<ExceptionResponse> cannotBeChangeStatusExceptionHandler(CannotBeChangeStatusException ex, WebRequest request) {
+    @ExceptionHandler(CannotChangeStatusException.class)
+    public ResponseEntity<ExceptionResponse> cannotChangeStatusExceptionHandler(CannotChangeStatusException ex, WebRequest request) {
         return new ResponseEntity<>(
                 getMessageResponse(ex.getMessage(), request, ex.getStatus()),
                 HttpStatus.BAD_REQUEST);

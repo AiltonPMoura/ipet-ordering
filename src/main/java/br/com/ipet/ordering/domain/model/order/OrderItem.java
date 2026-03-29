@@ -40,15 +40,6 @@ public class OrderItem {
         setTotalAmount(totalAmount);
     }
 
-    void changeQuantity(Quantity quantity) {
-        this.setQuantity(quantity);
-        reCalculateTotals();
-    }
-
-    private void reCalculateTotals() {
-        this.setTotalAmount(this.product.price().multiply(this.quantity));
-    }
-
     public OrderItemId id() {
         return id;
     }
@@ -69,35 +60,43 @@ public class OrderItem {
         return totalAmount;
     }
 
+    void changeQuantity(Quantity quantity) {
+        this.setQuantity(quantity);
+        this.reCalculateTotals();
+    }
+
+    private void reCalculateTotals() {
+        this.setTotalAmount(this.product.price().multiply(this.quantity));
+    }
+
     private void setId(OrderItemId id) {
-        FieldValidator.requiresNonNull("order item id", id);
+        FieldValidator.requiresNonNull("id", id);
         this.id = id;
     }
 
     private void setOrderId(OrderId orderId) {
-        FieldValidator.requiresNonNull("order id", orderId);
+        FieldValidator.requiresNonNull("orderId", orderId);
         this.orderId = orderId;
     }
 
     private void setQuantity(Quantity quantity) {
-        FieldValidator.requiresNonNull("order item quantity", quantity);
+        FieldValidator.requiresNonNull("quantity", quantity);
         this.quantity = quantity;
     }
 
     private void setProduct(Product product) {
-        FieldValidator.requiresNonNull("order item product", product);
+        FieldValidator.requiresNonNull("product", product);
         this.product = product;
     }
 
     private void setTotalAmount(Money totalAmount) {
-        FieldValidator.requiresNonNull("order item total amount", totalAmount);
+        FieldValidator.requiresNonNull("totalAmount", totalAmount);
         this.totalAmount = totalAmount;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        OrderItem orderItem = (OrderItem) o;
+    public boolean equals(Object object) {
+        if (!(object instanceof OrderItem orderItem)) return false;
         return Objects.equals(id, orderItem.id);
     }
 

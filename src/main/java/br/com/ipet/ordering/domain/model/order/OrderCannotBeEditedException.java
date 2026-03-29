@@ -5,12 +5,12 @@ import br.com.ipet.ordering.domain.model.MessageCode;
 import lombok.Getter;
 
 @Getter
-public class OrderItemNotFoundException extends DomainException {
+public class OrderCannotBeEditedException extends DomainException {
 
     private final String[] fields;
 
-    public OrderItemNotFoundException(String... fields) {
-        super(MessageCode.ERROR_ORDER_ITEM_NOT_FOUND);
+    public OrderCannotBeEditedException(String... fields) {
+        super(MessageCode.ERROR_ORDER_CANNOT_BE_EDITED);
         this.fields = fields;
     }
 }

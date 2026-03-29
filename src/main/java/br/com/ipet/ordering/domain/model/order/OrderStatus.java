@@ -1,5 +1,7 @@
 package br.com.ipet.ordering.domain.model.order;
 
+import br.com.ipet.ordering.domain.model.FieldValidator;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,7 +12,7 @@ public enum OrderStatus {
     READY(PAID),
     DELIVERING(READY),
     COMPLETED(DELIVERING),
-    CANCELED(DRAFT, PLACED, PAID);
+    CANCELED(DRAFT, PLACED, PAID, READY, DELIVERING);
 
     OrderStatus(OrderStatus... previousStatuses) {
         this.previousStatuses = Arrays.asList(previousStatuses);
@@ -18,12 +20,14 @@ public enum OrderStatus {
 
     private final List<OrderStatus> previousStatuses;
 
-    public boolean canChange(OrderStatus newStatus) {
+    public boolean canChangeTo(OrderStatus newStatus) {
+        FieldValidator.requiresNonNull("newStatus", newStatus);
+
         var currentStatus = this;
         return newStatus.previousStatuses.contains(currentStatus);
     }
 
-    public boolean canNotChange(OrderStatus newStatus) {
-        return !canChange(newStatus);
+    public boolean canNotChangeTo(OrderStatus newStatus) {
+        return !canChangeTo(newStatus);
     }
 }

@@ -6,9 +6,5 @@ public record ProductName(String value) {
 
     public ProductName {
         FieldValidator.requiresNonBlank("product name", value);
-
-        //if (value.length() < 4)
-            //throw new ProductNameCannotBeVerySmall();
     }
-
 }
