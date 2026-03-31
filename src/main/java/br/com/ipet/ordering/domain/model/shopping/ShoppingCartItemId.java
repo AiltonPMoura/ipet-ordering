@@ -1,17 +1,17 @@
-package br.com.ipet.ordering.domain.model.order;
+package br.com.ipet.ordering.domain.model.shopping;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.IdGenerator;
 
 import java.util.UUID;
 
-public record OrderId(UUID value) {
+public record ShoppingCartItemId(UUID value) {
 
-    public OrderId() {
+    public ShoppingCartItemId() {
         this(IdGenerator.generateTimeBasedEpochRandomGenerator());
     }
 
-    public OrderId {
+    public ShoppingCartItemId {
         FieldValidator.requiresNonNull("id", value);
     }
 

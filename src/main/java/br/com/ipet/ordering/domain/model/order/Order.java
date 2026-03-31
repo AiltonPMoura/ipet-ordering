@@ -213,10 +213,10 @@ public class Order implements AggregateRoot<OrderId> {
             shippingCost = this.shipping.cost().value();
         }
 
-        var total = totalItemsAmount.add(shippingCost);
+        var totalItemsShippingAmount = totalItemsAmount.add(shippingCost);
 
         this.setTotalItems(new Quantity(totalItemsQuantity));
-        this.setTotalAmount(new Money(total));
+        this.setTotalAmount(new Money(totalItemsShippingAmount));
     }
 
     private void verifyIfChangeable() {
