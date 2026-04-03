@@ -9,16 +9,21 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.Company;
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
+import br.com.ipet.ordering.infrastructure.persistence.commons.document.DocumentFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class CompanyMapper {
+
+    private final DocumentFactory documentFactory;
 
     public Company toDomain(CompanyPersistenceEntity companyPersistenceEntity) {
         return Company.existing()
                 .id(new CompanyId(companyPersistenceEntity.getId()))
                 .name(new CompanyName(companyPersistenceEntity.getName()))
-                .cnpj(new Cnpj(companyPersistenceEntity.getCnpj()))
+                .document(documentFactory.from(companyPersistenceEntity.getDocument()))
                 .email(new Email(companyPersistenceEntity.getEmail()))
                 .celPhone(new CelPhone(companyPersistenceEntity.getCelPhone()))
                 .address(toAddress(companyPersistenceEntity.getAddress()))

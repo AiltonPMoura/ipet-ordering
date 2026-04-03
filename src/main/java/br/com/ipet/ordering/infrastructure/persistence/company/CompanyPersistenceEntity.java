@@ -1,6 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.company;
 
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -26,12 +27,22 @@ import java.util.UUID;
 public class CompanyPersistenceEntity {
 
     @Id
+    @EqualsAndHashCode.Include
     private UUID id;
 
+    @Column
     private String name;
-    private String cnpj;
+
+    @Column
+    private String document;
+
+    @Column
     private Integer celPhone;
+
+    @Column
     private String email;
+
+    @Column
     private OffsetDateTime registeredAt;
 
     @Embedded

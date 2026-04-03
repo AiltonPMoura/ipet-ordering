@@ -7,13 +7,10 @@ import br.com.ipet.ordering.domain.model.commons.DocumentIsNotValidException;
 public record Cpf(String value) implements Document {
 
     public Cpf {
-        FieldValidator.requiresNonNull("document value", value);
-        this.isValid(value);
-    }
+        FieldValidator.requiresNonBlank("cpf", value);
 
-    @Override
-    public void isValid(String cpf) throws DocumentIsNotValidException {
-        if (cpf.length() != 11)
+        if (!value.matches("\\d{11}"))
             throw new DocumentIsNotValidException("");
     }
+
 }

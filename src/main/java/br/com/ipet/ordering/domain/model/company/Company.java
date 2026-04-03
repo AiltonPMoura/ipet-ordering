@@ -2,6 +2,7 @@ package br.com.ipet.ordering.domain.model.company;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.commons.Document;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.CelPhone;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
@@ -12,25 +13,25 @@ import java.time.OffsetDateTime;
 public class Company implements AggregateRoot<CompanyId> {
     private CompanyId id;
     private CompanyName name;
-    private Cnpj cnpj;
+    private Document document;
     private CelPhone celPhone;
     private Email email;
     private Address address;
     private OffsetDateTime registeredAt;
 
     @Builder(builderClassName = "CreateNewCompanyBuilder", builderMethodName = "createNew")
-    private static Company create(CompanyName name, Cnpj cnpj,
+    private static Company create(CompanyName name, Document document,
                                   CelPhone celPhone, Email email, Address address) {
-        return new Company(new CompanyId(), name, cnpj,
+        return new Company(new CompanyId(), name, document,
                 celPhone, email, address, OffsetDateTime.now());
     }
 
     @Builder(builderClassName = "CreateExistingCompanyBuilder", builderMethodName = "existing")
-    private Company(CompanyId id, CompanyName name, Cnpj cnpj,
+    private Company(CompanyId id, CompanyName name, Document document,
                     CelPhone celPhone, Email email, Address address, OffsetDateTime registeredAt) {
         this.setId(id);
         this.setName(name);
-        this.setCnpj(cnpj);
+        this.setDocument(document);
         this.setCelPhone(celPhone);
         this.setEmail(email);
         this.setAddress(address);
@@ -64,7 +65,7 @@ public class Company implements AggregateRoot<CompanyId> {
     }
 
     void changeCnpj(Cnpj cnpj) {
-        this.setCnpj(cnpj);
+        this.setDocument(cnpj);
     }
 
     public void changeCelPhone(CelPhone celPhone) {
@@ -117,8 +118,8 @@ public class Company implements AggregateRoot<CompanyId> {
         return name;
     }
 
-    public Cnpj cnpj() {
-        return cnpj;
+    public Document document() {
+        return document;
     }
 
     public CelPhone celPhone() {
@@ -170,9 +171,9 @@ public class Company implements AggregateRoot<CompanyId> {
         this.celPhone = celPhone;
     }
 
-    private void setCnpj(Cnpj cnpj) {
-        FieldValidator.requiresNonNull("cnpj", cnpj);
-        this.cnpj = cnpj;
+    private void setDocument(Document document) {
+        FieldValidator.requiresNonNull("document", document);
+        this.document = document;
     }
 
     private void setName(CompanyName name) {

@@ -36,7 +36,7 @@ public class CompanyPersistenceProvider implements Companies {
     }
 
     @Override
-    public int count() {
+    public long count() {
         return 0;
     }
 
