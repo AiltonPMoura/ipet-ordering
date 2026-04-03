@@ -1,25 +1,7 @@
-package br.com.ipet.ordering.infrastructure.persistence.mapper;
+package br.com.ipet.ordering.infrastructure.persistence.order;
 
-import br.com.ipet.ordering.domain.model.order.Order;
-import br.com.ipet.ordering.domain.model.order.OrderItem;
-import br.com.ipet.ordering.domain.model.order.OrderStatus;
-import br.com.ipet.ordering.domain.model.order.PaymentMethod;
-import br.com.ipet.ordering.domain.model.customer.CompanyId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
-import br.com.ipet.ordering.domain.model.order.OrderId;
-import br.com.ipet.ordering.domain.model.order.OrderItemId;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Product;
-import br.com.ipet.ordering.domain.model.product.ProductDescription;
-import br.com.ipet.ordering.domain.model.product.ProductName;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 //import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddable;
-import br.com.ipet.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
-import br.com.ipet.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class OrderMapper {

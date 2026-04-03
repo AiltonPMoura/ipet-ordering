@@ -1,6 +1,7 @@
-package br.com.ipet.ordering.infrastructure.persistence.entity;
+package br.com.ipet.ordering.infrastructure.persistence.shopping;
 
-//import br.com.ipet.ordering.infrastructure.persistence.embedded.ProductEmbeddable;
+import br.com.ipet.ordering.infrastructure.persistence.commons.ProductEmbeddable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -24,8 +25,8 @@ import java.util.UUID;
 @ToString(of = "id")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "order_item")
-public class OrderItemPersistenceEntity {
+@Table(name = "shopping_cart_item")
+public class ShoppingCartItemPersistenceEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -33,16 +34,15 @@ public class OrderItemPersistenceEntity {
 
     @JoinColumn
     @ManyToOne(optional = false)
-    private OrderPersistenceEntity order;
+    private ShoppingCartPersistenceEntity shoppingCart;
 
-    /*@Embedded
-    private ProductEmbeddable product;*/
+    @Embedded
+    private ProductEmbeddable product;
 
+    @Column
     private Integer quantity;
-    private BigDecimal totalAmount;
 
-    public UUID getOrderId() {
-        return this.order.getId();
-    }
+    @Column
+    private BigDecimal totalAmount;
 
 }

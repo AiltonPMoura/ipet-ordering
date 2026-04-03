@@ -125,6 +125,12 @@ public class Order implements AggregateRoot<OrderId> {
         this.setShipping(shipping);
     }
 
+    public void changeDeliveryCompany(DeliveryCompany deliveryCompany) {
+        FieldValidator.requiresNonNull("deliveryCompany", deliveryCompany);
+        this.verifyIfChangeable();
+        this.setDeliveryCompany(deliveryCompany);
+    }
+
     public void place() {
         this.verifyIfCanChangeToPlaced();
         this.changeStatus(OrderStatus.PLACED);
@@ -269,6 +275,10 @@ public class Order implements AggregateRoot<OrderId> {
 
     private void setBilling(Billing billing) {
         this.billing = billing;
+    }
+
+    public DeliveryCompany deliveryCompany() {
+        return deliveryCompany;
     }
 
     private void setDeliveryCompany(DeliveryCompany deliveryCompany) {

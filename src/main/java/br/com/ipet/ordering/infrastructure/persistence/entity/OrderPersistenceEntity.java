@@ -2,6 +2,7 @@ package br.com.ipet.ordering.infrastructure.persistence.entity;
 
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
+import br.com.ipet.ordering.infrastructure.persistence.order.OrderItemPersistenceEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

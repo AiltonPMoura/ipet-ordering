@@ -18,6 +18,7 @@ import java.util.Set;
 public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
 
     private ShoppingCartId id;
+    private CustomerId customerId;
     private Set<ShoppingCartItem> items;
     private Quantity totalItems;
     private Money totalAmount;
@@ -32,6 +33,7 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
     private ShoppingCart(ShoppingCartId id, CustomerId customerId, Set<ShoppingCartItem> items,
                          Quantity totalItems, Money totalAmount, LocalDate startAt) {
         this.setId(id);
+        this.setCustomerId(customerId);
         this.setItems(items);
         this.setTotalItems(totalItems);
         this.setTotalAmount(totalAmount);
@@ -104,6 +106,15 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
     private void setId(ShoppingCartId id) {
         FieldValidator.requiresNonNull("id", id);
         this.id = id;
+    }
+
+    public CustomerId customerId() {
+        return customerId;
+    }
+
+    private void setCustomerId(CustomerId customerId) {
+        FieldValidator.requiresNonNull("customerId", customerId);
+        this.customerId = customerId;
     }
 
     public Set<ShoppingCartItem> items() {
