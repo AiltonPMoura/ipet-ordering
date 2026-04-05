@@ -1,0 +1,19 @@
+package br.com.ipet.ordering.infrastructure.persistence.order;
+
+import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Embeddable
+public class RecipientEmbeddable {
+    private String firstName;
+    private String lastName;
+    private String document;
+    private String phone;
+}

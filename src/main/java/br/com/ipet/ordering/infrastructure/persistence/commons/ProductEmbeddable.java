@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -15,7 +16,7 @@ import java.util.UUID;
 @Embeddable
 public class ProductEmbeddable {
     private UUID productId;
-    private String prductName;
-    private String productDescription;
-    private String price;
+    private String name;
+    private String description;
+    private BigDecimal price;
 }

@@ -8,12 +8,12 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 @Builder
-public record Shipping(Recipient recipient, Money cost, LocalDate expetedDate, Address address) {
+public record Shipping(Recipient recipient, Money cost, LocalDate expectedDate, Address address) {
 
     public Shipping {
         FieldValidator.requiresNonNull("cost", recipient);
         FieldValidator.requiresNonNull("shippingCost", cost);
-        FieldValidator.requiresNonNull("expetedDate", expetedDate);
+        FieldValidator.requiresNonNull("expectedDate", expectedDate);
         FieldValidator.requiresNonNull("address", address);
     }
 

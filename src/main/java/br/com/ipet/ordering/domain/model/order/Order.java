@@ -33,7 +33,8 @@ public class Order implements AggregateRoot<OrderId> {
     private OffsetDateTime placedAt;
     private OffsetDateTime paidAt;
     private OffsetDateTime readyAt;
-    private OffsetDateTime completedAt;
+    private OffsetDateTime outForDeliveryAt;
+    private OffsetDateTime deliveredAt;
     private OffsetDateTime canceledAt;
 
     public static Order draft(CustomerId customerId, CompanyId companyId) {
@@ -41,7 +42,7 @@ public class Order implements AggregateRoot<OrderId> {
                 new HashSet<>(), Money.ZERO, Quantity.ZERO,
                 null, OrderStatus.DRAFT,
                 null, null, null,
-                null, null, null, null, null
+                null, null, null, null, null, null
         );
     }
 
@@ -51,10 +52,10 @@ public class Order implements AggregateRoot<OrderId> {
                   PaymentMethod paymentMethod, OrderStatus status,
                   Shipping shipping, Billing billing, DeliveryCompany deliveryCompany,
                   OffsetDateTime placedAt, OffsetDateTime paidAt, OffsetDateTime readyAt,
-                  OffsetDateTime completedAt, OffsetDateTime canceledAt) {
+                  OffsetDateTime outForDeliveryAt, OffsetDateTime deliveredAt, OffsetDateTime canceledAt) {
         this.setId(id);
         this.setCompanyId(companyId);
-        this.setCustomrtId(customerId);
+        this.setCustomerId(customerId);
         this.setItems(items);
         this.setTotalAmount(totalAmount);
         this.setTotalItems(totalItems);
@@ -66,7 +67,8 @@ public class Order implements AggregateRoot<OrderId> {
         this.setPlacedAt(placedAt);
         this.setPaidAt(paidAt);
         this.setReadyAt(readyAt);
-        this.setCompletedAt(completedAt);
+        this.setOutForDeliveryAt(outForDeliveryAt);
+        this.setDeliveredAt(deliveredAt);
         this.setCanceledAt(canceledAt);
     }
 
@@ -80,26 +82,20 @@ public class Order implements AggregateRoot<OrderId> {
                 .build();
 
         this.items.add(orderItem);
-
         this.recalculateTotals();
     }
 
     public void removeItem(OrderItemId itemId) {
         this.verifyIfChangeable();
-
         var orderItem = this.findOrderItem(itemId);
-
         this.items.remove(orderItem);
-
         this.recalculateTotals();
     }
 
     public void changeItemQuantity(OrderItemId itemId, Quantity quantity) {
         this.verifyIfChangeable();
-
-        var orderItem = findOrderItem(itemId);
+        var orderItem = this.findOrderItem(itemId);
         orderItem.changeQuantity(quantity);
-
         this.recalculateTotals();
     }
 
@@ -119,7 +115,7 @@ public class Order implements AggregateRoot<OrderId> {
         FieldValidator.requiresNonNull("shipping", shipping);
         this.verifyIfChangeable();
 
-        if (shipping.expetedDate().isBefore(LocalDate.now()))
+        if (shipping.expectedDate().isBefore(LocalDate.now()))
             throw new InvalidShippingDeliveryDateException("");
 
         this.setShipping(shipping);
@@ -147,6 +143,16 @@ public class Order implements AggregateRoot<OrderId> {
         this.setReadyAt(OffsetDateTime.now());
     }
 
+    public void outForDelivery() {
+        this.changeStatus(OrderStatus.OUT_FOR_DELIVERY);
+        this.setOutForDeliveryAt(OffsetDateTime.now());
+    }
+
+    public void delivered() {
+        this.changeStatus(OrderStatus.DELIVERED);
+        this.setDeliveredAt(OffsetDateTime.now());
+    }
+
     public void cancel() {
         this.changeStatus(OrderStatus.CANCELED);
         this.setCanceledAt(OffsetDateTime.now());
@@ -166,6 +172,14 @@ public class Order implements AggregateRoot<OrderId> {
 
     public boolean isReady() {
         return OrderStatus.READY.equals(this.status);
+    }
+
+    public boolean isOutForDelivery() {
+        return OrderStatus.OUT_FOR_DELIVERY.equals(this.status);
+    }
+
+    public boolean isDelivered() {
+        return OrderStatus.DELIVERED.equals(this.status);
     }
 
     public boolean isCancel() {
@@ -220,7 +234,6 @@ public class Order implements AggregateRoot<OrderId> {
         }
 
         var totalItemsShippingAmount = totalItemsAmount.add(shippingCost);
-
         this.setTotalItems(new Quantity(totalItemsQuantity));
         this.setTotalAmount(new Money(totalItemsShippingAmount));
     }
@@ -230,14 +243,26 @@ public class Order implements AggregateRoot<OrderId> {
             throw new OrderCannotBeEditedException(this.id.toString());
     }
 
+    public OrderId id() {
+        return id;
+    }
+
     private void setId(OrderId id) {
         FieldValidator.requiresNonNull("orderId", id);
         this.id = id;
     }
 
-    private void setCustomrtId(CustomerId customerId) {
+    public CustomerId customerId() {
+        return customerId;
+    }
+
+    private void setCustomerId(CustomerId customerId) {
         FieldValidator.requiresNonNull("customerId", customerId);
         this.customerId = customerId;
+    }
+
+    public CompanyId companyId() {
+        return companyId;
     }
 
     private void setCompanyId(CompanyId companyId) {
@@ -245,9 +270,17 @@ public class Order implements AggregateRoot<OrderId> {
         this.companyId = companyId;
     }
 
+    public Set<OrderItem> items() {
+        return Collections.unmodifiableSet(items);
+    }
+
     private void setItems(Set<OrderItem> items) {
         FieldValidator.requiresNonNull("order items", items);
         this.items = items;
+    }
+
+    public Money totalAmount() {
+        return totalAmount;
     }
 
     private void setTotalAmount(Money totalAmount) {
@@ -255,13 +288,25 @@ public class Order implements AggregateRoot<OrderId> {
         this.totalAmount = totalAmount;
     }
 
+    public Quantity totalItems() {
+        return totalItems;
+    }
+
     private void setTotalItems(Quantity totalItems) {
         FieldValidator.requiresNonNull("order total items", totalItems);
         this.totalItems = totalItems;
     }
 
+    public PaymentMethod paymentMethod() {
+        return paymentMethod;
+    }
+
     private void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public OrderStatus status() {
+        return status;
     }
 
     private void setStatus(OrderStatus status) {
@@ -269,8 +314,16 @@ public class Order implements AggregateRoot<OrderId> {
         this.status = status;
     }
 
+    public Shipping shipping() {
+        return shipping;
+    }
+
     private void setShipping(Shipping shipping) {
         this.shipping = shipping;
+    }
+
+    public Billing billing() {
+        return billing;
     }
 
     private void setBilling(Billing billing) {
@@ -285,84 +338,52 @@ public class Order implements AggregateRoot<OrderId> {
         this.deliveryCompany = deliveryCompany;
     }
 
-    private void setPlacedAt(OffsetDateTime placedAt) {
-        this.placedAt = placedAt;
-    }
-
-    private void setReadyAt(OffsetDateTime readyAt) {
-        this.readyAt = readyAt;
-    }
-
-    private void setPaidAt(OffsetDateTime paidAt) {
-        this.paidAt = paidAt;
-    }
-
-    private void setCompletedAt(OffsetDateTime completedAt) {
-        this.completedAt = completedAt;
-    }
-
-    private void setCanceledAt(OffsetDateTime canceledAt) {
-        this.canceledAt = canceledAt;
-    }
-
-    public OrderId id() {
-        return id;
-    }
-
-    public CustomerId custumerId() {
-        return customerId;
-    }
-
-    public CompanyId ccompanyId() {
-        return companyId;
-    }
-
-    public Set<OrderItem> items() {
-        return Collections.unmodifiableSet(items);
-    }
-
-    public Money totalAmount() {
-        return totalAmount;
-    }
-
-    public Quantity totalItems() {
-        return totalItems;
-    }
-
-    public Billing billing() {
-        return billing;
-    }
-
-    public Shipping shpping() {
-        return shipping;
-    }
-
-    public OrderStatus status() {
-        return status;
-    }
-
-    public PaymentMethod paymentMethod() {
-        return paymentMethod;
-    }
-
     public OffsetDateTime placedAt() {
         return placedAt;
+    }
+
+    private void setPlacedAt(OffsetDateTime placedAt) {
+        this.placedAt = placedAt;
     }
 
     public OffsetDateTime readyAt() {
         return readyAt;
     }
 
+    private void setReadyAt(OffsetDateTime readyAt) {
+        this.readyAt = readyAt;
+    }
+
     public OffsetDateTime paidAt() {
         return paidAt;
     }
 
-    public OffsetDateTime completedAt() {
-        return completedAt;
+    private void setPaidAt(OffsetDateTime paidAt) {
+        this.paidAt = paidAt;
     }
 
-    public OffsetDateTime cancelAt() {
+    public OffsetDateTime outForDeliveryAt() {
+        return outForDeliveryAt;
+    }
+
+    private void setOutForDeliveryAt(OffsetDateTime outForDeliveryAt) {
+        this.outForDeliveryAt = outForDeliveryAt;
+    }
+
+    public OffsetDateTime deliveredAt() {
+        return deliveredAt;
+    }
+
+    private void setDeliveredAt(OffsetDateTime deliveredAt) {
+        this.deliveredAt = deliveredAt;
+    }
+
+    public OffsetDateTime canceledAt() {
         return canceledAt;
+    }
+
+    private void setCanceledAt(OffsetDateTime canceledAt) {
+        this.canceledAt = canceledAt;
     }
 
     @Override

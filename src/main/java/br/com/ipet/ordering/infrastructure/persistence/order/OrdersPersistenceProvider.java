@@ -11,49 +11,42 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Component
 public class OrdersPersistenceProvider implements Orders {
-    @Override
-    public Optional<Order> ofId(OrderId id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public boolean exists(OrderId id) {
-        return false;
-    }
-
-    @Override
-    public void add(Order aggregateRoot) {
-
-    }
-
-    @Override
-    public int count() {
-        return 0;
-    }
-
-    /*private final OrderPersistenceEntityRepository repository;
+    private final OrderPersistenceRepository repository;
     private final OrderMapper orderMapper;
-    private final OrderPersistenceEntityMapper orderPersistenceEntityMapper;
+    private final OrderPersistenceMapper orderPersistenceMapper;
 
     @Override
     public Optional<Order> ofId(OrderId orderId) {
         var persistenceEntity = repository.findById(orderId.value());
-        return persistenceEntity.map(orderMapper::toDomainEntity);
+        return persistenceEntity.map(orderMapper::toDomain);
     }
 
     @Override
     public boolean exists(OrderId orderId) {
-        return false;
+        return repository.existsById(orderId.value());
     }
 
     @Override
-    public void add(Order aggregateRoot) {
-        var orderPersistenceEntity = orderPersistenceEntityMapper.fromDomain(aggregateRoot);
+    public void add(Order order) {
+        repository.findById(order.id().value())
+                .ifPresentOrElse(orderPersistenceEntity ->
+                        update(orderPersistenceEntity, order),
+                        () -> insert(order)
+                );
+    }
+
+    private void insert(Order order) {
+        var orderPersistenceEntity = orderPersistenceMapper.fromDomain(order);
+        repository.saveAndFlush(orderPersistenceEntity);
+    }
+
+    private void update(OrderPersistenceEntity orderPersistenceEntity, Order order) {
+        orderPersistenceEntity = orderPersistenceMapper.merge(orderPersistenceEntity, order);
         repository.saveAndFlush(orderPersistenceEntity);
     }
 
     @Override
-    public int count() {
-        return 0;
-    }*/
+    public long count() {
+        return repository.count();
+    }
 }

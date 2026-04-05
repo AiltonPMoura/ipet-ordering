@@ -27,12 +27,12 @@ public class OrderItem {
         );
 
         orderItem.reCalculateTotals();
-
         return orderItem;
     }
 
     @Builder(builderClassName = "ExistingOrderItemBuilder", builderMethodName = "existing")
-    private OrderItem(OrderItemId id, OrderId orderId, Product product, Quantity quantity, Money totalAmount) {
+    private OrderItem(OrderItemId id, OrderId orderId,
+                      Product product, Quantity quantity, Money totalAmount) {
         setId(id);
         setOrderId(orderId);
         setProduct(product);
@@ -40,27 +40,9 @@ public class OrderItem {
         setTotalAmount(totalAmount);
     }
 
-    public OrderItemId id() {
-        return id;
-    }
-
-    public OrderId orderId() {
-        return orderId;
-    }
-
-    public Product product() {
-        return product;
-    }
-
-    public Quantity quantity() {
-        return quantity;
-    }
-
-    public Money totalAmount() {
-        return totalAmount;
-    }
-
     void changeQuantity(Quantity quantity) {
+        FieldValidator.requiresNonNull("quantity", quantity);
+
         this.setQuantity(quantity);
         this.reCalculateTotals();
     }
@@ -69,9 +51,17 @@ public class OrderItem {
         this.setTotalAmount(this.product.price().multiply(this.quantity));
     }
 
+    public OrderItemId id() {
+        return id;
+    }
+
     private void setId(OrderItemId id) {
         FieldValidator.requiresNonNull("id", id);
         this.id = id;
+    }
+
+    public OrderId orderId() {
+        return orderId;
     }
 
     private void setOrderId(OrderId orderId) {
@@ -79,14 +69,26 @@ public class OrderItem {
         this.orderId = orderId;
     }
 
+    public Quantity quantity() {
+        return quantity;
+    }
+
     private void setQuantity(Quantity quantity) {
         FieldValidator.requiresNonNull("quantity", quantity);
         this.quantity = quantity;
     }
 
+    public Product product() {
+        return product;
+    }
+
     private void setProduct(Product product) {
         FieldValidator.requiresNonNull("product", product);
         this.product = product;
+    }
+
+    public Money totalAmount() {
+        return totalAmount;
     }
 
     private void setTotalAmount(Money totalAmount) {

@@ -10,9 +10,9 @@ public enum OrderStatus {
     PLACED(DRAFT),
     PAID(PLACED),
     READY(PAID),
-    DELIVERING(READY),
-    COMPLETED(DELIVERING),
-    CANCELED(DRAFT, PLACED, PAID, READY, DELIVERING);
+    OUT_FOR_DELIVERY(READY),
+    DELIVERED(READY, OUT_FOR_DELIVERY),
+    CANCELED(DRAFT, PLACED, PAID, READY, OUT_FOR_DELIVERY, DELIVERED);
 
     OrderStatus(OrderStatus... previousStatuses) {
         this.previousStatuses = Arrays.asList(previousStatuses);

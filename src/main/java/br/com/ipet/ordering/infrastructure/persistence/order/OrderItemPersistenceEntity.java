@@ -1,6 +1,5 @@
 package br.com.ipet.ordering.infrastructure.persistence.order;
 
-import br.com.ipet.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.commons.ProductEmbeddable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
