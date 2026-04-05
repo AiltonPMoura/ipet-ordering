@@ -1,8 +1,4 @@
-package br.com.ipet.ordering.infrastructure.persistence.commons.document;
-
-import br.com.ipet.ordering.domain.model.commons.Document;
-import br.com.ipet.ordering.domain.model.company.Cnpj;
-import br.com.ipet.ordering.domain.model.customer.Cpf;
+package br.com.ipet.ordering.domain.model.commons.document;
 
 public class CnpjStrategy implements DocumentStrategy{
     @Override

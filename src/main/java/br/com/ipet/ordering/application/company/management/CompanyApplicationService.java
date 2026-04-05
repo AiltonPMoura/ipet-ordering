@@ -1,9 +1,9 @@
 package br.com.ipet.ordering.application.company.management;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
-import br.com.ipet.ordering.domain.model.commons.valueobject.CelPhone;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
-import br.com.ipet.ordering.domain.model.company.Cnpj;
+import br.com.ipet.ordering.domain.model.commons.document.Cnpj;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.company.CompanyName;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
@@ -12,6 +12,7 @@ import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.company.Company;
 import br.com.ipet.ordering.domain.model.company.CompanyService;
 import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,15 +26,17 @@ public class CompanyApplicationService {
 
     private final CompanyService companyService;
     private final Companies companies;
+    private final DocumentFactory documentFactory;
 
     public UUID create(CompanyInput input) {
         FieldValidator.requiresNonNull("company input", input);
+
         var address = input.getAddress();
 
         var company = companyService.register(
                 new CompanyName(input.getCompanyName()),
-                new Cnpj(input.getCnpj()),
-                new CelPhone(input.getCelPhone()),
+                documentFactory.from(input.getDocument()),
+                new Phone(input.getPhone()),
                 new Email(input.getEmail()),
                 Address.builder()
                         .street(address.getStreet())
@@ -59,7 +62,7 @@ public class CompanyApplicationService {
         var address = input.getAddress();
 
         company.changeCompanyName(new CompanyName(input.getCompanyName()));
-        company.changeCelPhone(new CelPhone(input.getCelPhone()));
+        company.changeCelPhone(new Phone(input.getCelPhone()));
         company.changeAddress(Address.builder()
                         .street(address.getStreet())
                         .number(address.getNumber())

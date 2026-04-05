@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.company;
 
-import br.com.ipet.ordering.domain.model.company.Cnpj;
+import br.com.ipet.ordering.domain.model.commons.document.Document;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.company.Company;
 import br.com.ipet.ordering.domain.model.company.Companies;
@@ -46,7 +46,7 @@ public class CompanyPersistenceProvider implements Companies {
     }
 
     @Override
-    public boolean isCnpjUnique(Cnpj cnpj, CompanyId excepedCompanyId) {
-        return !companyPersistenceRepository.existsByCnpjAndIdNot(cnpj.value(), excepedCompanyId.value());
+    public boolean isDocumentUnique(Document document, CompanyId excepedCompanyId) {
+        return !companyPersistenceRepository.existsByDocumentAndIdNot(document.value(), excepedCompanyId.value());
     }
 }

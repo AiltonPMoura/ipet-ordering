@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class CompanyInput {
     private String companyName;
     private String email;
-    private Integer celPhone;
-    private String cnpj;
+    private String phone;
+    private String document;
     private AddressData address;
 }

@@ -1,6 +1,5 @@
-package br.com.ipet.ordering.infrastructure.persistence.commons.document;
+package br.com.ipet.ordering.domain.model.commons.document;
 
-import br.com.ipet.ordering.domain.model.commons.Document;
 import br.com.ipet.ordering.domain.model.commons.DocumentIsNotValidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

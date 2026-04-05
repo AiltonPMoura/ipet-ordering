@@ -1,30 +1,32 @@
 package br.com.ipet.ordering.domain.model.company;
 
+import br.com.ipet.ordering.domain.model.commons.document.Cnpj;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
-import br.com.ipet.ordering.domain.model.commons.valueobject.CelPhone;
+import br.com.ipet.ordering.domain.model.commons.document.Document;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
+import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class CompanyService {
-
     private final Companies companies;
 
-    public Company register(CompanyName name, Cnpj cnpj,
-                            CelPhone celPhone, Email email, Address address) {
+    public Company register(CompanyName name, Document document,
+                            Phone phone, Email email, Address address) {
 
         var company = Company.createNew()
                 .name(name)
-                .cnpj(cnpj)
-                .celPhone(celPhone)
+                .document(document)
+                .phone(phone)
                 .email(email)
                 .address(address)
                 .build();
 
         verifyEmailIsUnique(company.email(), company.id());
-        verifyCnpjIsUnique(company.cnpj(), company.id());
+        verifyDocumentIsUnique(company.document(), company.id());
 
         return company;
     }
@@ -35,13 +37,13 @@ public class CompanyService {
     }
 
     public void changeCnpj(Company company, Cnpj newCnpj) {
-        verifyCnpjIsUnique(newCnpj, company.id());
+        verifyDocumentIsUnique(newCnpj, company.id());
         company.changeCnpj(newCnpj);
     }
 
-    private void verifyCnpjIsUnique(Cnpj cnpj, CompanyId companyId) {
-        if (!companies.isCnpjUnique(cnpj, companyId)) {
-            throw new CompanyCnpjIsInUseException();
+    private void verifyDocumentIsUnique(Document document, CompanyId companyId) {
+        if (!companies.isDocumentUnique(document, companyId)) {
+            throw new CompanyDocumentIsInUseException();
         }
     }
 
