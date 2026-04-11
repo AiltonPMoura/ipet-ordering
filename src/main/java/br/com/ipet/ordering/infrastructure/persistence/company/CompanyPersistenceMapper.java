@@ -10,18 +10,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class CompanyPersistenceMapper {
 
-    public CompanyPersistenceEntity toPersistence(Company company) {
+    public CompanyPersistenceEntity fromDomain(Company company) {
         return merge(new CompanyPersistenceEntity(), company);
     }
 
-    public CompanyPersistenceEntity merge(CompanyPersistenceEntity companyPersistenceEntity, Company company) {
-        companyPersistenceEntity.setId(company.id().value());
-        companyPersistenceEntity.setName(company.name().value());
-        companyPersistenceEntity.setCnpj(company.cnpj().value());
-        companyPersistenceEntity.setEmail(company.email().value());
-        companyPersistenceEntity.setCelPhone(company.celPhone().value());
-        companyPersistenceEntity.setAddress(toAdressEmbeddable(company.address()));
-        return companyPersistenceEntity;
+    public CompanyPersistenceEntity merge(CompanyPersistenceEntity companyPersistence, Company company) {
+        companyPersistence.setId(company.id().value());
+        companyPersistence.setCompanyName(company.name().value());
+        companyPersistence.setDocument(company.document().value());
+        companyPersistence.setPhone(company.phone().value());
+        companyPersistence.setEmail(company.email().value());
+        companyPersistence.setRegisteredAt(company.registeredAt());
+        companyPersistence.setAddress(this.toAdressEmbeddable(company.address()));
+        return companyPersistence;
     }
 
     private AddressEmbeddable toAdressEmbeddable(Address address) {

@@ -1,9 +1,9 @@
 package br.com.ipet.ordering.application.company.management;
 
+import br.com.ipet.ordering.application.commons.AddressData;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
-import br.com.ipet.ordering.domain.model.commons.document.Cnpj;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.company.CompanyName;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
@@ -38,15 +38,7 @@ public class CompanyApplicationService {
                 documentFactory.from(input.getDocument()),
                 new Phone(input.getPhone()),
                 new Email(input.getEmail()),
-                Address.builder()
-                        .street(address.getStreet())
-                        .neighborhood(address.getNeighborhood())
-                        .number(address.getNumber())
-                        .city(address.getCity())
-                        .state(address.getState())
-                        .complement(address.getComplement())
-                        .zipCode(new ZipCode(address.getZipCode()))
-                        .build()
+                this.toAddress(address)
         );
 
         companies.add(company);
@@ -54,49 +46,45 @@ public class CompanyApplicationService {
         return company.id().value();
     }
 
-    public void update(CompanyUpdateInput input, UUID companyId) {
-        FieldValidator.requiresNonNull("company input", input);
+    public void update(UUID companyId, CompanyUpdateInput input) {
         FieldValidator.requiresNonNull("company id", companyId);
+        FieldValidator.requiresNonNull("company input", input);
 
-        var company = findCompanyById(companyId);
-        var address = input.getAddress();
+        var company = this.findCompanyById(companyId);
 
         company.changeCompanyName(new CompanyName(input.getCompanyName()));
-        company.changeCelPhone(new Phone(input.getCelPhone()));
-        company.changeAddress(Address.builder()
-                        .street(address.getStreet())
-                        .number(address.getNumber())
-                        .neighborhood(address.getNeighborhood())
-                        .complement(address.getComplement())
-                        .city(address.getCity())
-                        .state(address.getState())
-                        .zipCode(new ZipCode(address.getZipCode()))
-                .build());
+        company.changePhone(new Phone(input.getPhone()));
+        company.changeDocument(documentFactory.from(input.getDocument()));
+        company.changeAddress(this.toAddress(input.getAddress()));
 
         companies.add(company);
     }
 
-    public void changeEmail(String newEmail, UUID companyId) {
+    public void changeEmail(UUID companyId, String newEmail) {
+        FieldValidator.requiresNonNull("companyId", companyId);
         FieldValidator.requiresNonNull("email", newEmail);
-        FieldValidator.requiresNonNull("companyId", companyId);
 
-        var company = findCompanyById(companyId);
+        var company = this.findCompanyById(companyId);
+
         companyService.changeEmail(company, new Email(newEmail));
-        companies.add(company);
-    }
-
-    public void changeCnpj(String newCnpj, UUID companyId) {
-        FieldValidator.requiresNonNull("cnpj", newCnpj);
-        FieldValidator.requiresNonNull("companyId", companyId);
-
-        var company = findCompanyById(companyId);
-        companyService.changeCnpj(company, new Cnpj(newCnpj));
         companies.add(company);
     }
 
     private Company findCompanyById(UUID companyId) {
         return companies.ofId(new CompanyId(companyId))
                 .orElseThrow(CompanyNotFoundException::new);
+    }
+
+    private Address toAddress(AddressData address) {
+        return Address.builder()
+                .street(address.getStreet())
+                .neighborhood(address.getNeighborhood())
+                .number(address.getNumber())
+                .city(address.getCity())
+                .state(address.getState())
+                .complement(address.getComplement())
+                .zipCode(new ZipCode(address.getZipCode()))
+                .build();
     }
 
 }

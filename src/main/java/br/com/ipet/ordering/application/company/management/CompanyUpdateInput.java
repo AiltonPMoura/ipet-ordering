@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CompanyUpdateInput {
     private String companyName;
-    private Integer celPhone;
+    private String document;
+    private String phone;
     private AddressData address;
 }

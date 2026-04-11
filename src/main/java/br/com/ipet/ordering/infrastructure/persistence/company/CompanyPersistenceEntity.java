@@ -30,14 +30,14 @@ public class CompanyPersistenceEntity {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @Column
-    private String name;
+    @Column(name = "company_name")
+    private String companyName;
 
     @Column
     private String document;
 
     @Column
-    private Integer celPhone;
+    private String phone;
 
     @Column
     private String email;

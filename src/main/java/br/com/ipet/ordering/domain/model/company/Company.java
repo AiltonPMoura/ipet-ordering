@@ -2,9 +2,9 @@ package br.com.ipet.ordering.domain.model.company;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.Document;
+import br.com.ipet.ordering.domain.model.commons.document.Document;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
-import br.com.ipet.ordering.domain.model.commons.valueobject.CelPhone;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import lombok.Builder;
 
@@ -14,62 +14,40 @@ public class Company implements AggregateRoot<CompanyId> {
     private CompanyId id;
     private CompanyName name;
     private Document document;
-    private CelPhone celPhone;
+    private Phone phone;
     private Email email;
     private Address address;
     private OffsetDateTime registeredAt;
 
     @Builder(builderClassName = "CreateNewCompanyBuilder", builderMethodName = "createNew")
     private static Company create(CompanyName name, Document document,
-                                  CelPhone celPhone, Email email, Address address) {
+                                  Phone phone, Email email, Address address) {
         return new Company(new CompanyId(), name, document,
-                celPhone, email, address, OffsetDateTime.now());
+                phone, email, address, OffsetDateTime.now());
     }
 
     @Builder(builderClassName = "CreateExistingCompanyBuilder", builderMethodName = "existing")
     private Company(CompanyId id, CompanyName name, Document document,
-                    CelPhone celPhone, Email email, Address address, OffsetDateTime registeredAt) {
+                    Phone phone, Email email, Address address, OffsetDateTime registeredAt) {
         this.setId(id);
         this.setName(name);
         this.setDocument(document);
-        this.setCelPhone(celPhone);
+        this.setPhone(phone);
         this.setEmail(email);
         this.setAddress(address);
         this.setRegisteredAt(registeredAt);
     }
 
-    /*public void addService(ServiceName name, ServiceDescription description, Money price) {
-        var service = Service.createNew()
-                .companyId(this.id)
-                .name(name)
-                .description(description)
-                .price(price)
-                .build();
-
-        this.services.add(service);
-    }
-
-    public void addProduct(ProductName name, ProductDescription description, Money price) {
-        var product = Product.createNew()
-                .companyId(this.id)
-                .name(name)
-                .description(description)
-                .price(price)
-                .build();
-
-        this.products.add(product);
-    }*/
-
     public void changeCompanyName(CompanyName companyName) {
         this.setName(companyName);
     }
 
-    void changeCnpj(Cnpj cnpj) {
-        this.setDocument(cnpj);
+    public void changeDocument(Document document) {
+        this.setDocument(document);
     }
 
-    public void changeCelPhone(CelPhone celPhone) {
-        this.setCelPhone(celPhone);
+    public void changePhone(Phone phone) {
+        this.setPhone(phone);
     }
 
     void changeEmail(Email email) {
@@ -80,95 +58,25 @@ public class Company implements AggregateRoot<CompanyId> {
         this.setAddress(address);
     }
 
-    /*public void changeServiceName(ServiceId id, ServiceName name) {
-        var service = findService(id);
-        service.changeName(name);
-    }
-
-    public void changeServiceDescription(ServiceId id, ServiceDescription description) {
-        var service = findService(id);
-        service.changeDescription(description);
-    }
-
-    public void changeServicePrice(ServiceId id, Money price) {
-        var service = findService(id);
-        service.changePrice(price);
-    }
-
-    public void changeProductName(ProductId id, ProductName name) {
-        var product = findProduct(id);
-        product.changeName(name);
-    }
-
-    public void changeProductDescription(ProductId id, ProductDescription description) {
-        var product = findProduct(id);
-        product.changeDescription(description);
-    }
-
-    public void changeProductPrice(ProductId id, Money price) {
-        var product = findProduct(id);
-        product.changePrice(price);
-    }*/
-
     public CompanyId id() {
         return id;
+    }
+
+    private void setId(CompanyId id) {
+        this.id = id;
     }
 
     public CompanyName name() {
         return name;
     }
 
+    private void setName(CompanyName name) {
+        FieldValidator.requiresNonNull("name", name);
+        this.name = name;
+    }
+
     public Document document() {
         return document;
-    }
-
-    public CelPhone celPhone() {
-        return celPhone;
-    }
-
-    public Email email() {
-        return email;
-    }
-
-    public Address address() {
-        return address;
-    }
-
-    public OffsetDateTime registeredAt() {
-        return registeredAt;
-    }
-
-    /*private Service findService(ServiceId id) {
-        return this.services.stream()
-                .filter(service -> service.id().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new ServiceNotFoundException(id.value().toString(), this.id.value().toString()));
-    }
-
-    private Product findProduct(ProductId id) {
-        return this.products.stream()
-                .filter(product -> product.id().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new ProductNotFoundException(id.value().toString(), this.id.value().toString()));
-    }*/
-
-    private void setId(CompanyId id) {
-        this.id = id;
-    }
-
-    private void setAddress(Address address) {
-        FieldValidator.requiresNonNull("addres", address);
-        this.address = address;
-    }
-
-    private void setEmail(Email email) {
-        FieldValidator.requiresNonNull("email", email);
-        this.email = email;
-    }
-
-    private void setCelPhone(CelPhone celPhone) {
-        FieldValidator.requiresNonNull("celPhone", celPhone);
-        this.celPhone = celPhone;
     }
 
     private void setDocument(Document document) {
@@ -176,9 +84,35 @@ public class Company implements AggregateRoot<CompanyId> {
         this.document = document;
     }
 
-    private void setName(CompanyName name) {
-        FieldValidator.requiresNonNull("company name", name);
-        this.name = name;
+    public Phone phone() {
+        return phone;
+    }
+
+    private void setPhone(Phone phone) {
+        FieldValidator.requiresNonNull("phone", phone);
+        this.phone = phone;
+    }
+
+    public Email email() {
+        return email;
+    }
+
+    private void setEmail(Email email) {
+        FieldValidator.requiresNonNull("email", email);
+        this.email = email;
+    }
+
+    public Address address() {
+        return address;
+    }
+
+    private void setAddress(Address address) {
+        FieldValidator.requiresNonNull("addres", address);
+        this.address = address;
+    }
+
+    public OffsetDateTime registeredAt() {
+        return registeredAt;
     }
 
     private void setRegisteredAt(OffsetDateTime registeredAt) {

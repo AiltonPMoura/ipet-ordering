@@ -7,6 +7,7 @@ import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -14,39 +15,57 @@ import java.util.Optional;
 @Component
 public class CompanyPersistenceProvider implements Companies {
 
-    private final CompanyPersistenceRepository companyPersistenceRepository;
+    private final CompanyPersistenceRepository repository;
     private final CompanyMapper companyMapper;
     private final CompanyPersistenceMapper companyPersistenceMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Company> ofId(CompanyId companyId) {
-        return companyPersistenceRepository.findById(companyId.value())
+        return repository.findById(companyId.value())
                 .map(companyMapper::toDomain);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean exists(CompanyId companyId) {
-        return companyPersistenceRepository.existsById(companyId.value());
+        return repository.existsById(companyId.value());
     }
 
     @Override
+    @Transactional
     public void add(Company company) {
-        var companyPersistence = companyPersistenceMapper.toPersistence(company);
-        companyPersistenceRepository.saveAndFlush(companyPersistence);
+        repository.findById(company.id().value())
+                .ifPresentOrElse(companyPersistence ->
+                        update(companyPersistence, company),
+                        () -> insert(company));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public long count() {
-        return 0;
+        return repository.count();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isEmailUnique(Email email, CompanyId excepedCompanyId) {
-        return !companyPersistenceRepository.existsByEmailAndIdNot(email.value(), excepedCompanyId.value());
+        return !repository.existsByEmailAndIdNot(email.value(), excepedCompanyId.value());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isDocumentUnique(Document document, CompanyId excepedCompanyId) {
-        return !companyPersistenceRepository.existsByDocumentAndIdNot(document.value(), excepedCompanyId.value());
+        return !repository.existsByDocumentAndIdNot(document.value(), excepedCompanyId.value());
+    }
+
+    private void insert(Company company) {
+        var companyPersistence = companyPersistenceMapper.fromDomain(company);
+        repository.saveAndFlush(companyPersistence);
+    }
+
+    private void update(CompanyPersistenceEntity companyPersistence, Company company) {
+        companyPersistence = companyPersistenceMapper.merge(companyPersistence, company);
+        repository.saveAndFlush(companyPersistence);
     }
 }

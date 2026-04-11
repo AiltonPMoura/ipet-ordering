@@ -19,5 +19,4 @@ public class DocumentFactory {
                 .orElseThrow(() -> new DocumentIsNotValidException("documento inválido"));
     }
 
-
 }
