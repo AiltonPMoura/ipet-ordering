@@ -1,6 +1,10 @@
 package br.com.ipet.ordering.domain.model.commons.document;
 
-public class CpfStrategy implements DocumentStrategy{
+import org.springframework.stereotype.Component;
+
+@Component
+public class CpfStrategy implements DocumentStrategy {
+
     @Override
     public boolean match(String value) {
         return value.matches("\\d{11}");

@@ -1,6 +1,5 @@
 package br.com.ipet.ordering.infrastructure.persistence.customer;
 
-import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -41,5 +40,9 @@ public class CustomerAddressPersistenceEntity {
 
     @Column(name = "delivery_address")
     private boolean isDeliveryAddress;
+
+    public UUID getCustomerId() {
+        return this.customer.getId();
+    }
 
 }

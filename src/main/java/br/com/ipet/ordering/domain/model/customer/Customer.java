@@ -2,9 +2,9 @@ package br.com.ipet.ordering.domain.model.customer;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.Document;
+import br.com.ipet.ordering.domain.model.commons.document.Document;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
-import br.com.ipet.ordering.domain.model.commons.valueobject.CelPhone;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
 import lombok.Builder;
@@ -19,17 +19,17 @@ public class Customer implements AggregateRoot<CustomerId> {
     private CustomerId id;
     private FullName fullName;
     private Email email;
-    private CelPhone celPhone;
+    private Phone phone;
     private Document document;
     private Set<CustomerAddress> address;
     private OffsetDateTime registerAt;
 
     @Builder(builderClassName = "CreateNewCustomerBuilder", builderMethodName = "createNew")
     private static Customer create(FullName fullName, Email email,
-                                   CelPhone celPhone, Document document, Address address) {
+                                   Phone phone, Document document, Address address) {
 
         var customer = new Customer(new CustomerId(), fullName,
-                email, celPhone, document, new HashSet<>(), OffsetDateTime.now());
+                email, phone, document, new HashSet<>(), OffsetDateTime.now());
 
         customer.addAddress(address, true);
 
@@ -38,34 +38,14 @@ public class Customer implements AggregateRoot<CustomerId> {
 
     @Builder(builderClassName = "CreateExistingCustomerBuilder", builderMethodName = "existing")
     private Customer(CustomerId id, FullName fullName, Email email,
-                     CelPhone celPhone, Document document, Set<CustomerAddress> address, OffsetDateTime registerAt) {
+                     Phone phone, Document document, Set<CustomerAddress> address, OffsetDateTime registerAt) {
         this.setId(id);
         this.setFullName(fullName);
         this.setEmail(email);
-        this.setCelPhone(celPhone);
+        this.setPhone(phone);
         this.setDocument(document);
         this.setAddress(address);
         this.setRegisterAt(registerAt);
-    }
-
-    public CustomerId id() {
-        return id;
-    }
-
-    public FullName fullName() {
-        return fullName;
-    }
-
-    public Email email() {
-        return email;
-    }
-
-    public CelPhone celPhone() {
-        return celPhone;
-    }
-
-    public Document document() {
-        return document;
     }
 
     public Set<CustomerAddress> customerAddresses() {
@@ -76,7 +56,7 @@ public class Customer implements AggregateRoot<CustomerId> {
         return registerAt;
     }
 
-    void addAddress(Address address, boolean isDeliveryAddress) {
+    public CustomerAddressId addAddress(Address address, boolean isDeliveryAddress) {
         FieldValidator.requiresNonNull("address", address);
         FieldValidator.requiresNonNull("isDeliveryAddress", isDeliveryAddress);
         
@@ -89,9 +69,11 @@ public class Customer implements AggregateRoot<CustomerId> {
                 .build();
 
         this.address.add(customerAddress);
+
+        return customerAddress.id();
     }
 
-    void removeAddress(CustomerAddressId addressId) {
+    public void removeAddress(CustomerAddressId addressId) {
         var customerAddress = this.findCustomerAddress(addressId);
 
         this.verifyIfCanRemoveAddress(customerAddress);
@@ -107,8 +89,8 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.setEmail(email);
     }
 
-    public void changeCelPhone(CelPhone celPhone) {
-        this.setCelPhone(celPhone);
+    public void changePhone(Phone phone) {
+        this.setPhone(phone);
     }
 
     public void changeDocument(Document document) {
@@ -116,15 +98,17 @@ public class Customer implements AggregateRoot<CustomerId> {
     }
 
     public void changeAddress(CustomerAddressId addressId, Address address, boolean isDeliveryAddress) {
-        var customerAddress = findCustomerAddress(addressId);
+        var customerAddress = this.findCustomerAddress(addressId);
 
-        if (isDeliveryAddress) disableCurrentDeliveryAddress();
+        if (isDeliveryAddress) this.disableCurrentDeliveryAddress();
 
         customerAddress.changeAddress(address);
         customerAddress.changeDeliveryAddress(isDeliveryAddress);
     }
 
     private CustomerAddress findCustomerAddress(CustomerAddressId addressId) {
+        FieldValidator.requiresNonNull("addressId", addressId);
+
         return this.address.stream()
                 .filter(customerAddress -> customerAddress.id().equals(addressId))
                 .findFirst()
@@ -143,9 +127,17 @@ public class Customer implements AggregateRoot<CustomerId> {
             throw new CannotDeleteDeliveryAddress("");
     }
 
+    public CustomerId id() {
+        return id;
+    }
+
     private void setId(CustomerId id) {
         FieldValidator.requiresNonNull("id", id);
         this.id = id;
+    }
+
+    public FullName fullName() {
+        return fullName;
     }
 
     private void setFullName(FullName fullName) {
@@ -153,14 +145,26 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.fullName = fullName;
     }
 
+    public Email email() {
+        return email;
+    }
+
     private void setEmail(Email email) {
         FieldValidator.requiresNonNull("email", email);
         this.email = email;
     }
 
-    private void setCelPhone(CelPhone celPhone) {
-        FieldValidator.requiresNonNull("celPhone", celPhone);
-        this.celPhone = celPhone;
+    public Phone phone() {
+        return phone;
+    }
+
+    private void setPhone(Phone phone) {
+        FieldValidator.requiresNonNull("phone", phone);
+        this.phone = phone;
+    }
+
+    public Document document() {
+        return document;
     }
 
     private void setDocument(Document document) {

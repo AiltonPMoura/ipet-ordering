@@ -1,12 +1,13 @@
 package br.com.ipet.ordering.application.customer.management;
 
+import br.com.ipet.ordering.application.commons.AddressData;
 import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
-import br.com.ipet.ordering.domain.model.commons.valueobject.CelPhone;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
-import br.com.ipet.ordering.domain.model.customer.Cpf;
 import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
@@ -23,28 +24,21 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomerApplicationService {
 
-    private final CustomerService customerService;
     private final Customers customers;
+    private final CustomerService customerService;
+    private final DocumentFactory documentFactory;
 
     public UUID create(CustomerInput input) {
-        FieldValidator.requiresNonNull("customer input", input);
+        FieldValidator.requiresNonNull("input", input);
 
         var address = input.getAddressData();
 
         var customer = customerService.register(
                 new FullName(input.getFirstName(), input.getLastName()),
                 new Email(input.getEmail()),
-                new CelPhone(input.getCelPhone()),
-                new Cpf(input.getDocument()),
-                Address.builder()
-                        .street(address.getStreet())
-                        .number(address.getNumber())
-                        .neighborhood(address.getNeighborhood())
-                        .city(address.getCity())
-                        .state(address.getState())
-                        .complement(address.getComplement())
-                        .zipCode(new ZipCode(address.getZipCode()))
-                        .build()
+                new Phone(input.getPhone()),
+                documentFactory.from(input.getDocument()),
+                this.toAddress(address)
         );
 
         customers.add(customer);
@@ -52,32 +46,42 @@ public class CustomerApplicationService {
         return customer.id().value();
     }
 
-    public void update(UUID customerId, UUID addressId, CustomerUpdateInput input) {
+    public UUID addAddress(UUID customerId, AddressData address, boolean isDeliveryAddress) {
+        FieldValidator.requiresNonNull("customerId", customerId);
+        FieldValidator.requiresNonNull("address", address);
+
+        var customer = customers.ofId(new CustomerId(customerId))
+                .orElseThrow(CustomerNotFoundException::new);
+
+        var customerAddressId = customer.addAddress(this.toAddress(address), isDeliveryAddress);
+
+        customers.add(customer);
+
+        return customerAddressId.value();
+    }
+
+    public void removeAddress(UUID customerId, UUID addressId) {
         FieldValidator.requiresNonNull("customerId", customerId);
         FieldValidator.requiresNonNull("addressId", addressId);
+
+        var customer = customers.ofId(new CustomerId(customerId))
+                .orElseThrow(CustomerNotFoundException::new);
+
+        customer.removeAddress(new CustomerAddressId(addressId));
+
+        customers.add(customer);
+    }
+
+    public void update(UUID customerId, CustomerUpdateInput input) {
+        FieldValidator.requiresNonNull("customerId", customerId);
         FieldValidator.requiresNonNull("input", input);
 
         var customer = customers.ofId(new CustomerId(customerId))
                 .orElseThrow(CustomerNotFoundException::new);
 
         customer.changeName(new FullName(input.getFirstName(), input.getLastName()));
-        customer.changeDocument(new Cpf(input.getDocument()));
-        customer.changeCelPhone(new CelPhone(input.getCelPhone()));
-
-        var address = input.getAddressData();
-        customer.changeAddress(
-                new CustomerAddressId(addressId),
-                Address.builder()
-                        .street(address.getStreet())
-                        .number(address.getNumber())
-                        .neighborhood(address.getNeighborhood())
-                        .city(address.getCity())
-                        .state(address.getState())
-                        .complement(address.getComplement())
-                        .zipCode(new ZipCode(address.getZipCode()))
-                        .build(),
-                input.isDeliveryAddress()
-        );
+        customer.changeDocument(documentFactory.from(input.getDocument()));
+        customer.changePhone(new Phone(input.getPhone()));
 
         customers.add(customer);
     }
@@ -92,6 +96,32 @@ public class CustomerApplicationService {
         customerService.changeEmail(customer, new Email(newEmail));
 
         customers.add(customer);
+    }
+
+    public void changeAddress(UUID customerId, UUID addressId, AddressData address, boolean isDeliveryAddress) {
+        FieldValidator.requiresNonNull("customerId", customerId);
+        FieldValidator.requiresNonNull("addressId", addressId);
+        FieldValidator.requiresNonNull("address", address);
+        FieldValidator.requiresNonNull("isDeliveryAddress", isDeliveryAddress);
+
+        var customer = customers.ofId(new CustomerId(customerId))
+                .orElseThrow(CustomerNotFoundException::new);
+
+        customer.changeAddress(new CustomerAddressId(addressId), this.toAddress(address), isDeliveryAddress);
+
+        customers.add(customer);
+    }
+
+    private Address toAddress(AddressData address) {
+        return Address.builder()
+                .street(address.getStreet())
+                .number(address.getNumber())
+                .neighborhood(address.getNeighborhood())
+                .city(address.getCity())
+                .state(address.getState())
+                .complement(address.getComplement())
+                .zipCode(new ZipCode(address.getZipCode()))
+                .build();
     }
 
 }

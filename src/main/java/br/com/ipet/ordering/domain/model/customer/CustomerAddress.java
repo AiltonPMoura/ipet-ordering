@@ -4,6 +4,8 @@ import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import lombok.Builder;
 
+import java.util.Objects;
+
 public class CustomerAddress {
     private CustomerAddressId id;
     private CustomerId customerId;
@@ -24,22 +26,6 @@ public class CustomerAddress {
         this.setIsDeliveryAddress(isDeliveryAddress);
     }
 
-    public CustomerAddressId id() {
-        return id;
-    }
-
-    public CustomerId customerId() {
-        return customerId;
-    }
-
-    public Address address() {
-        return address;
-    }
-
-    public boolean isDeliveryAddress() {
-        return isDeliveryAddress;
-    }
-
     void changeAddress(Address address) {
         this.setAddress(address);
     }
@@ -48,9 +34,17 @@ public class CustomerAddress {
         this.setIsDeliveryAddress(isDeliveryAddress);
     }
 
+    public CustomerAddressId id() {
+        return id;
+    }
+
     private void setId(CustomerAddressId id) {
         FieldValidator.requiresNonNull("id", id);
         this.id = id;
+    }
+
+    public CustomerId customerId() {
+        return customerId;
     }
 
     private void setCustomerId(CustomerId customerId) {
@@ -58,13 +52,32 @@ public class CustomerAddress {
         this.customerId = customerId;
     }
 
+    public Address address() {
+        return address;
+    }
+
     private void setAddress(Address address) {
         FieldValidator.requiresNonNull("address", address);
         this.address = address;
     }
 
+    public boolean isDeliveryAddress() {
+        return isDeliveryAddress;
+    }
+
     private void setIsDeliveryAddress(boolean deliveryAddress) {
         FieldValidator.requiresNonNull("deliveryAddress", deliveryAddress);
         this.isDeliveryAddress = deliveryAddress;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof CustomerAddress that)) return false;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
