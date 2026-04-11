@@ -7,6 +7,8 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import lombok.Builder;
 
+import java.util.Objects;
+
 public class ShoppingCartItem {
     private ShoppingCartItemId id;
     private ShoppingCartId shoppingCartId;
@@ -23,16 +25,19 @@ public class ShoppingCartItem {
         return shoppingCartItem;
     }
 
-    @Builder(builderClassName = "CreateShoppingCartBuilder", builderMethodName = "existing")
+    @Builder(builderClassName = "ExistingShoppingCartItemBuilder", builderMethodName = "existing")
     private ShoppingCartItem(ShoppingCartItemId id, ShoppingCartId shoppingCartId,
                              Product product, Quantity quantity, Money totalAmount) {
         this.setId(id);
+        this.setShoppingCartId(shoppingCartId);
         this.setProduct(product);
         this.setQuantity(quantity);
         this.setTotalAmount(totalAmount);
     }
 
     void changeQuantity(Quantity quantity) {
+        FieldValidator.requiresNonNull("quantity", quantity);
+
         if (quantity.value() < 1)
             throw new QuantityNeedsGreaterThanZeroException();
 
@@ -41,6 +46,11 @@ public class ShoppingCartItem {
     }
 
     void refresh(Product product) {
+        FieldValidator.requiresNonNull("product", product);
+
+        if (!this.product.id().equals(product.id()))
+            throw new ShoppingCartItemIncompatibleProductException("");
+
         this.setProduct(product);
         this.recalculateTotals();
     }
@@ -57,6 +67,15 @@ public class ShoppingCartItem {
     private void setId(ShoppingCartItemId id) {
         FieldValidator.requiresNonNull("id", id);
         this.id = id;
+    }
+
+    public ShoppingCartId shoppingCartId() {
+        return shoppingCartId;
+    }
+
+    private void setShoppingCartId(ShoppingCartId shoppingCartId) {
+        FieldValidator.requiresNonNull("shoppingCartId", shoppingCartId);
+        this.shoppingCartId = shoppingCartId;
     }
 
     public Product product() {
@@ -84,5 +103,16 @@ public class ShoppingCartItem {
     private void setTotalAmount(Money totalAmount) {
         FieldValidator.requiresNonNull("totalAmount", totalAmount);
         this.totalAmount = totalAmount;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof ShoppingCartItem that)) return false;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

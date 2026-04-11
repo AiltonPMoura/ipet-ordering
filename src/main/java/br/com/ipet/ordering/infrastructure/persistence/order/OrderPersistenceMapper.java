@@ -1,6 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.order;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Product;
 import br.com.ipet.ordering.domain.model.order.Billing;
 import br.com.ipet.ordering.domain.model.order.DeliveryCompany;
 import br.com.ipet.ordering.domain.model.order.Order;
@@ -53,15 +54,14 @@ public class OrderPersistenceMapper {
         var orderItems = order.items();
 
         if (orderItemsPersistence.isEmpty())
-            return orderItems.stream().map(this::fromDomainItem)
-                    .collect(Collectors.toSet());
+            return orderItems.stream().map(this::fromDomainItem).collect(Collectors.toSet());
 
         var orderItemsPersistenceMap = orderItemsPersistence.stream()
                 .collect(Collectors.toMap(OrderItemPersistenceEntity::getId, item -> item));
 
         return orderItems.stream().map(orderItem -> {
-            var itemPersistence = orderItemsPersistenceMap.getOrDefault(orderItem.id().value(), new OrderItemPersistenceEntity());
-            return mergeItem(itemPersistence, orderItem);
+            var orderItemPersistence = orderItemsPersistenceMap.getOrDefault(orderItem.id().value(), new OrderItemPersistenceEntity());
+            return mergeItem(orderItemPersistence, orderItem);
         }).collect(Collectors.toSet());
 
     }
@@ -72,16 +72,19 @@ public class OrderPersistenceMapper {
 
     private OrderItemPersistenceEntity mergeItem(OrderItemPersistenceEntity orderItemPersistence, OrderItem orderItem) {
         orderItemPersistence.setId(orderItem.id().value());
-        orderItemPersistence.setProduct(ProductEmbeddable.builder()
-                .productId(orderItem.product().id().value())
-                .name(orderItem.product().name().value())
-                .description(orderItem.product().description().value())
-                .price(orderItem.product().price().value())
-                .build());
+        orderItemPersistence.setProduct(this.toProductEmbeddable(orderItem.product()));
         orderItemPersistence.setQuantity(orderItem.quantity().value());
         orderItemPersistence.setTotalAmount(orderItem.totalAmount().value());
-
         return orderItemPersistence;
+    }
+
+    private ProductEmbeddable toProductEmbeddable(Product product) {
+        return ProductEmbeddable.builder()
+                .productId(product.id().value())
+                .name(product.name().value())
+                .description(product.description().value())
+                .price(product.price().value())
+                .build();
     }
 
     private BillingEmbeddable toBillingEmbeddable(Billing billing) {

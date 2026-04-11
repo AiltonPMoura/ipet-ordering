@@ -18,6 +18,8 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,8 +41,8 @@ public class ShoppingCartPersistenceEntity {
     @ManyToOne(optional = false)
     private CustomerPersistenceEntity customer;
 
-    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.PERSIST)
-    private Set<ShoppingCartItemPersistenceEntity> items;
+    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private Set<ShoppingCartItemPersistenceEntity> items = new HashSet<>();
 
     @Column
     private Integer totalItems;
@@ -49,14 +51,15 @@ public class ShoppingCartPersistenceEntity {
     private BigDecimal totalAmount;
 
     @Column
-    private LocalDate startAt;
+    private OffsetDateTime createdAt;
 
     public UUID getCustomerId() {
         return this.customer.getId();
     }
 
-    public void refreshItems() {
-        this.items.forEach(item -> item.setShoppingCart(this));
+    public void setItems(Set<ShoppingCartItemPersistenceEntity> items) {
+        items.forEach(item -> item.setShoppingCart(this));
+        this.items = items;
     }
 
 }

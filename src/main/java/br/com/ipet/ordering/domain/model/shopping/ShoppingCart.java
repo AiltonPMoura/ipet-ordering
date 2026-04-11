@@ -10,9 +10,11 @@ import br.com.ipet.ordering.domain.model.product.ProductId;
 import lombok.Builder;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
@@ -22,28 +24,41 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
     private Set<ShoppingCartItem> items;
     private Quantity totalItems;
     private Money totalAmount;
-    private LocalDate startAt;
+    private OffsetDateTime createdAt;
 
     public static ShoppingCart startShopping(CustomerId customerId) {
         return new ShoppingCart(new ShoppingCartId(), customerId,
-                new HashSet<>(), Quantity.ZERO, Money.ZERO, LocalDate.now());
+                new HashSet<>(), Quantity.ZERO, Money.ZERO, OffsetDateTime.now());
     }
 
-    @Builder(builderClassName = "CreateShoppingCartBuilder", builderMethodName = "existing")
+    @Builder(builderClassName = "ExistingShoppingCartBuilder", builderMethodName = "existing")
     private ShoppingCart(ShoppingCartId id, CustomerId customerId, Set<ShoppingCartItem> items,
-                         Quantity totalItems, Money totalAmount, LocalDate startAt) {
+                         Quantity totalItems, Money totalAmount, OffsetDateTime createdAt) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.setItems(items);
         this.setTotalItems(totalItems);
         this.setTotalAmount(totalAmount);
-        this.setStartAt(startAt);
+        this.setCreatedAt(createdAt);
     }
 
     public void addItem(Product product, Quantity quantity) {
         var shoppingCartItem = ShoppingCartItem.create(this.id, product, quantity);
-        this.items.add(shoppingCartItem);
+
+        this.searchItemByProduct(product.id())
+                .ifPresentOrElse(item -> updateItem(item, product, quantity),
+                        () -> insertItem(shoppingCartItem));
+
         this.recalculateTotals();
+    }
+
+    private void insertItem(ShoppingCartItem shoppingCartItem) {
+        this.items.add(shoppingCartItem);
+    }
+
+    private void updateItem(ShoppingCartItem shoppingCartItem, Product product, Quantity quantity) {
+        shoppingCartItem.refresh(product);
+        shoppingCartItem.changeQuantity(quantity);
     }
 
     public void removeItem(ShoppingCartItemId itemId) {
@@ -60,31 +75,37 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
 
     public void clear() {
         this.items.clear();
-        this.recalculateTotals();
+        this.totalAmount = Money.ZERO;
+        this.totalItems = Quantity.ZERO;
     }
 
     public void refreshItem(Product product) {
+        FieldValidator.requiresNonNull("product", product);
+
         var shoppingCartItem = this.findItem(product.id());
         shoppingCartItem.refresh(product);
         recalculateTotals();
     }
+    public ShoppingCartItem findItem(ProductId productId) {
+        FieldValidator.requiresNonNull("productId", productId);
 
-    public boolean isEmpty() {
-        return this.items.isEmpty();
-    }
-
-    private ShoppingCartItem findItem(ProductId productId) {
         return this.items.stream()
                 .filter(item -> item.product().id().equals(productId))
                 .findFirst()
                 .orElseThrow(() -> new ShoppingCartProductItemNotFoundException(""));
     }
 
-    private ShoppingCartItem findItem(ShoppingCartItemId itemId) {
+    public ShoppingCartItem findItem(ShoppingCartItemId itemId) {
+        FieldValidator.requiresNonNull("itemId", itemId);
+
         return this.items.stream()
                 .filter(item -> item.id().equals(itemId))
                 .findFirst()
                 .orElseThrow(() -> new ShoppingCartItemNotFoundException(""));
+    }
+
+    public boolean isEmpty() {
+        return this.items.isEmpty();
     }
 
     private void recalculateTotals() {
@@ -96,6 +117,12 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
 
         this.setTotalItems(new Quantity(totalItemsQuantity));
         this.setTotalAmount(new Money(totalItemsAmount));
+    }
+
+    private Optional<ShoppingCartItem> searchItemByProduct(ProductId productId) {
+        return this.items.stream()
+                .filter(item -> item.product().id().equals(productId))
+                .findFirst();
     }
 
     @Override
@@ -144,12 +171,23 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
         this.totalAmount = totalAmount;
     }
 
-    public LocalDate startAt() {
-        return startAt;
+    public OffsetDateTime createdAt() {
+        return createdAt;
     }
 
-    private void setStartAt(LocalDate startAt) {
-        FieldValidator.requiresNonNull("startAt", startAt);
-        this.startAt = startAt;
+    private void setCreatedAt(OffsetDateTime createdAt) {
+        FieldValidator.requiresNonNull("createdAt", createdAt);
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof ShoppingCart that)) return false;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

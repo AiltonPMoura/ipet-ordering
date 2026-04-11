@@ -62,13 +62,14 @@ public class OrderMapper {
     }
 
     private Set<OrderItem> toItems(Set<OrderItemPersistenceEntity> itemsPersistence) {
-        return itemsPersistence.stream().map(itemPersistence -> OrderItem.existing()
-                .id(new OrderItemId(itemPersistence.getId()))
-                .orderId(new OrderId(itemPersistence.getOrderId()))
-                .product(this.toProduct(itemPersistence.getProduct()))
-                .quantity(new Quantity(itemPersistence.getQuantity()))
-                .totalAmount(new Money(itemPersistence.getTotalAmount()))
-                .build()
+        return itemsPersistence.stream().map(itemPersistence ->
+                OrderItem.existing()
+                        .id(new OrderItemId(itemPersistence.getId()))
+                        .orderId(new OrderId(itemPersistence.getOrderId()))
+                        .product(this.toProduct(itemPersistence.getProduct()))
+                        .quantity(new Quantity(itemPersistence.getQuantity()))
+                        .totalAmount(new Money(itemPersistence.getTotalAmount()))
+                        .build()
         ).collect(Collectors.toSet());
     }
 

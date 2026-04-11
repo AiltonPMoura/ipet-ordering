@@ -45,4 +45,8 @@ public class ShoppingCartItemPersistenceEntity {
     @Column
     private BigDecimal totalAmount;
 
+    public UUID getShoppingCartId() {
+        return this.shoppingCart.getId();
+    }
+
 }

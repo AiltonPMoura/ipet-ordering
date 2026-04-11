@@ -1,6 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.order;
 
 import br.com.ipet.ordering.infrastructure.persistence.commons.ProductEmbeddable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -38,7 +39,10 @@ public class OrderItemPersistenceEntity {
     @Embedded
     private ProductEmbeddable product;
 
+    @Column
     private Integer quantity;
+
+    @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
     public UUID getOrderId() {
