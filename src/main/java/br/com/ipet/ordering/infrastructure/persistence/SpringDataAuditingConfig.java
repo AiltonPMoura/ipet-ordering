@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.infrastructure.persistence.config;
+package br.com.ipet.ordering.infrastructure.persistence;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
