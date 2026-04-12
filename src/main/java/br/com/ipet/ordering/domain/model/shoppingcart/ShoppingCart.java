@@ -73,7 +73,7 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
         this.recalculateTotals();
     }
 
-    public void clear() {
+    public void empty() {
         this.items.clear();
         this.totalAmount = Money.ZERO;
         this.totalItems = Quantity.ZERO;
