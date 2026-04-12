@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -19,8 +20,9 @@ public class CustomerDetailOutput {
     private String firstName;
     private String lastName;
     private String email;
-    private Integer celPhone;
+    private Integer phone;
     private String document;
+    private LocalDate birthDate;
     private AddressData address;
     private OffsetDateTime registerAt;
 }

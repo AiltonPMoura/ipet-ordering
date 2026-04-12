@@ -11,7 +11,7 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
-import br.com.ipet.ordering.domain.model.customer.CustomerService;
+import br.com.ipet.ordering.domain.model.customer.CustomerRegistrationService;
 import br.com.ipet.ordering.domain.model.customer.Customers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,10 +22,10 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CustomerApplicationService {
+public class CustomerManagementApplicationService {
 
     private final Customers customers;
-    private final CustomerService customerService;
+    private final CustomerRegistrationService customerRegistrationService;
     private final DocumentFactory documentFactory;
 
     public UUID create(CustomerInput input) {
@@ -33,7 +33,7 @@ public class CustomerApplicationService {
 
         var address = input.getAddressData();
 
-        var customer = customerService.register(
+        var customer = customerRegistrationService.register(
                 new FullName(input.getFirstName(), input.getLastName()),
                 new Email(input.getEmail()),
                 new Phone(input.getPhone()),
@@ -93,7 +93,7 @@ public class CustomerApplicationService {
         var customer = customers.ofId(new CustomerId(customerId))
                 .orElseThrow(CustomerNotFoundException::new);
 
-        customerService.changeEmail(customer, new Email(newEmail));
+        customerRegistrationService.changeEmail(customer, new Email(newEmail));
 
         customers.add(customer);
     }
