@@ -1,9 +1,10 @@
-package br.com.ipet.ordering.infrastructure.rest.service;
+package br.com.ipet.ordering.infrastructure.client.catalog;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Service;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ServiceDescription;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ServiceId;
+import br.com.ipet.ordering.domain.model.pet.Size;
 import br.com.ipet.ordering.domain.model.service.ServiceDomain;
 
 import java.util.Set;
@@ -15,14 +16,14 @@ public class ServiceDomainImpl implements ServiceDomain {
                 new Service(
                         new ServiceId(),
                         "DOG_BATH",
-                        "SMALL",
+                        Size.valueOf("SMALL"),
                         new ServiceDescription(""),
                         new Money("10")
                 ),
                 new Service(
                         new ServiceId(),
                         "DOG_BATH",
-                        "LARGE",
+                        Size.valueOf("LARGE"),
                         new ServiceDescription(""),
                         new Money("20")
                 )
