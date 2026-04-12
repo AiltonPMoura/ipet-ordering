@@ -16,5 +16,5 @@ public class AddressData {
     private String complement;
     private String city;
     private String state;
-    private Integer zipCode;
+    private String zipCode;
 }

@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.domain.model.shopping;
+package br.com.ipet.ordering.domain.model.shoppingcart;
 
 import br.com.ipet.ordering.domain.model.DomainException;
 

@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.infrastructure.persistence.shopping;
+package br.com.ipet.ordering.infrastructure.persistence.shoppingcart;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

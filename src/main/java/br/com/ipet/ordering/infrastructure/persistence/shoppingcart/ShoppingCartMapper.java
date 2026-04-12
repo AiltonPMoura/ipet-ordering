@@ -1,16 +1,16 @@
-package br.com.ipet.ordering.infrastructure.persistence.shopping;
+package br.com.ipet.ordering.infrastructure.persistence.shoppingcart;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Product;
+import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.product.ProductDescription;
 import br.com.ipet.ordering.domain.model.product.ProductId;
 import br.com.ipet.ordering.domain.model.product.ProductName;
-import br.com.ipet.ordering.domain.model.shopping.ShoppingCart;
-import br.com.ipet.ordering.domain.model.shopping.ShoppingCartId;
-import br.com.ipet.ordering.domain.model.shopping.ShoppingCartItem;
-import br.com.ipet.ordering.domain.model.shopping.ShoppingCartItemId;
+import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCart;
+import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCartId;
+import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCartItem;
+import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCartItemId;
 import br.com.ipet.ordering.infrastructure.persistence.commons.ProductEmbeddable;
 import org.springframework.stereotype.Component;
 

@@ -6,7 +6,7 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Product;
+import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.CompanyId;

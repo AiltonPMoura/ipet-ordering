@@ -1,8 +1,8 @@
-package br.com.ipet.ordering.infrastructure.persistence.shopping;
+package br.com.ipet.ordering.infrastructure.persistence.shoppingcart;
 
-import br.com.ipet.ordering.domain.model.commons.valueobject.Product;
-import br.com.ipet.ordering.domain.model.shopping.ShoppingCart;
-import br.com.ipet.ordering.domain.model.shopping.ShoppingCartItem;
+import br.com.ipet.ordering.domain.model.product.Product;
+import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCart;
+import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCartItem;
 import br.com.ipet.ordering.infrastructure.persistence.commons.ProductEmbeddable;
 import br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceRepository;
 import lombok.RequiredArgsConstructor;

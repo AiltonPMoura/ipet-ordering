@@ -1,9 +1,9 @@
-package br.com.ipet.ordering.infrastructure.persistence.shopping;
+package br.com.ipet.ordering.infrastructure.persistence.shoppingcart;
 
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.shopping.ShoppingCart;
-import br.com.ipet.ordering.domain.model.shopping.ShoppingCartId;
-import br.com.ipet.ordering.domain.model.shopping.ShoppingCarts;
+import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCart;
+import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCartId;
+import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCarts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

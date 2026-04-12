@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.order;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Product;
+import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.order.Billing;
 import br.com.ipet.ordering.domain.model.order.DeliveryCompany;
 import br.com.ipet.ordering.domain.model.order.Order;

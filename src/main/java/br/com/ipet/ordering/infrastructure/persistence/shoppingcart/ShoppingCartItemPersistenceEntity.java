@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.infrastructure.persistence.shopping;
+package br.com.ipet.ordering.infrastructure.persistence.shoppingcart;
 
 import br.com.ipet.ordering.infrastructure.persistence.commons.ProductEmbeddable;
 import jakarta.persistence.Column;

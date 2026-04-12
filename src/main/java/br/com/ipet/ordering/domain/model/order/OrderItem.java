@@ -3,7 +3,7 @@ package br.com.ipet.ordering.domain.model.order;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Product;
+import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import lombok.Builder;
 

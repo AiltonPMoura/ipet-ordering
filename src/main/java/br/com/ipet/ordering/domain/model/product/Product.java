@@ -1,9 +1,7 @@
-package br.com.ipet.ordering.domain.model.commons.valueobject;
+package br.com.ipet.ordering.domain.model.product;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.product.ProductDescription;
-import br.com.ipet.ordering.domain.model.product.ProductId;
-import br.com.ipet.ordering.domain.model.product.ProductName;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import lombok.Builder;
 
 @Builder
@@ -16,7 +14,6 @@ public record Product(
     public Product {
         FieldValidator.requiresNonNull("product id", id);
         FieldValidator.requiresNonNull("product name", name);
-        FieldValidator.requiresNonNull("product description", description);
         FieldValidator.requiresNonNull("product price", price);
     }
 

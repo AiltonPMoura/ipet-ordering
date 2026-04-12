@@ -4,7 +4,7 @@ import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Product;
+import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;

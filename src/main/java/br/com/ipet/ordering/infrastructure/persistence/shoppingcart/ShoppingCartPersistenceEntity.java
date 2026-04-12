@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.infrastructure.persistence.shopping;
+package br.com.ipet.ordering.infrastructure.persistence.shoppingcart;
 
 import br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
 import jakarta.persistence.CascadeType;
@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
