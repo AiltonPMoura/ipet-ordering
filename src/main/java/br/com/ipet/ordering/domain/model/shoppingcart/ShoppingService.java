@@ -1,8 +1,6 @@
 package br.com.ipet.ordering.domain.model.shoppingcart;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.product.Product;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
 import br.com.ipet.ordering.domain.model.customer.Customers;
@@ -28,44 +26,7 @@ public class ShoppingService {
         return ShoppingCart.startShopping(customerId);
     }
 
-    public void addItem(ShoppingCart shoppingCart, Product product, Quantity quantity, CustomerId customerId) {
-        FieldValidator.requiresNonNull("shoppingCart", shoppingCart);
-        FieldValidator.requiresNonNull("product", product);
-        FieldValidator.requiresNonNull("Quantity", quantity);
-        FieldValidator.requiresNonNull("customerId", customerId);
-
-        verifyIfBelongToTheCustomer(shoppingCart, customerId);
-
-        shoppingCart.addItem(product, quantity);
-    }
-
-    public void removeItem(ShoppingCart shoppingCart, ShoppingCartItemId shoppingCartItemId, CustomerId customerId) {
-        FieldValidator.requiresNonNull("shoppingCart", shoppingCart);
-        FieldValidator.requiresNonNull("shoppingCartItemId", shoppingCartItemId);
-        FieldValidator.requiresNonNull("customerId", customerId);
-
-        verifyIfBelongToTheCustomer(shoppingCart, customerId);
-
-        shoppingCart.removeItem(shoppingCartItemId);
-    }
-
-    public void empty(ShoppingCart shoppingCart, CustomerId customerId) {
-        FieldValidator.requiresNonNull("shoppingCart", shoppingCart);
-        FieldValidator.requiresNonNull("customerId", customerId);
-
-        verifyIfBelongToTheCustomer(shoppingCart, customerId);
-
-        shoppingCart.empty();
-    }
-
-    public void remove(ShoppingCart shoppingCart, CustomerId customerId) {
-        FieldValidator.requiresNonNull("shoppingCart", shoppingCart);
-        FieldValidator.requiresNonNull("customerId", customerId);
-
-        verifyIfBelongToTheCustomer(shoppingCart, customerId);
-    }
-
-    private static void verifyIfBelongToTheCustomer(ShoppingCart shoppingCart, CustomerId customerId) {
+    public void verifyIfBelongToTheCustomer(ShoppingCart shoppingCart, CustomerId customerId) {
         if (!shoppingCart.customerId().equals(customerId))
             throw new ShoppingCartDoesNotBelongToTheCustomer("");
     }

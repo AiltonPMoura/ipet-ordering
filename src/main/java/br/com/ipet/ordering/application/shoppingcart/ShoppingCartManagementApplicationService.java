@@ -3,7 +3,6 @@ package br.com.ipet.ordering.application.shoppingcart;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.product.ProductCatalogService;
 import br.com.ipet.ordering.domain.model.product.ProductId;
 import br.com.ipet.ordering.domain.model.product.ProductNotFoundException;
@@ -38,18 +37,17 @@ public class ShoppingCartManagementApplicationService {
         return shoppingCart.id().value();
     }
 
-    public void addItem(UUID shoppingCartId, UUID productId, Integer quantity, UUID customerId) {
-        FieldValidator.requiresNonNull("shoppingCartId", shoppingCartId);
-        FieldValidator.requiresNonNull("productId", productId);
-        FieldValidator.requiresNonNull("quantity", quantity);
-        FieldValidator.requiresNonNull("customerId", customerId);
+    public void addItem(ShoppingCartItemInput input) {
+        FieldValidator.requiresNonNull("input", input);
 
-        var shoppingCart = this.findShoppingCart(shoppingCartId);
+        var shoppingCart = this.findShoppingCart(input.getShoppingCartId());
 
-        var product = productCatalogService.ofId(new ProductId(productId))
+        var product = productCatalogService.ofId(new ProductId(input.getProductId()))
                 .orElseThrow(() -> new ProductNotFoundException(""));
 
-        shoppingService.addItem(shoppingCart, product, new Quantity(quantity), new CustomerId(customerId));
+        shoppingService.verifyIfBelongToTheCustomer(shoppingCart, new CustomerId(input.getCustomerId()));
+
+        shoppingCart.addItem(product, new Quantity(input.getQuantity()));
 
         shoppingCarts.add(shoppingCart);
     }
@@ -61,7 +59,9 @@ public class ShoppingCartManagementApplicationService {
 
         var shoppingCart = this.findShoppingCart(shoppingCartId);
 
-        shoppingService.removeItem(shoppingCart, new ShoppingCartItemId(shoppingCartItemId), new CustomerId(customerId));
+        shoppingService.verifyIfBelongToTheCustomer(shoppingCart, new CustomerId(customerId));
+
+        shoppingCart.removeItem(new ShoppingCartItemId(shoppingCartItemId));
 
         shoppingCarts.add(shoppingCart);
     }
@@ -72,18 +72,20 @@ public class ShoppingCartManagementApplicationService {
 
         var shoppingCart = this.findShoppingCart(shoppingCartId);
 
-        shoppingService.empty(shoppingCart, new CustomerId(customerId));
+        shoppingService.verifyIfBelongToTheCustomer(shoppingCart, new CustomerId(customerId));
+
+        shoppingCart.empty();
 
         shoppingCarts.add(shoppingCart);
     }
 
-    public void remove(UUID shoppingCartId, UUID customerId) {
+    public void delete(UUID shoppingCartId, UUID customerId) {
         FieldValidator.requiresNonNull("shoppingCartId", shoppingCartId);
         FieldValidator.requiresNonNull("customerId", customerId);
 
         var shoppingCart = this.findShoppingCart(shoppingCartId);
 
-        shoppingService.remove(shoppingCart, new CustomerId(customerId));
+        shoppingService.verifyIfBelongToTheCustomer(shoppingCart, new CustomerId(customerId));
 
         shoppingCarts.remove(shoppingCart);
     }
