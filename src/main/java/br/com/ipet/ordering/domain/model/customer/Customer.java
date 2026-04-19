@@ -56,16 +56,17 @@ public class Customer implements AggregateRoot<CustomerId> {
         return registerAt;
     }
 
-    public CustomerAddressId addAddress(Address address, boolean isDeliveryAddress) {
+    public CustomerAddressId addAddress(Address address, boolean isPrincipalAddress) {
         FieldValidator.requiresNonNull("address", address);
-        FieldValidator.requiresNonNull("isDeliveryAddress", isDeliveryAddress);
+        FieldValidator.requiresNonNull("isPrincipalAddress", isPrincipalAddress);
         
-        if (isDeliveryAddress) disableCurrentDeliveryAddress();
+        if (isPrincipalAddress)
+            this.disableCurrentPrincipalAddress();
 
         var customerAddress = CustomerAddress.createNew()
                 .customerId(this.id)
                 .address(address)
-                .isDeliveryAddress(isDeliveryAddress)
+                .isPrincipalAddress(isPrincipalAddress)
                 .build();
 
         this.address.add(customerAddress);
@@ -79,6 +80,18 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.verifyIfCanRemoveAddress(customerAddress);
 
         this.address.remove(customerAddress);
+    }
+
+    public Address principalAddress() {
+        return this.address.stream()
+                .filter(CustomerAddress::isPrincipalAddress)
+                .findFirst()
+                .map(CustomerAddress::address)
+                .orElseThrow(() -> new CustomerDoesNotContainPrincipalAddressException(""));
+    }
+
+    public Address findAddress(CustomerAddressId customerAddressId) {
+        return this.findCustomerAddress(customerAddressId).address();
     }
 
     public void changeName(FullName fullName) {
@@ -97,33 +110,33 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.setDocument(document);
     }
 
-    public void changeAddress(CustomerAddressId addressId, Address address, boolean isDeliveryAddress) {
+    public void changeAddress(CustomerAddressId addressId, Address address, boolean isPrincipalAddress) {
         var customerAddress = this.findCustomerAddress(addressId);
 
-        if (isDeliveryAddress) this.disableCurrentDeliveryAddress();
+        if (isPrincipalAddress) this.disableCurrentPrincipalAddress();
 
         customerAddress.changeAddress(address);
-        customerAddress.changeDeliveryAddress(isDeliveryAddress);
+        customerAddress.changePrincipalAddress(isPrincipalAddress);
     }
 
-    private CustomerAddress findCustomerAddress(CustomerAddressId addressId) {
-        FieldValidator.requiresNonNull("addressId", addressId);
+    private CustomerAddress findCustomerAddress(CustomerAddressId customerAddressId) {
+        FieldValidator.requiresNonNull("addressId", customerAddressId);
 
         return this.address.stream()
-                .filter(customerAddress -> customerAddress.id().equals(addressId))
+                .filter(customerAddress -> customerAddress.id().equals(customerAddressId))
                 .findFirst()
                 .orElseThrow(() -> new CustomerAddressNotFoundException(""));
     }
 
-    private void disableCurrentDeliveryAddress() {
+    private void disableCurrentPrincipalAddress() {
         this.address.stream()
-                .filter(CustomerAddress::isDeliveryAddress)
+                .filter(CustomerAddress::isPrincipalAddress)
                 .findFirst()
-                .ifPresent(deliveryAddress -> deliveryAddress.changeDeliveryAddress(false));
+                .ifPresent(deliveryAddress -> deliveryAddress.changePrincipalAddress(false));
     }
 
     private void verifyIfCanRemoveAddress(CustomerAddress customerAddress) {
-        if (customerAddress.isDeliveryAddress() || this.address.size() == 1)
+        if (customerAddress.isPrincipalAddress() || this.address.size() == 1)
             throw new CannotDeleteDeliveryAddress("");
     }
 

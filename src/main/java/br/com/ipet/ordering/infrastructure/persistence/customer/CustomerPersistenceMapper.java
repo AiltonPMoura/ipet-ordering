@@ -55,7 +55,7 @@ public class CustomerPersistenceMapper {
                                                           CustomerAddress customerAddress) {
         customerAddressPersistence.setId(customerAddress.id().value());
         customerAddressPersistence.setAddress(this.toAddressEmbeddable(customerAddress.address()));
-        customerAddressPersistence.setDeliveryAddress(customerAddress.isDeliveryAddress());
+        customerAddressPersistence.setDeliveryAddress(customerAddress.isPrincipalAddress());
         return customerAddressPersistence;
     }
 

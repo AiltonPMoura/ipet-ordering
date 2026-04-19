@@ -10,28 +10,28 @@ public class CustomerAddress {
     private CustomerAddressId id;
     private CustomerId customerId;
     private Address address;
-    private boolean isDeliveryAddress;
+    private boolean isPrincipalAddress;
 
     @Builder(builderClassName = "CreateNewCustomerAddressBuilder", builderMethodName = "createNew")
-    private static CustomerAddress create(CustomerId customerId, Address address, boolean isDeliveryAddress) {
-        return new CustomerAddress(new CustomerAddressId(), customerId, address, isDeliveryAddress);
+    private static CustomerAddress create(CustomerId customerId, Address address, boolean isPrincipalAddress) {
+        return new CustomerAddress(new CustomerAddressId(), customerId, address, isPrincipalAddress);
     }
 
     @Builder(builderClassName = "ExistingCustomerAddressBuilder", builderMethodName = "existing")
     private CustomerAddress(CustomerAddressId id, CustomerId customerId,
-                           Address address, boolean isDeliveryAddress) {
+                           Address address, boolean isPrincipalAddress) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.setAddress(address);
-        this.setIsDeliveryAddress(isDeliveryAddress);
+        this.setIsPrincipalAddress(isPrincipalAddress);
     }
 
     void changeAddress(Address address) {
         this.setAddress(address);
     }
 
-    void changeDeliveryAddress(boolean isDeliveryAddress) {
-        this.setIsDeliveryAddress(isDeliveryAddress);
+    void changePrincipalAddress(boolean isPrincipalAddress) {
+        this.setIsPrincipalAddress(isPrincipalAddress);
     }
 
     public CustomerAddressId id() {
@@ -61,13 +61,13 @@ public class CustomerAddress {
         this.address = address;
     }
 
-    public boolean isDeliveryAddress() {
-        return isDeliveryAddress;
+    public boolean isPrincipalAddress() {
+        return isPrincipalAddress;
     }
 
-    private void setIsDeliveryAddress(boolean deliveryAddress) {
-        FieldValidator.requiresNonNull("deliveryAddress", deliveryAddress);
-        this.isDeliveryAddress = deliveryAddress;
+    private void setIsPrincipalAddress(boolean isPrincipalAddress) {
+        FieldValidator.requiresNonNull("isPrincipalAddress", isPrincipalAddress);
+        this.isPrincipalAddress = isPrincipalAddress;
     }
 
     @Override

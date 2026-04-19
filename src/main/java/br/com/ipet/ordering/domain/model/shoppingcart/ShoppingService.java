@@ -18,7 +18,7 @@ public class ShoppingService {
         FieldValidator.requiresNonNull("customerId", customerId);
 
         if (!customers.exists(customerId))
-            throw new CustomerNotFoundException();
+            throw new CustomerNotFoundException("");
 
         if (shoppingCarts.ofCustomer(customerId).isPresent())
             throw new CustomerAlreadyHaveShoppingCartException("");

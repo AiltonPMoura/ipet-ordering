@@ -37,7 +37,7 @@ public class Order implements AggregateRoot<OrderId> {
     private OffsetDateTime deliveredAt;
     private OffsetDateTime canceledAt;
 
-    public static Order draft(CustomerId customerId, CompanyId companyId) {
+    static Order draft(CustomerId customerId, CompanyId companyId) {
         return new Order(new OrderId(), customerId, companyId,
                 new HashSet<>(), Money.ZERO, Quantity.ZERO,
                 null, OrderStatus.DRAFT,

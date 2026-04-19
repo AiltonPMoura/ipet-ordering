@@ -1,8 +1,6 @@
 package br.com.ipet.ordering.domain.model.order;
 
-import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCart;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,16 +9,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CheckoutService {
 
-    private final Companies companies;
-
-    public Order checkout(ShoppingCart shoppingCart, CompanyId companyId, Billing billing,
-                          Shipping shipping, DeliveryCompany deliveryCompany, PaymentMethod paymentMethod) {
+    public Order checkout(ShoppingCart shoppingCart, CompanyId companyId,
+                          Billing billing, Shipping shipping,
+                          DeliveryCompany deliveryCompany, PaymentMethod paymentMethod) {
 
         if (shoppingCart.isEmpty())
             throw new ShoppingCartCantProceedToCheckoutException("");
 
-        if (!companies.exists(companyId))
-            throw new CompanyNotFoundException();
+        //Specification, verifyIFPertenceCustomer
 
         var order = Order.draft(shoppingCart.customerId(), companyId);
         order.changeBilling(billing);

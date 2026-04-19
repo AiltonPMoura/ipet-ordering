@@ -1,13 +1,13 @@
 package br.com.ipet.ordering.application.customer.management;
 
 import br.com.ipet.ordering.application.commons.AddressData;
+import br.com.ipet.ordering.application.commons.AddressMapper;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
-import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
+import br.com.ipet.ordering.domain.model.customer.Customer;
 import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
@@ -27,6 +27,7 @@ public class CustomerManagementApplicationService {
     private final Customers customers;
     private final CustomerRegistrationService customerRegistrationService;
     private final DocumentFactory documentFactory;
+    private final AddressMapper addressMapper;
 
     public UUID create(CustomerInput input) {
         FieldValidator.requiresNonNull("input", input);
@@ -38,7 +39,7 @@ public class CustomerManagementApplicationService {
                 new Email(input.getEmail()),
                 new Phone(input.getPhone()),
                 documentFactory.from(input.getDocument()),
-                this.toAddress(address)
+                addressMapper.toAddress(address)
         );
 
         customers.add(customer);
@@ -50,10 +51,9 @@ public class CustomerManagementApplicationService {
         FieldValidator.requiresNonNull("customerId", customerId);
         FieldValidator.requiresNonNull("address", address);
 
-        var customer = customers.ofId(new CustomerId(customerId))
-                .orElseThrow(CustomerNotFoundException::new);
+        var customer = this.findById(customerId);
 
-        var customerAddressId = customer.addAddress(this.toAddress(address), isDeliveryAddress);
+        var customerAddressId = customer.addAddress(addressMapper.toAddress(address), isDeliveryAddress);
 
         customers.add(customer);
 
@@ -64,8 +64,7 @@ public class CustomerManagementApplicationService {
         FieldValidator.requiresNonNull("customerId", customerId);
         FieldValidator.requiresNonNull("addressId", addressId);
 
-        var customer = customers.ofId(new CustomerId(customerId))
-                .orElseThrow(CustomerNotFoundException::new);
+        var customer = this.findById(customerId);
 
         customer.removeAddress(new CustomerAddressId(addressId));
 
@@ -76,8 +75,7 @@ public class CustomerManagementApplicationService {
         FieldValidator.requiresNonNull("customerId", customerId);
         FieldValidator.requiresNonNull("input", input);
 
-        var customer = customers.ofId(new CustomerId(customerId))
-                .orElseThrow(CustomerNotFoundException::new);
+        var customer = this.findById(customerId);
 
         customer.changeName(new FullName(input.getFirstName(), input.getLastName()));
         customer.changeDocument(documentFactory.from(input.getDocument()));
@@ -90,8 +88,7 @@ public class CustomerManagementApplicationService {
         FieldValidator.requiresNonNull("email", newEmail);
         FieldValidator.requiresNonNull("customerId", customerId);
 
-        var customer = customers.ofId(new CustomerId(customerId))
-                .orElseThrow(CustomerNotFoundException::new);
+        var customer = this.findById(customerId);
 
         customerRegistrationService.changeEmail(customer, new Email(newEmail));
 
@@ -104,24 +101,16 @@ public class CustomerManagementApplicationService {
         FieldValidator.requiresNonNull("address", address);
         FieldValidator.requiresNonNull("isDeliveryAddress", isDeliveryAddress);
 
-        var customer = customers.ofId(new CustomerId(customerId))
-                .orElseThrow(CustomerNotFoundException::new);
+        var customer = this.findById(customerId);
 
-        customer.changeAddress(new CustomerAddressId(addressId), this.toAddress(address), isDeliveryAddress);
+        customer.changeAddress(new CustomerAddressId(addressId), addressMapper.toAddress(address), isDeliveryAddress);
 
         customers.add(customer);
     }
 
-    private Address toAddress(AddressData address) {
-        return Address.builder()
-                .street(address.getStreet())
-                .number(address.getNumber())
-                .neighborhood(address.getNeighborhood())
-                .city(address.getCity())
-                .state(address.getState())
-                .complement(address.getComplement())
-                .zipCode(new ZipCode(address.getZipCode()))
-                .build();
+    private Customer findById(UUID customerId) {
+        return customers.ofId(new CustomerId(customerId))
+                .orElseThrow(() -> new CustomerNotFoundException(""));
     }
 
 }
