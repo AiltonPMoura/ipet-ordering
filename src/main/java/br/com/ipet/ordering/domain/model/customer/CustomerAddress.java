@@ -10,28 +10,27 @@ public class CustomerAddress {
     private CustomerAddressId id;
     private CustomerId customerId;
     private Address address;
-    private boolean isPrincipalAddress;
+    private boolean isPrincipal;
 
-    @Builder(builderClassName = "CreateNewCustomerAddressBuilder", builderMethodName = "createNew")
-    private static CustomerAddress create(CustomerId customerId, Address address, boolean isPrincipalAddress) {
-        return new CustomerAddress(new CustomerAddressId(), customerId, address, isPrincipalAddress);
+    static CustomerAddress create(CustomerId customerId, Address address, boolean isPrincipal) {
+        return new CustomerAddress(new CustomerAddressId(), customerId, address, isPrincipal);
     }
 
     @Builder(builderClassName = "ExistingCustomerAddressBuilder", builderMethodName = "existing")
     private CustomerAddress(CustomerAddressId id, CustomerId customerId,
-                           Address address, boolean isPrincipalAddress) {
+                           Address address, boolean isPrincipal) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.setAddress(address);
-        this.setIsPrincipalAddress(isPrincipalAddress);
+        this.setIsPrincipal(isPrincipal);
     }
 
     void changeAddress(Address address) {
         this.setAddress(address);
     }
 
-    void changePrincipalAddress(boolean isPrincipalAddress) {
-        this.setIsPrincipalAddress(isPrincipalAddress);
+    void changePrincipal(boolean isPrincipal) {
+        this.setIsPrincipal(isPrincipal);
     }
 
     public CustomerAddressId id() {
@@ -61,13 +60,13 @@ public class CustomerAddress {
         this.address = address;
     }
 
-    public boolean isPrincipalAddress() {
-        return isPrincipalAddress;
+    public boolean isPrincipal() {
+        return isPrincipal;
     }
 
-    private void setIsPrincipalAddress(boolean isPrincipalAddress) {
-        FieldValidator.requiresNonNull("isPrincipalAddress", isPrincipalAddress);
-        this.isPrincipalAddress = isPrincipalAddress;
+    private void setIsPrincipal(boolean isPrincipal) {
+        FieldValidator.requiresNonNull("isPrincipal", isPrincipal);
+        this.isPrincipal = isPrincipal;
     }
 
     @Override

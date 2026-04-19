@@ -24,6 +24,7 @@ public class CustomerPersistenceMapper {
         customerPersistence.setLastName(customer.fullName().lastName());
         customerPersistence.setEmail(customer.email().value());
         customerPersistence.setDocument(customer.document().value());
+        customerPersistence.setBirthDate(customer.birthDate().value());
         customerPersistence.setPhone(customer.phone().value());
         customerPersistence.setAddress(this.mergeAddress(customerPersistence, customer));
         customerPersistence.setRegisterAt(customer.registerAt());
@@ -55,7 +56,7 @@ public class CustomerPersistenceMapper {
                                                           CustomerAddress customerAddress) {
         customerAddressPersistence.setId(customerAddress.id().value());
         customerAddressPersistence.setAddress(this.toAddressEmbeddable(customerAddress.address()));
-        customerAddressPersistence.setDeliveryAddress(customerAddress.isPrincipalAddress());
+        customerAddressPersistence.setPrincipal(customerAddress.isPrincipal());
         return customerAddressPersistence;
     }
 

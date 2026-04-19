@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.customer;
 
+import br.com.ipet.ordering.domain.model.customer.BirthDate;
 import br.com.ipet.ordering.domain.model.customer.Customer;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
@@ -30,6 +31,7 @@ public class CustomerMapper {
                 .email(new Email(persistenceEntity.getEmail()))
                 .phone(new Phone(persistenceEntity.getPhone()))
                 .document(documentFactory.from(persistenceEntity.getDocument()))
+                .birthDate(new BirthDate(persistenceEntity.getBirthDate()))
                 .address(this.toCustomerAddress(persistenceEntity.getCustomerAddress()))
                 .registerAt(persistenceEntity.getRegisterAt())
                 .build();
@@ -48,7 +50,7 @@ public class CustomerMapper {
                         .id(new CustomerAddressId(customerAddress.getId()))
                         .customerId(new CustomerId(customerAddress.getCustomerId()))
                         .address(toAddress(customerAddress.getAddress()))
-                        .isDeliveryAddress(customerAddress.isDeliveryAddress())
+                        .isPrincipal(customerAddress.isPrincipal())
                         .build()
                 ).collect(Collectors.toSet());
     }

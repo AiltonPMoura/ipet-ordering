@@ -7,6 +7,7 @@ import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
+import br.com.ipet.ordering.domain.model.customer.BirthDate;
 import br.com.ipet.ordering.domain.model.customer.Customer;
 import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
@@ -32,14 +33,13 @@ public class CustomerManagementApplicationService {
     public UUID create(CustomerInput input) {
         FieldValidator.requiresNonNull("input", input);
 
-        var address = input.getAddressData();
-
         var customer = customerRegistrationService.register(
                 new FullName(input.getFirstName(), input.getLastName()),
                 new Email(input.getEmail()),
                 new Phone(input.getPhone()),
                 documentFactory.from(input.getDocument()),
-                addressMapper.toAddress(address)
+                new BirthDate(input.getBirthDate()),
+                addressMapper.toAddress(input.getAddress())
         );
 
         customers.add(customer);
@@ -47,13 +47,13 @@ public class CustomerManagementApplicationService {
         return customer.id().value();
     }
 
-    public UUID addAddress(UUID customerId, AddressData address, boolean isDeliveryAddress) {
+    public UUID addAddress(UUID customerId, AddressData address) {
         FieldValidator.requiresNonNull("customerId", customerId);
         FieldValidator.requiresNonNull("address", address);
 
         var customer = this.findById(customerId);
 
-        var customerAddressId = customer.addAddress(addressMapper.toAddress(address), isDeliveryAddress);
+        var customerAddressId = customer.addAddress(addressMapper.toAddress(address));
 
         customers.add(customer);
 
@@ -80,6 +80,7 @@ public class CustomerManagementApplicationService {
         customer.changeName(new FullName(input.getFirstName(), input.getLastName()));
         customer.changeDocument(documentFactory.from(input.getDocument()));
         customer.changePhone(new Phone(input.getPhone()));
+        customer.changeBirthDate(new BirthDate(input.getBirthDate()));
 
         customers.add(customer);
     }
@@ -95,15 +96,25 @@ public class CustomerManagementApplicationService {
         customers.add(customer);
     }
 
-    public void changeAddress(UUID customerId, UUID addressId, AddressData address, boolean isDeliveryAddress) {
+    public void changeAddress(UUID customerId, UUID addressId, AddressData address) {
         FieldValidator.requiresNonNull("customerId", customerId);
         FieldValidator.requiresNonNull("addressId", addressId);
         FieldValidator.requiresNonNull("address", address);
-        FieldValidator.requiresNonNull("isDeliveryAddress", isDeliveryAddress);
 
         var customer = this.findById(customerId);
 
-        customer.changeAddress(new CustomerAddressId(addressId), addressMapper.toAddress(address), isDeliveryAddress);
+        customer.changeAddress(new CustomerAddressId(addressId), addressMapper.toAddress(address));
+
+        customers.add(customer);
+    }
+
+    public void changePrincipalAddress(UUID customerId, UUID addressId) {
+        FieldValidator.requiresNonNull("customerId", customerId);
+        FieldValidator.requiresNonNull("addressId", addressId);
+
+        var customer = this.findById(customerId);
+
+        customer.changePrincipalAddress(new CustomerAddressId(addressId));
 
         customers.add(customer);
     }

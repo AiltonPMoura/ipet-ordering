@@ -11,7 +11,6 @@ public record Address(String street,
                       String city,
                       String state,
                       ZipCode zipCode) {
-
     public Address {
         FieldValidator.requiresNonBlank("Street", street);
         FieldValidator.requiresNonNull("number", number);
@@ -20,5 +19,4 @@ public record Address(String street,
         FieldValidator.requiresNonBlank("state", state);
         FieldValidator.requiresNonNull("zipCode", zipCode);
     }
-
 }

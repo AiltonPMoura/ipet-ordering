@@ -1,7 +1,6 @@
 package br.com.ipet.ordering.application.customer.query;
 
 
-import br.com.ipet.ordering.application.commons.AddressData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -20,9 +20,9 @@ public class CustomerDetailOutput {
     private String firstName;
     private String lastName;
     private String email;
-    private Integer phone;
+    private String phone;
     private String document;
     private LocalDate birthDate;
-    private AddressData address;
+    private Set<CustomerAddressOutput> customerAddress;
     private OffsetDateTime registerAt;
 }

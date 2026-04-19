@@ -18,6 +18,6 @@ public class CustomerSummaryOutput {
     private String firstName;
     private String lastName;
     private String email;
-    private Integer celPhone;
+    private String phone;
     private OffsetDateTime registerAt;
 }

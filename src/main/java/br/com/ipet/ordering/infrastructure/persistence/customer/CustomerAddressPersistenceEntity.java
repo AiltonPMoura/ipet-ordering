@@ -38,8 +38,8 @@ public class CustomerAddressPersistenceEntity {
     @Embedded
     private AddressEmbeddable address;
 
-    @Column(name = "delivery_address")
-    private boolean isDeliveryAddress;
+    @Column(name = "principal")
+    private boolean isPrincipal;
 
     public UUID getCustomerId() {
         return this.customer.getId();

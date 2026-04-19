@@ -21,53 +21,45 @@ public class Customer implements AggregateRoot<CustomerId> {
     private Email email;
     private Phone phone;
     private Document document;
+    private BirthDate birthDate;
     private Set<CustomerAddress> address;
     private OffsetDateTime registerAt;
 
     @Builder(builderClassName = "CreateNewCustomerBuilder", builderMethodName = "createNew")
-    private static Customer create(FullName fullName, Email email,
-                                   Phone phone, Document document, Address address) {
+    private static Customer create(FullName fullName, Email email, Phone phone,
+                                   Document document, BirthDate birthDate, Address address) {
 
-        var customer = new Customer(new CustomerId(), fullName,
-                email, phone, document, new HashSet<>(), OffsetDateTime.now());
+        var customer = new Customer(new CustomerId(), fullName, email,
+                phone, document, birthDate, new HashSet<>(), OffsetDateTime.now());
 
-        customer.addAddress(address, true);
+        var customerAddress = CustomerAddress.create(customer.id, address, true);
+
+        customer.address.add(customerAddress);
 
         return customer;
     }
 
     @Builder(builderClassName = "CreateExistingCustomerBuilder", builderMethodName = "existing")
-    private Customer(CustomerId id, FullName fullName, Email email,
-                     Phone phone, Document document, Set<CustomerAddress> address, OffsetDateTime registerAt) {
+    private Customer(CustomerId id, FullName fullName, Email email, Phone phone, Document document,
+                     BirthDate birthDate, Set<CustomerAddress> address, OffsetDateTime registerAt) {
         this.setId(id);
         this.setFullName(fullName);
         this.setEmail(email);
         this.setPhone(phone);
         this.setDocument(document);
+        this.setBirthDate(birthDate);
         this.setAddress(address);
         this.setRegisterAt(registerAt);
-    }
-
-    public Set<CustomerAddress> customerAddresses() {
-        return Collections.unmodifiableSet(address);
     }
 
     public OffsetDateTime registerAt() {
         return registerAt;
     }
 
-    public CustomerAddressId addAddress(Address address, boolean isPrincipalAddress) {
+    public CustomerAddressId addAddress(Address address) {
         FieldValidator.requiresNonNull("address", address);
-        FieldValidator.requiresNonNull("isPrincipalAddress", isPrincipalAddress);
-        
-        if (isPrincipalAddress)
-            this.disableCurrentPrincipalAddress();
 
-        var customerAddress = CustomerAddress.createNew()
-                .customerId(this.id)
-                .address(address)
-                .isPrincipalAddress(isPrincipalAddress)
-                .build();
+        var customerAddress = CustomerAddress.create(this.id, address, false);
 
         this.address.add(customerAddress);
 
@@ -77,14 +69,26 @@ public class Customer implements AggregateRoot<CustomerId> {
     public void removeAddress(CustomerAddressId addressId) {
         var customerAddress = this.findCustomerAddress(addressId);
 
-        this.verifyIfCanRemoveAddress(customerAddress);
+        if (customerAddress.isPrincipal())
+            throw new CannotDeletePrincipalAddress("");
 
         this.address.remove(customerAddress);
     }
 
+    public void changeAddress(CustomerAddressId addressId, Address address) {
+        var customerAddress = this.findCustomerAddress(addressId);
+        customerAddress.changeAddress(address);
+    }
+
+    public void changePrincipalAddress(CustomerAddressId addressId) {
+        var customerAddress = this.findCustomerAddress(addressId);
+        this.disableCurrentPrincipalAddress();
+        customerAddress.changePrincipal(true);
+    }
+
     public Address principalAddress() {
         return this.address.stream()
-                .filter(CustomerAddress::isPrincipalAddress)
+                .filter(CustomerAddress::isPrincipal)
                 .findFirst()
                 .map(CustomerAddress::address)
                 .orElseThrow(() -> new CustomerDoesNotContainPrincipalAddressException(""));
@@ -110,13 +114,8 @@ public class Customer implements AggregateRoot<CustomerId> {
         this.setDocument(document);
     }
 
-    public void changeAddress(CustomerAddressId addressId, Address address, boolean isPrincipalAddress) {
-        var customerAddress = this.findCustomerAddress(addressId);
-
-        if (isPrincipalAddress) this.disableCurrentPrincipalAddress();
-
-        customerAddress.changeAddress(address);
-        customerAddress.changePrincipalAddress(isPrincipalAddress);
+    public void changeBirthDate(BirthDate birthDate) {
+        this.setBirthDate(birthDate);
     }
 
     private CustomerAddress findCustomerAddress(CustomerAddressId customerAddressId) {
@@ -130,14 +129,9 @@ public class Customer implements AggregateRoot<CustomerId> {
 
     private void disableCurrentPrincipalAddress() {
         this.address.stream()
-                .filter(CustomerAddress::isPrincipalAddress)
+                .filter(CustomerAddress::isPrincipal)
                 .findFirst()
-                .ifPresent(deliveryAddress -> deliveryAddress.changePrincipalAddress(false));
-    }
-
-    private void verifyIfCanRemoveAddress(CustomerAddress customerAddress) {
-        if (customerAddress.isPrincipalAddress() || this.address.size() == 1)
-            throw new CannotDeleteDeliveryAddress("");
+                .ifPresent(principalAddress -> principalAddress.changePrincipal(false));
     }
 
     public CustomerId id() {
@@ -183,6 +177,19 @@ public class Customer implements AggregateRoot<CustomerId> {
     private void setDocument(Document document) {
         FieldValidator.requiresNonNull("document", document);
         this.document = document;
+    }
+
+    public BirthDate birthDate() {
+        return birthDate;
+    }
+
+    private void setBirthDate(BirthDate birthDate) {
+        FieldValidator.requiresNonNull("birthDate", birthDate);
+        this.birthDate = birthDate;
+    }
+
+    public Set<CustomerAddress> customerAddresses() {
+        return Collections.unmodifiableSet(address);
     }
 
     private void setAddress(Set<CustomerAddress> customerAddresses) {

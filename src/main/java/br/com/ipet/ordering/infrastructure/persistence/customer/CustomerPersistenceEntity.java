@@ -16,6 +16,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,6 +49,8 @@ public class CustomerPersistenceEntity {
 
     @Column
     private String document;
+
+    private LocalDate birthDate;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private Set<CustomerAddressPersistenceEntity> customerAddress = new HashSet<>();

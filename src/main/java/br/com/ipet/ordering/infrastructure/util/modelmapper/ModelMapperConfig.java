@@ -13,6 +13,7 @@ public class ModelMapperConfig {
     public Mapper modelMapper() {
         var modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
         return new Mapper() {
             @Override
             public <T> T convert(Object source, Class<T> destinationType) {

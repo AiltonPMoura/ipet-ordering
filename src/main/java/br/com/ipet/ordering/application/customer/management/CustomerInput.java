@@ -19,5 +19,5 @@ public class CustomerInput {
     private String phone;
     private String document;
     private LocalDate birthDate;
-    private AddressData addressData;
+    private AddressData address;
 }
