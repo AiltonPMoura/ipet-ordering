@@ -77,10 +77,6 @@ public class OrderPersistenceEntity {
     @Embedded
     @AttributeOverride(name = "cost", column = @Column(name = "shipping_cost"))
     @AttributeOverride(name = "expectedDate", column = @Column(name = "shipping_expected_date"))
-    @AttributeOverride(name = "recipient.firstName", column = @Column(name = "shipping_recipient_first_name"))
-    @AttributeOverride(name = "recipient.lastName", column = @Column(name = "shipping_recipient_last_name"))
-    @AttributeOverride(name = "recipient.document", column = @Column(name = "shipping_recipient_document"))
-    @AttributeOverride(name = "recipient.phone", column = @Column(name = "shipping_recipient_phone"))
     @AttributeOverride(name = "address.street", column = @Column(name = "shipping_address_street"))
     @AttributeOverride(name = "address.number", column = @Column(name = "shipping_address_number"))
     @AttributeOverride(name = "address.complement", column = @Column(name = "shipping_address_complement"))

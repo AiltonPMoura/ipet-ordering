@@ -21,8 +21,5 @@ public class ShippingEmbeddable {
     private LocalDate expectedDate;
 
     @Embedded
-    private RecipientEmbeddable recipient;
-
-    @Embedded
     private AddressEmbeddable address;
 }

@@ -99,18 +99,9 @@ public class OrderPersistenceMapper {
     }
 
     private ShippingEmbeddable toShippingEmbeddable(Shipping shipping) {
-        var recipient = shipping.recipient();
-
         return ShippingEmbeddable.builder()
                 .cost(shipping.cost().value())
                 .expectedDate(shipping.expectedDate())
-                .recipient(RecipientEmbeddable.builder()
-                        .firstName(recipient.fullName().firstName())
-                        .lastName(recipient.fullName().lastName())
-                        .document(recipient.document().value())
-                        .phone(recipient.phone().value())
-                        .build()
-                )
                 .address(this.toAddressEmbeddable(shipping.address()))
                 .build();
     }

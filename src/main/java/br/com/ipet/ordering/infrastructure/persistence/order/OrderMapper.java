@@ -6,7 +6,6 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
-import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
@@ -20,8 +19,8 @@ import br.com.ipet.ordering.domain.model.order.OrderItem;
 import br.com.ipet.ordering.domain.model.order.OrderItemId;
 import br.com.ipet.ordering.domain.model.order.OrderStatus;
 import br.com.ipet.ordering.domain.model.order.PaymentMethod;
-import br.com.ipet.ordering.domain.model.order.Recipient;
 import br.com.ipet.ordering.domain.model.order.Shipping;
+import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.product.ProductDescription;
 import br.com.ipet.ordering.domain.model.product.ProductId;
 import br.com.ipet.ordering.domain.model.product.ProductName;
@@ -83,16 +82,9 @@ public class OrderMapper {
     }
 
     private Shipping toShipping(ShippingEmbeddable shippingEmbeddable) {
-        var recipientEmbeddable = shippingEmbeddable.getRecipient();
-
         return Shipping.builder()
                 .cost(new Money(shippingEmbeddable.getCost()))
                 .expectedDate(shippingEmbeddable.getExpectedDate())
-                .recipient(Recipient.builder()
-                        .fullName(new FullName(recipientEmbeddable.getFirstName(), recipientEmbeddable.getLastName()))
-                        .document(documentFactory.from(recipientEmbeddable.getDocument()))
-                        .phone(new Phone(recipientEmbeddable.getPhone()))
-                        .build())
                 .address(this.toAddress(shippingEmbeddable.getAddress()))
                 .build();
     }
