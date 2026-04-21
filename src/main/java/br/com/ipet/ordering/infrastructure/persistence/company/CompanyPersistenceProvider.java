@@ -1,9 +1,8 @@
 package br.com.ipet.ordering.infrastructure.persistence.company;
 
-import br.com.ipet.ordering.domain.model.commons.document.Document;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
-import br.com.ipet.ordering.domain.model.company.Company;
 import br.com.ipet.ordering.domain.model.company.Companies;
+import br.com.ipet.ordering.domain.model.company.Company;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,8 +21,7 @@ public class CompanyPersistenceProvider implements Companies {
     @Override
     @Transactional(readOnly = true)
     public Optional<Company> ofId(CompanyId companyId) {
-        return repository.findById(companyId.value())
-                .map(companyMapper::toDomain);
+        return repository.findById(companyId.value()).map(companyMapper::toDomain);
     }
 
     @Override
@@ -49,14 +47,8 @@ public class CompanyPersistenceProvider implements Companies {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean isEmailUnique(Email email, CompanyId excepedCompanyId) {
-        return !repository.existsByEmailAndIdNot(email.value(), excepedCompanyId.value());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public boolean isDocumentUnique(Document document, CompanyId excepedCompanyId) {
-        return !repository.existsByDocumentAndIdNot(document.value(), excepedCompanyId.value());
+    public boolean isEmailUnique(Email email, CompanyId companyId) {
+        return !repository.existsByEmailAndIdNot(email.value(), companyId.value());
     }
 
     private void insert(Company company) {

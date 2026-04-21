@@ -16,8 +16,8 @@ import java.util.UUID;
 public class CompanyDetailOutput {
     private UUID id;
     private String companyName;
-    private String cnpj;
-    private Integer celPhone;
+    private String document;
+    private String phone;
     private String email;
     private AddressData address;
     private OffsetDateTime registeredAt;

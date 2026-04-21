@@ -16,17 +16,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CompanyMapper {
 
-    private final DocumentFactory documentFactory;
-
-    public Company toDomain(CompanyPersistenceEntity companyPersistenceEntity) {
+    public Company toDomain(CompanyPersistenceEntity companyPersistence) {
         return Company.existing()
-                .id(new CompanyId(companyPersistenceEntity.getId()))
-                .name(new CompanyName(companyPersistenceEntity.getCompanyName()))
-                .document(documentFactory.from(companyPersistenceEntity.getDocument()))
-                .email(new Email(companyPersistenceEntity.getEmail()))
-                .phone(new Phone(companyPersistenceEntity.getPhone()))
-                .address(this.toAddress(companyPersistenceEntity.getAddress()))
-                .registeredAt(companyPersistenceEntity.getRegisteredAt())
+                .id(new CompanyId(companyPersistence.getId()))
+                .name(new CompanyName(companyPersistence.getCompanyName()))
+                .document(DocumentFactory.from(companyPersistence.getDocument()))
+                .email(new Email(companyPersistence.getEmail()))
+                .phone(new Phone(companyPersistence.getPhone()))
+                .address(this.toAddress(companyPersistence.getAddress()))
+                .registeredAt(companyPersistence.getRegisteredAt())
                 .build();
     }
 

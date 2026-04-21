@@ -27,7 +27,6 @@ public class CustomerManagementApplicationService {
 
     private final Customers customers;
     private final CustomerRegistrationService customerRegistrationService;
-    private final DocumentFactory documentFactory;
     private final AddressMapper addressMapper;
 
     public UUID create(CustomerInput input) {
@@ -37,7 +36,7 @@ public class CustomerManagementApplicationService {
                 new FullName(input.getFirstName(), input.getLastName()),
                 new Email(input.getEmail()),
                 new Phone(input.getPhone()),
-                documentFactory.from(input.getDocument()),
+                DocumentFactory.from(input.getDocument()),
                 new BirthDate(input.getBirthDate()),
                 addressMapper.toAddress(input.getAddress())
         );
@@ -78,7 +77,7 @@ public class CustomerManagementApplicationService {
         var customer = this.findById(customerId);
 
         customer.changeName(new FullName(input.getFirstName(), input.getLastName()));
-        customer.changeDocument(documentFactory.from(input.getDocument()));
+        customer.changeDocument(DocumentFactory.from(input.getDocument()));
         customer.changePhone(new Phone(input.getPhone()));
         customer.changeBirthDate(new BirthDate(input.getBirthDate()));
 

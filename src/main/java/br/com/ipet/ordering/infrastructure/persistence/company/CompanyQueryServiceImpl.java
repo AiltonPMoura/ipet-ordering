@@ -15,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceSpecification.*;
+import static br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceSpecification.email;
+import static br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceSpecification.name;
 
 @Component
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class CompanyQueryServiceImpl implements CompanyQueryService {
 
     @Override
     public CompanyDetailOutput findById(UUID companyId) {
-        var company = repository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
+        var company = repository.findById(companyId).orElseThrow(() -> new CompanyNotFoundException(""));
         return mapper.convert(company, CompanyDetailOutput.class);
     }
 

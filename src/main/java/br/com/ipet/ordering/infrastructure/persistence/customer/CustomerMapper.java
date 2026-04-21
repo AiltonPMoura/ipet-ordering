@@ -22,15 +22,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CustomerMapper {
 
-    private final DocumentFactory documentFactory;
-
     public Customer toDomain(CustomerPersistenceEntity persistenceEntity) {
         return Customer.existing()
                 .id(new CustomerId(persistenceEntity.getId()))
                 .fullName(this.toFullName(persistenceEntity))
                 .email(new Email(persistenceEntity.getEmail()))
                 .phone(new Phone(persistenceEntity.getPhone()))
-                .document(documentFactory.from(persistenceEntity.getDocument()))
+                .document(DocumentFactory.from(persistenceEntity.getDocument()))
                 .birthDate(new BirthDate(persistenceEntity.getBirthDate()))
                 .address(this.toCustomerAddress(persistenceEntity.getCustomerAddress()))
                 .registerAt(persistenceEntity.getRegisterAt())

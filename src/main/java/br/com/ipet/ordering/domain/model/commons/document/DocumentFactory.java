@@ -1,22 +1,23 @@
 package br.com.ipet.ordering.domain.model.commons.document;
 
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.DocumentIsNotValidException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
+public final class DocumentFactory {
 
-@Component
-@RequiredArgsConstructor
-public class DocumentFactory {
-    private final List<DocumentStrategy> strategies;
+    private DocumentFactory() {}
 
-    public Document from(String value) {
-        return strategies.stream()
-                .filter(strategy -> strategy.match(value))
-                .findFirst()
-                .map(strategy -> strategy.create(value))
-                .orElseThrow(() -> new DocumentIsNotValidException("documento inválido"));
+    public static Document from(String value) {
+        FieldValidator.requiresNonBlank("document", value);
+        value = value.trim().toUpperCase();
+
+        if (value.length() == 11)
+            return new Cpf(value);
+
+        if (value.length() == 14)
+            return new Cnpj(value);
+
+        throw new DocumentIsNotValidException("documento inválido");
     }
 
 }

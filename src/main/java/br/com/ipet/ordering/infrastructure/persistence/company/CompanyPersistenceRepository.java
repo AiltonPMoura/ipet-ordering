@@ -7,5 +7,4 @@ import java.util.UUID;
 
 public interface CompanyPersistenceRepository extends JpaRepository<CompanyPersistenceEntity, UUID>, JpaSpecificationExecutor<CompanyPersistenceEntity> {
     boolean existsByEmailAndIdNot(String email, UUID id);
-    boolean existsByDocumentAndIdNot(String document, UUID id);
 }

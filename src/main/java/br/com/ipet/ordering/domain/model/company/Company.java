@@ -6,6 +6,7 @@ import br.com.ipet.ordering.domain.model.commons.document.Document;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
+import lombok.AccessLevel;
 import lombok.Builder;
 
 import java.time.OffsetDateTime;
@@ -19,7 +20,7 @@ public class Company implements AggregateRoot<CompanyId> {
     private Address address;
     private OffsetDateTime registeredAt;
 
-    @Builder(builderClassName = "CreateNewCompanyBuilder", builderMethodName = "createNew")
+    @Builder(builderClassName = "CreateNewCompanyBuilder", builderMethodName = "createNew", access = AccessLevel.PACKAGE)
     private static Company create(CompanyName name, Document document,
                                   Phone phone, Email email, Address address) {
         return new Company(new CompanyId(), name, document,

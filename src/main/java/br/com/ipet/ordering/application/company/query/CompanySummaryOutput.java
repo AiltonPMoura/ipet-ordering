@@ -14,6 +14,6 @@ import java.util.UUID;
 public class CompanySummaryOutput {
     private UUID id;
     private String companyName;
-    private Integer celPhone;
+    private String phone;
     private String email;
 }
