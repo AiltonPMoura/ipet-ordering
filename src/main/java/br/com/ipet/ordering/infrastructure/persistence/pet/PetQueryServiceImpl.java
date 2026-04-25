@@ -22,25 +22,22 @@ import static br.com.ipet.ordering.infrastructure.persistence.pet.PetPersistence
 @Transactional(readOnly = true)
 public class PetQueryServiceImpl implements PetQueryService {
 
-    private final PetPersistenceRepository repository;
+    private final PetPersistenceRepository petRepository;
     private final Mapper mapper;
 
     @Override
     public PetDetailOutput findById(UUID petId) {
-        var pet = repository.findById(petId)
-                .orElseThrow(PetNotFoundException::new);
-
-        return mapper.convert(pet, PetDetailOutput.class);
+        var petPersistence = petRepository.findById(petId).orElseThrow(() -> new PetNotFoundException(""));
+        return mapper.convert(petPersistence, PetDetailOutput.class);
     }
 
     @Override
     public Page<PetSummaryOutput> filter(PetFilter petFilter, Pageable pageable) {
-        return repository.findAll(toSpecification(petFilter), pageable)
-                .map(petPersistence ->
-                        mapper.convert(petPersistence, PetSummaryOutput.class));
+        return petRepository.findAll(this.toSpecification(petFilter), pageable)
+                .map(petPersistence -> mapper.convert(petPersistence, PetSummaryOutput.class));
     }
 
-    private static Specification<PetPersistenceEntity> toSpecification(PetFilter petFilter) {
+    private Specification<PetPersistenceEntity> toSpecification(PetFilter petFilter) {
         return customerId(petFilter.getCustomerId())
                 .and(name(petFilter.getName())
                         .or(type(petFilter.getType()))
@@ -48,6 +45,5 @@ public class PetQueryServiceImpl implements PetQueryService {
                         .or(breed(petFilter.getBreed()))
                 );
     }
-
 
 }

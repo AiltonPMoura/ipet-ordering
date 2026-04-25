@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model.pet;
 
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
 import br.com.ipet.ordering.domain.model.customer.Customers;
@@ -9,57 +10,50 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class PetService {
-
     private final Customers customers;
-    private final Pets pets;
 
-    public Pet register(CustomerId customerId, PetName name,
-                         Type type, Breed breed, Gender gender,
-                         Size size, PetWeight weight, PetAge age) {
+    public Pet register(CustomerId customerId, PetProfile petProfile) {
+        FieldValidator.requiresNonNull("customerId", customerId);
+        FieldValidator.requiresNonNull("petProfile", petProfile);
 
-        verifyCustomerExists(customerId);
+        this.verifyCustomerExists(customerId);
 
         return Pet.createNew()
                 .customerId(customerId)
-                .name(name)
-                .type(type)
-                .breed(breed)
-                .gender(gender)
-                .size(size)
-                .weight(weight)
-                .age(age)
+                .name(petProfile.name())
+                .type(petProfile.type())
+                .breed(petProfile.breed())
+                .gender(petProfile.gender())
+                .size(petProfile.size())
+                .weight(petProfile.weight())
+                .age(petProfile.age())
                 .build();
     }
 
-    public void change(Pet pet, CustomerId customerId,
-                      PetName name, Type type, Breed breed, Gender gender,
-                      Size size, PetWeight weight, PetAge age) {
+    public void change(Pet pet, CustomerId customerId, PetProfile petProfile) {
+        FieldValidator.requiresNonNull("pet", pet);
+        FieldValidator.requiresNonNull("customerId", customerId);
+        FieldValidator.requiresNonNull("petProfile", petProfile);
 
         this.verifyIfBelongsToTheCustomer(customerId, pet);
 
-        pet.changeName(name);
-        pet.changeType(type);
-        pet.changeBreed(breed);
-        pet.changeGender(gender);
-        pet.changeSize(size);
-        pet.changeWeight(weight);
-        pet.changeAge(age);
+        pet.changeName(petProfile.name());
+        pet.changeType(petProfile.type());
+        pet.changeBreed(petProfile.breed());
+        pet.changeGender(petProfile.gender());
+        pet.changeSize(petProfile.size());
+        pet.changeWeight(petProfile.weight());
+        pet.changeAge(petProfile.age());
     }
 
     private void verifyIfBelongsToTheCustomer(CustomerId customerId, Pet pet) {
-        verifyCustomerExists(customerId);
-
-        var doesNottBelongsToTheCustomer = pets.ofCustomer(customerId)
-                .stream()
-                .noneMatch(pet::equals);
-
-        if (doesNottBelongsToTheCustomer)
+        if (!pet.customerId().equals(customerId))
             throw new PetDoesNotBelongToTheCustomer();
     }
 
     private void verifyCustomerExists(CustomerId customerId) {
         if (!customers.exists(customerId))
-            throw new CustomerNotFoundException();
+            throw new CustomerNotFoundException("");
     }
 
 }

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class CustomerPersistenceMapper {
 
     public CustomerPersistenceEntity fromDomain(Customer customer) {
-        return merge(new CustomerPersistenceEntity(), customer);
+        return this.merge(new CustomerPersistenceEntity(), customer);
     }
 
     public CustomerPersistenceEntity merge(CustomerPersistenceEntity customerPersistence, Customer customer) {

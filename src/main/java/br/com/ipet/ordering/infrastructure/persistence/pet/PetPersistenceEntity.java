@@ -39,6 +39,7 @@ public class PetPersistenceEntity {
     private String gender;
     private String size;
     private Double weight;
+    private Integer age;
 
     public UUID getCustomerId() {
         return this.getCustomer().getId();

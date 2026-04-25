@@ -3,6 +3,7 @@ package br.com.ipet.ordering.domain.model.pet;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.FieldValidator;
+import lombok.AccessLevel;
 import lombok.Builder;
 
 import java.util.Objects;
@@ -18,7 +19,7 @@ public class Pet implements AggregateRoot<PetId> {
     private PetWeight weight;
     private PetAge age;
 
-    @Builder(builderClassName = "createNewPetBuilder", builderMethodName = "createNew")
+    @Builder(builderClassName = "createNewPetBuilder", builderMethodName = "createNew", access = AccessLevel.PACKAGE)
     private static Pet create(PetName name, CustomerId customerId,
                               Type type, Breed breed, Gender gender,
                               Size size, PetWeight weight, PetAge age) {
@@ -74,41 +75,13 @@ public class Pet implements AggregateRoot<PetId> {
         return id;
     }
 
-    public CustomerId customerId() {
-        return customerId;
-    }
-
-    public PetName name() {
-        return name;
-    }
-
-    public Type type() {
-        return type;
-    }
-
-    public Breed breed() {
-        return breed;
-    }
-
-    public Gender gender() {
-        return gender;
-    }
-
-    public Size size() {
-        return size;
-    }
-
-    public PetWeight weight() {
-        return weight;
-    }
-
-    public PetAge age() {
-        return age;
-    }
-
     private void setId(PetId id) {
         FieldValidator.requiresNonNull("pet id", id);
         this.id = id;
+    }
+
+    public CustomerId customerId() {
+        return customerId;
     }
 
     private void setCustomerId(CustomerId customerId) {
@@ -116,9 +89,17 @@ public class Pet implements AggregateRoot<PetId> {
         this.customerId = customerId;
     }
 
+    public PetName name() {
+        return name;
+    }
+
     private void setName(PetName name) {
         FieldValidator.requiresNonNull("pet name", name);
         this.name = name;
+    }
+
+    public Type type() {
+        return type;
     }
 
     private void setType(Type type) {
@@ -126,9 +107,17 @@ public class Pet implements AggregateRoot<PetId> {
         this.type = type;
     }
 
+    public Breed breed() {
+        return breed;
+    }
+
     private void setBreed(Breed breed) {
         FieldValidator.requiresNonNull("pet breed", breed);
         this.breed = breed;
+    }
+
+    public Gender gender() {
+        return gender;
     }
 
     private void setGender(Gender gender) {
@@ -136,9 +125,17 @@ public class Pet implements AggregateRoot<PetId> {
         this.gender = gender;
     }
 
+    public Size size() {
+        return size;
+    }
+
     private void setSize(Size size) {
         FieldValidator.requiresNonNull("pet size", size);
         this.size = size;
+    }
+
+    public PetWeight weight() {
+        return weight;
     }
 
     private void setWeight(PetWeight weight) {
@@ -147,6 +144,10 @@ public class Pet implements AggregateRoot<PetId> {
 
     private void setAge(PetAge age) {
         this.age = age;
+    }
+
+    public PetAge age() {
+        return age;
     }
 
     @Override

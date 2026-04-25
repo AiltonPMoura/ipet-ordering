@@ -36,8 +36,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderMapper {
 
-    private final DocumentFactory documentFactory;
-
     public Order toDomain(OrderPersistenceEntity orderPersistence) {
         return Order.existing()
                 .id(new OrderId(orderPersistence.getId()))
@@ -92,7 +90,7 @@ public class OrderMapper {
     private Billing toBilling(BillingEmbeddable billingEmbeddable) {
         return Billing.builder()
                 .fullName(new FullName(billingEmbeddable.getFirstName(), billingEmbeddable.getLastName()))
-                .document(documentFactory.from(billingEmbeddable.getDocument()))
+                .document(DocumentFactory.from(billingEmbeddable.getDocument()))
                 .phone(new Phone(billingEmbeddable.getPhone()))
                 .email(new Email(billingEmbeddable.getEmail()))
                 .address(this.toAddress(billingEmbeddable.getAddress()))
@@ -102,7 +100,7 @@ public class OrderMapper {
     private DeliveryCompany toDeliveryCompany(DeliveryCompanyEmbeddable deliveryCompany) {
         return DeliveryCompany.builder()
                 .companyName(new CompanyName(deliveryCompany.getCompanyName()))
-                .document(documentFactory.from(deliveryCompany.getDocument()))
+                .document(DocumentFactory.from(deliveryCompany.getDocument()))
                 .phone(new Phone(deliveryCompany.getPhone()))
                 .email(new Email(deliveryCompany.getEmail()))
                 .address(this.toAddress(deliveryCompany.getAddress()))

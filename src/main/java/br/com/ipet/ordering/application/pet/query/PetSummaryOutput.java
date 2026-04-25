@@ -13,9 +13,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class PetSummaryOutput {
     private UUID petId;
+    private UUID customerId;
     private String name;
     private String type;
-    private String size;
     private String breed;
     private String gender;
 }

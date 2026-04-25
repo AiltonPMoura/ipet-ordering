@@ -1,6 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.pet;
 
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.pet.PetAge;
 import br.com.ipet.ordering.domain.model.pet.PetId;
 import br.com.ipet.ordering.domain.model.pet.PetName;
 import br.com.ipet.ordering.domain.model.pet.PetWeight;
@@ -24,6 +25,7 @@ public class PetMapper {
                 .size(Size.valueOf(petPersistence.getSize()))
                 .gender(Gender.valueOf(petPersistence.getGender()))
                 .weight(new PetWeight(petPersistence.getWeight()))
+                .age(new PetAge(petPersistence.getAge()))
                 .build();
     }
 
