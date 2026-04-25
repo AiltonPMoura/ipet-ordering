@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.application.shoppingcart;
+package br.com.ipet.ordering.application.shoppingcart.management;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ShoppingCartItemInput {
     private UUID shoppingCartId;
+    private UUID customerId;
     private UUID productId;
     private Integer quantity;
-    private UUID customerId;
 }

@@ -1,6 +1,5 @@
 package br.com.ipet.ordering.application.order.management;
 
-import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.order.Order;
 import br.com.ipet.ordering.domain.model.order.OrderId;
 import br.com.ipet.ordering.domain.model.order.OrderNotFoundException;
@@ -19,24 +18,18 @@ public class OrderManagementApplicationService {
     private final Orders orders;
 
     public void markAsPaid(UUID orderId) {
-        FieldValidator.requiresNonNull("orderId", orderId);
-
         var order = this.findOrderById(orderId);
         order.markAsPaid();
         orders.add(order);
     }
 
     public void markAsReady(UUID orderId) {
-        FieldValidator.requiresNonNull("orderId", orderId);
-
         var order = this.findOrderById(orderId);
         order.markAsReady();
         orders.add(order);
     }
 
     public void cancel(UUID orderId) {
-        FieldValidator.requiresNonNull("orderId", orderId);
-
         var order = this.findOrderById(orderId);
         order.cancel();
         orders.add(order);

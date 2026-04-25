@@ -26,9 +26,4 @@ public class ShoppingService {
         return ShoppingCart.startShopping(customerId);
     }
 
-    public void verifyIfBelongToTheCustomer(ShoppingCart shoppingCart, CustomerId customerId) {
-        if (!shoppingCart.customerId().equals(customerId))
-            throw new ShoppingCartDoesNotBelongToTheCustomer("");
-    }
-
 }

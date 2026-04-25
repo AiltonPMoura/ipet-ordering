@@ -33,9 +33,9 @@ public class OrdersPersistenceProvider implements Orders {
     @Transactional
     public void add(Order order) {
         repository.findById(order.id().value())
-                .ifPresentOrElse(orderPersistence ->
-                        update(orderPersistence, order),
-                        () -> insert(order)
+                .ifPresentOrElse(
+                        orderPersistence -> this.update(orderPersistence, order),
+                        () -> this.insert(order)
                 );
     }
 

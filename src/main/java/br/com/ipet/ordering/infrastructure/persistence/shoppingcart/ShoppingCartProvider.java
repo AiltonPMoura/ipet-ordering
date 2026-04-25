@@ -14,62 +14,62 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ShoppingCartProvider implements ShoppingCarts {
 
-    private final ShoppingCartPersistenceRepository repository;
+    private final ShoppingCartPersistenceRepository shoppingCartRepository;
     private final ShoppingCartMapper shoppingCartMapper;
     private final ShoppingCartPersistenceMapper shoppingCartPersistenceMapper;
 
     @Override
     @Transactional(readOnly = true)
     public Optional<ShoppingCart> ofId(ShoppingCartId id) {
-        return repository.findById(id.value()).map(shoppingCartMapper::toDomain);
+        return shoppingCartRepository.findById(id.value()).map(shoppingCartMapper::toDomain);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<ShoppingCart> ofCustomer(CustomerId customerId) {
-        return repository.findByCustomer_Id(customerId.value()).map(shoppingCartMapper::toDomain);
+        return shoppingCartRepository.findByCustomer_Id(customerId.value()).map(shoppingCartMapper::toDomain);
     }
 
     @Override
     @Transactional
     public void add(ShoppingCart shoppingCart) {
-        repository.findById(shoppingCart.id().value())
-                .ifPresentOrElse(shoppingCartPersistence ->
-                        update(shoppingCartPersistence, shoppingCart),
-                        () -> insert(shoppingCart));
+        shoppingCartRepository.findById(shoppingCart.id().value())
+                .ifPresentOrElse(
+                        shoppingCartPersistence -> this.update(shoppingCartPersistence, shoppingCart),
+                        () -> this.insert(shoppingCart));
     }
 
     @Override
     @Transactional(readOnly = true)
     public long count() {
-        return repository.count();
+        return shoppingCartRepository.count();
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean exists(ShoppingCartId id) {
-        return repository.existsById(id.value());
+        return shoppingCartRepository.existsById(id.value());
     }
 
     @Override
     @Transactional
     public void remove(ShoppingCart shoppingCart) {
-        repository.deleteById(shoppingCart.id().value());
+        shoppingCartRepository.deleteById(shoppingCart.id().value());
     }
 
     @Override
     @Transactional
     public void remove(ShoppingCartId id) {
-        repository.deleteById(id.value());
+        shoppingCartRepository.deleteById(id.value());
     }
 
     private void insert(ShoppingCart shoppingCart) {
         var shoppingCartPersistence = shoppingCartPersistenceMapper.fromDomain(shoppingCart);
-        repository.saveAndFlush(shoppingCartPersistence);
+        shoppingCartRepository.saveAndFlush(shoppingCartPersistence);
     }
 
     private void update(ShoppingCartPersistenceEntity shoppingCartPersistence, ShoppingCart shoppingCart) {
         shoppingCartPersistence = shoppingCartPersistenceMapper.merge(shoppingCartPersistence, shoppingCart);
-        repository.saveAndFlush(shoppingCartPersistence);
+        shoppingCartRepository.saveAndFlush(shoppingCartPersistence);
     }
 }

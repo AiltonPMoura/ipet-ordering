@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ShoppingCartPersistenceMapper {
 
-    private final CustomerPersistenceRepository customerPersistenceRepository;
+    private final CustomerPersistenceRepository customerRepository;
 
     public ShoppingCartPersistenceEntity fromDomain(ShoppingCart shoppingCart) {
         return merge(new ShoppingCartPersistenceEntity(), shoppingCart);
@@ -23,7 +23,7 @@ public class ShoppingCartPersistenceMapper {
 
     public ShoppingCartPersistenceEntity merge(ShoppingCartPersistenceEntity shoppingCartPersistence, ShoppingCart shoppingCart) {
         shoppingCartPersistence.setId(shoppingCart.id().value());
-        shoppingCartPersistence.setCustomer(customerPersistenceRepository.getReferenceById(shoppingCart.customerId().value()));
+        shoppingCartPersistence.setCustomer(customerRepository.getReferenceById(shoppingCart.customerId().value()));
         shoppingCartPersistence.setTotalAmount(shoppingCart.totalAmount().value());
         shoppingCartPersistence.setTotalItems(shoppingCart.totalItems().value());
         shoppingCartPersistence.setCreatedAt(shoppingCart.createdAt());
