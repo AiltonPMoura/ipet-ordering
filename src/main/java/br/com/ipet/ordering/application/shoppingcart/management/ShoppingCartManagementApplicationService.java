@@ -43,10 +43,7 @@ public class ShoppingCartManagementApplicationService {
         var product = productCatalogService.ofId(new ProductId(input.getProductId()))
                 .orElseThrow(() -> new ProductNotFoundException(""));
 
-        shoppingCart.addItem(product,
-                new Quantity(input.getQuantity()),
-                new CustomerId(input.getCustomerId()),
-                new CompanyId(input.getCompanyId()));
+        shoppingCart.addItem(product, new Quantity(input.getQuantity()), new CustomerId(input.getCustomerId()));
 
         shoppingCarts.add(shoppingCart);
     }

@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model.order;
 
+import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
@@ -8,6 +9,7 @@ import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.product.ProductDoesNotBelongsToTheCompany;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -18,7 +20,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Order implements AggregateRoot<OrderId> {
+public class Order
+        extends AbstractEventSourceEntity
+        implements AggregateRoot<OrderId> {
     private OrderId id;
     private CustomerId customerId;
     private CompanyId companyId;
@@ -127,8 +131,8 @@ public class Order implements AggregateRoot<OrderId> {
         this.setDeliveryCompany(deliveryCompany);
     }
 
-    public void place() {
-        this.verifyIfCanChangeToPlaced();
+    public void place(CustomerId customerId, CompanyId companyId) {
+        this.verifyIfCanChangeToPlaced(customerId, companyId);
         this.changeStatus(OrderStatus.PLACED);
         this.setPlacedAt(OffsetDateTime.now());
     }
@@ -193,7 +197,11 @@ public class Order implements AggregateRoot<OrderId> {
         this.setStatus(status);
     }
 
-    private void verifyIfCanChangeToPlaced() {
+    private void verifyIfCanChangeToPlaced(CustomerId customerId, CompanyId companyId) {
+        this.verifyIfOrderBelongsToTheCustomer(customerId);
+        this.verifyOrderAssociatedWithCompany(companyId);
+        this.veryfyProductsBelongsToTheCompany();
+
         if (this.items.isEmpty())
             throw OrderCannotBePlacedException.noItems(this.id.toString());
 
@@ -208,6 +216,7 @@ public class Order implements AggregateRoot<OrderId> {
 
         if (this.deliveryCompany == null)
             throw OrderCannotBePlacedException.noDeliveryCompany(this.id.toString());
+
     }
 
     private OrderItem findOrderItem(OrderItemId itemId) {
@@ -241,6 +250,24 @@ public class Order implements AggregateRoot<OrderId> {
     private void verifyIfChangeable() {
         if (!isDraft())
             throw new OrderCannotBeEditedException(this.id.toString());
+    }
+
+    private void verifyIfOrderBelongsToTheCustomer(CustomerId customerId) {
+        if (!this.customerId.equals(customerId))
+            throw new OrderDoesNotBelongsToTheCustomer("");
+    }
+
+    private void verifyOrderAssociatedWithCompany(CompanyId companyId) {
+        if (!this.companyId.equals(companyId))
+            throw new OrderDoesNotAssociatedWithCompany("");
+    }
+
+    private void veryfyProductsBelongsToTheCompany() {
+        var notBelongsCompany = this.items.stream().noneMatch(item ->
+                item.product().companyId().equals(this.companyId));
+
+        if (notBelongsCompany)
+            throw new ProductDoesNotBelongsToTheCompany("");
     }
 
     public OrderId id() {
