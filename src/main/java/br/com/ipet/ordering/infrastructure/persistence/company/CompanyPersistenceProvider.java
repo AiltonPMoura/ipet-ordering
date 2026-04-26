@@ -14,50 +14,50 @@ import java.util.Optional;
 @Component
 public class CompanyPersistenceProvider implements Companies {
 
-    private final CompanyPersistenceRepository repository;
+    private final CompanyPersistenceRepository companyRepository;
     private final CompanyMapper companyMapper;
     private final CompanyPersistenceMapper companyPersistenceMapper;
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Company> ofId(CompanyId companyId) {
-        return repository.findById(companyId.value()).map(companyMapper::toDomain);
+        return companyRepository.findById(companyId.value()).map(companyMapper::toDomain);
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean exists(CompanyId companyId) {
-        return repository.existsById(companyId.value());
+        return companyRepository.existsById(companyId.value());
     }
 
     @Override
     @Transactional
     public void add(Company company) {
-        repository.findById(company.id().value())
+        companyRepository.findById(company.id().value())
                 .ifPresentOrElse(companyPersistence ->
-                        update(companyPersistence, company),
-                        () -> insert(company));
+                        this.update(companyPersistence, company),
+                        () -> this.insert(company));
     }
 
     @Override
     @Transactional(readOnly = true)
     public long count() {
-        return repository.count();
+        return companyRepository.count();
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean isEmailUnique(Email email, CompanyId companyId) {
-        return !repository.existsByEmailAndIdNot(email.value(), companyId.value());
+        return !companyRepository.existsByEmailAndIdNot(email.value(), companyId.value());
     }
 
     private void insert(Company company) {
         var companyPersistence = companyPersistenceMapper.fromDomain(company);
-        repository.saveAndFlush(companyPersistence);
+        companyRepository.saveAndFlush(companyPersistence);
     }
 
     private void update(CompanyPersistenceEntity companyPersistence, Company company) {
         companyPersistence = companyPersistenceMapper.merge(companyPersistence, company);
-        repository.saveAndFlush(companyPersistence);
+        companyRepository.saveAndFlush(companyPersistence);
     }
 }

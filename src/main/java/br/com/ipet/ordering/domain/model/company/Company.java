@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model.company;
 
+import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.document.Document;
@@ -11,7 +12,9 @@ import lombok.Builder;
 
 import java.time.OffsetDateTime;
 
-public class Company implements AggregateRoot<CompanyId> {
+public class Company
+        extends AbstractEventSourceEntity
+        implements AggregateRoot<CompanyId> {
     private CompanyId id;
     private CompanyName name;
     private Document document;
