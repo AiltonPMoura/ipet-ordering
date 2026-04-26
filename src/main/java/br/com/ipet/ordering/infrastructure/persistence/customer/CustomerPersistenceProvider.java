@@ -38,6 +38,8 @@ public class CustomerPersistenceProvider implements Customers {
                         customerPersistence -> this.update(customerPersistence, customer),
                         () -> this.insert(customer)
                 );
+
+        customer.clearDomainEvents();
     }
 
     @Override

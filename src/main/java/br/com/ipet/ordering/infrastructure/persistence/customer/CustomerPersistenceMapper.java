@@ -28,6 +28,7 @@ public class CustomerPersistenceMapper {
         customerPersistence.setPhone(customer.phone().value());
         customerPersistence.setAddress(this.mergeAddress(customerPersistence, customer));
         customerPersistence.setRegisterAt(customer.registerAt());
+        customerPersistence.addEvents(customer.domainEvents());
         return customerPersistence;
     }
 

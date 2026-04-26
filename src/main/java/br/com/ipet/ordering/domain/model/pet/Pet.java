@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model.pet;
 
+import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.FieldValidator;
@@ -8,7 +9,9 @@ import lombok.Builder;
 
 import java.util.Objects;
 
-public class Pet implements AggregateRoot<PetId> {
+public class Pet
+        extends AbstractEventSourceEntity
+        implements AggregateRoot<PetId> {
     private PetId id;
     private CustomerId customerId;
     private PetName name;

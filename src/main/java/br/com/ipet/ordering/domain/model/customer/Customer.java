@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model.customer;
 
+import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.document.Document;
@@ -7,6 +8,7 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
+import lombok.AccessLevel;
 import lombok.Builder;
 
 import java.time.OffsetDateTime;
@@ -15,7 +17,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Customer implements AggregateRoot<CustomerId> {
+public class Customer
+        extends AbstractEventSourceEntity
+        implements AggregateRoot<CustomerId> {
     private CustomerId id;
     private FullName fullName;
     private Email email;
@@ -25,7 +29,7 @@ public class Customer implements AggregateRoot<CustomerId> {
     private Set<CustomerAddress> address;
     private OffsetDateTime registerAt;
 
-    @Builder(builderClassName = "CreateNewCustomerBuilder", builderMethodName = "createNew")
+    @Builder(builderClassName = "CreateNewCustomerBuilder", builderMethodName = "createNew", access = AccessLevel.PACKAGE)
     private static Customer create(FullName fullName, Email email, Phone phone,
                                    Document document, BirthDate birthDate, Address address) {
 
@@ -35,6 +39,8 @@ public class Customer implements AggregateRoot<CustomerId> {
         var customerAddress = CustomerAddress.create(customer.id, address, true);
 
         customer.address.add(customerAddress);
+
+        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id, customer.fullName, customer.email, customer.registerAt));
 
         return customer;
     }
