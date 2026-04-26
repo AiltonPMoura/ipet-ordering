@@ -1,6 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.shoppingcart;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
+import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
@@ -24,6 +25,7 @@ public class ShoppingCartMapper {
         return ShoppingCart.existing()
                 .id(new ShoppingCartId(shoppingCartPersistence.getId()))
                 .customerId(new CustomerId(shoppingCartPersistence.getCustomerId()))
+                .companyId(new CompanyId(shoppingCartPersistence.getCompanyId()))
                 .items(this.toItemDomain(shoppingCartPersistence.getItems()))
                 .totalItems(new Quantity(shoppingCartPersistence.getTotalItems()))
                 .totalAmount(new Money(shoppingCartPersistence.getTotalAmount()))

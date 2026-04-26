@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.shoppingcart;
 
+import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -40,6 +41,10 @@ public class ShoppingCartPersistenceEntity {
     @ManyToOne(optional = false)
     private CustomerPersistenceEntity customer;
 
+    @JoinColumn
+    @ManyToOne(optional = false)
+    private CompanyPersistenceEntity company;
+
     @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private Set<ShoppingCartItemPersistenceEntity> items = new HashSet<>();
 
@@ -54,6 +59,10 @@ public class ShoppingCartPersistenceEntity {
 
     public UUID getCustomerId() {
         return this.customer.getId();
+    }
+
+    public UUID getCompanyId() {
+        return this.company.getId();
     }
 
     public void setItems(Set<ShoppingCartItemPersistenceEntity> items) {

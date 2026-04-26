@@ -53,7 +53,10 @@ public class CheckoutApplicationService {
 
         var shippingCost = this.calculateShippingCost(company.address().zipCode(), customerAddress.zipCode());
 
-        var order = checkoutService.checkout(shoppingCart, new CompanyId(company.id().value()),
+        var order = checkoutService.checkout(
+                shoppingCart,
+                new CustomerId(customer.id().value()),
+                new CompanyId(company.id().value()),
                 Billing.builder()
                         .fullName(customer.fullName())
                         .document(customer.document())

@@ -2,6 +2,7 @@ package br.com.ipet.ordering.application.shoppingcart.management;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
+import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.product.ProductCatalogService;
 import br.com.ipet.ordering.domain.model.product.ProductId;
@@ -27,8 +28,8 @@ public class ShoppingCartManagementApplicationService {
     private final ShoppingCarts shoppingCarts;
     private final ProductCatalogService productCatalogService;
 
-    public UUID create(UUID customerId) {
-        var shoppingCart = shoppingService.startShopping(new CustomerId(customerId));
+    public UUID create(UUID customerId, UUID companyId) {
+        var shoppingCart = shoppingService.startShopping(new CustomerId(customerId), new CompanyId(companyId));
         shoppingCarts.add(shoppingCart);
 
         return shoppingCart.id().value();
@@ -42,7 +43,10 @@ public class ShoppingCartManagementApplicationService {
         var product = productCatalogService.ofId(new ProductId(input.getProductId()))
                 .orElseThrow(() -> new ProductNotFoundException(""));
 
-        shoppingCart.addItem(product, new Quantity(input.getQuantity()), new CustomerId(input.getCustomerId()));
+        shoppingCart.addItem(product,
+                new Quantity(input.getQuantity()),
+                new CustomerId(input.getCustomerId()),
+                new CompanyId(input.getCompanyId()));
 
         shoppingCarts.add(shoppingCart);
     }

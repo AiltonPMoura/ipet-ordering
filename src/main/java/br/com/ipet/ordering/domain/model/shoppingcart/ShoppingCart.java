@@ -1,11 +1,14 @@
 package br.com.ipet.ordering.domain.model.shoppingcart;
 
+import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
+import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.product.ProductDoesNotBelongToTheCompany;
 import br.com.ipet.ordering.domain.model.product.ProductId;
 import lombok.Builder;
 
@@ -17,32 +20,37 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
+public class ShoppingCart
+        extends AbstractEventSourceEntity
+        implements AggregateRoot<ShoppingCartId> {
     private ShoppingCartId id;
     private CustomerId customerId;
+    private CompanyId companyId;
     private Set<ShoppingCartItem> items;
     private Quantity totalItems;
     private Money totalAmount;
     private OffsetDateTime createdAt;
 
-    static ShoppingCart startShopping(CustomerId customerId) {
-        return new ShoppingCart(new ShoppingCartId(), customerId,
+    static ShoppingCart startShopping(CustomerId customerId, CompanyId companyId) {
+        return new ShoppingCart(new ShoppingCartId(), customerId, companyId,
                 new HashSet<>(), Quantity.ZERO, Money.ZERO, OffsetDateTime.now());
     }
 
     @Builder(builderClassName = "ExistingShoppingCartBuilder", builderMethodName = "existing")
-    private ShoppingCart(ShoppingCartId id, CustomerId customerId, Set<ShoppingCartItem> items,
+    private ShoppingCart(ShoppingCartId id, CustomerId customerId, CompanyId companyId, Set<ShoppingCartItem> items,
                          Quantity totalItems, Money totalAmount, OffsetDateTime createdAt) {
         this.setId(id);
         this.setCustomerId(customerId);
+        this.setCompanyId(companyId);
         this.setItems(items);
         this.setTotalItems(totalItems);
         this.setTotalAmount(totalAmount);
         this.setCreatedAt(createdAt);
     }
 
-    public void addItem(Product product, Quantity quantity, CustomerId customerId) {
+    public void addItem(Product product, Quantity quantity, CustomerId customerId, CompanyId companyId) {
         this.verifyIfBelongToTheCustomer(customerId);
+        this.verifyAssociatedWithCompany(companyId, product);
 
         var shoppingCartItem = ShoppingCartItem.create(this.id, product, quantity);
 
@@ -139,6 +147,14 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
             throw new ShoppingCartDoesNotBelongToTheCustomer("");
     }
 
+    private void verifyAssociatedWithCompany(CompanyId companyId, Product product) {
+        if (!this.companyId.equals(companyId))
+            throw new ShoppingCartDoesNotAssociatedToTheCompany("");
+
+        if (!this.companyId.equals(product.companyId()))
+            throw new ProductDoesNotBelongToTheCompany("");
+    }
+
     @Override
     public ShoppingCartId id() {
         return id;
@@ -156,6 +172,15 @@ public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
     private void setCustomerId(CustomerId customerId) {
         FieldValidator.requiresNonNull("customerId", customerId);
         this.customerId = customerId;
+    }
+
+    public CompanyId companyId() {
+        return companyId;
+    }
+
+    private void setCompanyId(CompanyId companyId) {
+        FieldValidator.requiresNonNull("companyId", companyId);
+        this.companyId = companyId;
     }
 
     public Set<ShoppingCartItem> items() {

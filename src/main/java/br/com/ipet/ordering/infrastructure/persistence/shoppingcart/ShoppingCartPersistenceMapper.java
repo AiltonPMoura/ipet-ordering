@@ -4,6 +4,7 @@ import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCart;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCartItem;
 import br.com.ipet.ordering.infrastructure.persistence.commons.ProductEmbeddable;
+import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceRepository;
 import br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 public class ShoppingCartPersistenceMapper {
 
     private final CustomerPersistenceRepository customerRepository;
+    private final CompanyPersistenceRepository companyRepository;
 
     public ShoppingCartPersistenceEntity fromDomain(ShoppingCart shoppingCart) {
         return merge(new ShoppingCartPersistenceEntity(), shoppingCart);
@@ -24,6 +26,7 @@ public class ShoppingCartPersistenceMapper {
     public ShoppingCartPersistenceEntity merge(ShoppingCartPersistenceEntity shoppingCartPersistence, ShoppingCart shoppingCart) {
         shoppingCartPersistence.setId(shoppingCart.id().value());
         shoppingCartPersistence.setCustomer(customerRepository.getReferenceById(shoppingCart.customerId().value()));
+        shoppingCartPersistence.setCompany(companyRepository.getReferenceById(shoppingCart.companyId().value()));
         shoppingCartPersistence.setTotalAmount(shoppingCart.totalAmount().value());
         shoppingCartPersistence.setTotalItems(shoppingCart.totalItems().value());
         shoppingCartPersistence.setCreatedAt(shoppingCart.createdAt());
