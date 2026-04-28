@@ -32,8 +32,13 @@ public class ShoppingCart
     private OffsetDateTime createdAt;
 
     static ShoppingCart startShopping(CustomerId customerId, CompanyId companyId) {
-        return new ShoppingCart(new ShoppingCartId(), customerId, companyId,
+        var shoppingCart = new ShoppingCart(new ShoppingCartId(), customerId, companyId,
                 new HashSet<>(), Quantity.ZERO, Money.ZERO, OffsetDateTime.now());
+
+        shoppingCart.publishDomainEvent(new ShoppingCartCreatedEvent(
+                shoppingCart.id, customerId, companyId, shoppingCart.createdAt));
+
+        return shoppingCart;
     }
 
     @Builder(builderClassName = "ExistingShoppingCartBuilder", builderMethodName = "existing")
@@ -59,6 +64,8 @@ public class ShoppingCart
                         () -> insertItem(shoppingCartItem));
 
         this.recalculateTotals();
+        this.publishDomainEvent(new ShoppingCartItemAddedEvent(
+                this.id, this.customerId, this.companyId, product.id(), OffsetDateTime.now()));
     }
 
     public void removeItem(ShoppingCartItemId itemId, CustomerId customerId) {
@@ -66,6 +73,8 @@ public class ShoppingCart
         var shoppingCartItem = this.findItem(itemId);
         this.items.remove(shoppingCartItem);
         this.recalculateTotals();
+        this.publishDomainEvent(new ShoppingCartItemRemovedEvent(
+                this.id, this.customerId, this.companyId, shoppingCartItem.product().id(), OffsetDateTime.now()));
     }
 
     public void changeItemQuantity(ShoppingCartItemId itemId, Quantity quantity, CustomerId customerId) {
@@ -80,6 +89,8 @@ public class ShoppingCart
         this.items.clear();
         this.totalAmount = Money.ZERO;
         this.totalItems = Quantity.ZERO;
+        this.publishDomainEvent(new ShoppingCartEmpitiedEvent(
+                this.id, this.customerId, this.companyId, OffsetDateTime.now()));
     }
 
     public void refreshItem(Product product) {
@@ -96,6 +107,8 @@ public class ShoppingCart
 
     public void discard(CustomerId customerId) {
         this.verifyIfShoppingCartBelongToTheCustomer(customerId);
+        this.publishDomainEvent(new ShoppingCartDiscartedEvent(
+                this.id, this.customerId, this.companyId, OffsetDateTime.now()));
     }
 
     private ShoppingCartItem findItem(ProductId productId) {

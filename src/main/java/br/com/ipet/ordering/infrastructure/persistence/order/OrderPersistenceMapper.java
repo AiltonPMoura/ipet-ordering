@@ -46,6 +46,7 @@ public class OrderPersistenceMapper {
         orderPersistence.setOutForDeliveryAt(order.outForDeliveryAt());
         orderPersistence.setDeliveredAt(order.deliveredAt());
         orderPersistence.setCanceledAt(order.canceledAt());
+        orderPersistence.addEvents(order.domainEvents());
         return orderPersistence;
     }
 

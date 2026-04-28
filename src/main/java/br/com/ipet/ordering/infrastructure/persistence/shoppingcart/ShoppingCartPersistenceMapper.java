@@ -31,6 +31,7 @@ public class ShoppingCartPersistenceMapper {
         shoppingCartPersistence.setTotalItems(shoppingCart.totalItems().value());
         shoppingCartPersistence.setCreatedAt(shoppingCart.createdAt());
         shoppingCartPersistence.setItems(this.mergeItems(shoppingCartPersistence, shoppingCart));
+        shoppingCartPersistence.addEvents(shoppingCart.domainEvents());
         return shoppingCartPersistence;
     }
 

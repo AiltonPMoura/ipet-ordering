@@ -16,9 +16,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -28,10 +30,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(of = "id")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 @Table(name = "shopping_cart")
-public class ShoppingCartPersistenceEntity {
+public class ShoppingCartPersistenceEntity
+        extends AbstractAggregateRoot<ShoppingCartPersistenceEntity> {
 
     @Id
     @EqualsAndHashCode.Include
@@ -68,6 +71,16 @@ public class ShoppingCartPersistenceEntity {
     public void setItems(Set<ShoppingCartItemPersistenceEntity> items) {
         items.forEach(item -> item.setShoppingCart(this));
         this.items = items;
+    }
+
+    public Collection<Object> getEvents() {
+        return super.domainEvents();
+    }
+
+    public void addEvents(Collection<Object> events) {
+        if (events != null)
+            for (Object event : events)
+                this.registerEvent(event);
     }
 
 }

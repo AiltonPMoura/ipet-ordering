@@ -37,6 +37,8 @@ public class OrdersPersistenceProvider implements Orders {
                         orderPersistence -> this.update(orderPersistence, order),
                         () -> this.insert(order)
                 );
+
+        order.clearDomainEvents();
     }
 
     @Override

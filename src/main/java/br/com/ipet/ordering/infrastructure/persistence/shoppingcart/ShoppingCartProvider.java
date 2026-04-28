@@ -37,6 +37,8 @@ public class ShoppingCartProvider implements ShoppingCarts {
                 .ifPresentOrElse(
                         shoppingCartPersistence -> this.update(shoppingCartPersistence, shoppingCart),
                         () -> this.insert(shoppingCart));
+
+        shoppingCart.clearDomainEvents();
     }
 
     @Override

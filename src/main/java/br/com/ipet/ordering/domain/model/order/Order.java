@@ -123,6 +123,7 @@ public class Order
             throw new InvalidShippingDeliveryDateException("");
 
         this.setShipping(shipping);
+        this.recalculateTotals();
     }
 
     public void changeDeliveryCompany(DeliveryCompany deliveryCompany) {
@@ -135,31 +136,37 @@ public class Order
         this.verifyIfCanChangeToPlaced(customerId, companyId);
         this.changeStatus(OrderStatus.PLACED);
         this.setPlacedAt(OffsetDateTime.now());
+        this.publishDomainEvent(new OrderPlacedEvent(this.id, this.customerId, this.companyId, this.placedAt));
     }
 
     public void markAsPaid() {
         this.changeStatus(OrderStatus.PAID);
         this.setPaidAt(OffsetDateTime.now());
+        this.publishDomainEvent(new OrderPaidEvent(this.id, this.customerId, this.companyId, this.paidAt));
     }
 
     public void markAsReady() {
         this.changeStatus(OrderStatus.READY);
         this.setReadyAt(OffsetDateTime.now());
+        this.publishDomainEvent(new OrderReadyEvent(this.id, this.customerId, this.companyId, this.readyAt));
     }
 
     public void outForDelivery() {
         this.changeStatus(OrderStatus.OUT_FOR_DELIVERY);
         this.setOutForDeliveryAt(OffsetDateTime.now());
+        this.publishDomainEvent(new OrderOutForDeliveredEvent(this.id, this.customerId, this.companyId, this.outForDeliveryAt));
     }
 
     public void delivered() {
         this.changeStatus(OrderStatus.DELIVERED);
         this.setDeliveredAt(OffsetDateTime.now());
+        this.publishDomainEvent(new OrderDeliveredEvent(this.id, this.customerId, this.companyId, this.deliveredAt));
     }
 
     public void cancel() {
         this.changeStatus(OrderStatus.CANCELED);
         this.setCanceledAt(OffsetDateTime.now());
+        this.publishDomainEvent(new OrderCanceledEvent(this.id, this.customerId, this.companyId, this.canceledAt));
     }
 
     public boolean isDraft() {
