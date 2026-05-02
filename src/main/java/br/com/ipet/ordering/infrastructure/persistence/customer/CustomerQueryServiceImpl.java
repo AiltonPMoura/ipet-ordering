@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceSpecification.email;
-import static br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceSpecification.firstName;
-import static br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceSpecification.lastName;
+import static br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceSpecification.emailLike;
+import static br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceSpecification.firstNameLike;
+import static br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceSpecification.lastNameLike;
 
 @Component
 @RequiredArgsConstructor
@@ -35,14 +35,14 @@ public class CustomerQueryServiceImpl implements CustomerQueryService {
 
     @Override
     public Page<CustomerSummaryOutput> filter(CustomerFilter filter, Pageable pageable) {
-        var customerPage = repository.findAll(toSpecification(filter), pageable);
-        return customerPage.map(customer ->
-                mapper.convert(customer, CustomerSummaryOutput.class));
+        return repository.findAll(toSpecification(filter), pageable)
+                .map(customerPersistenceEntity ->
+                        mapper.convert(customerPersistenceEntity, CustomerSummaryOutput.class));
     }
 
     private Specification<CustomerPersistenceEntity> toSpecification(CustomerFilter filter) {
-        return firstName(filter.getFirstName())
-                .or(lastName(filter.getLastName()))
-                .or(email(filter.getEmail()));
+        return firstNameLike(filter.getFirstName())
+                .or(lastNameLike(filter.getLastName()))
+                .or(emailLike(filter.getEmail()));
     }
 }
