@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.domain.model.commons;
+package br.com.ipet.ordering.domain.model.commons.document;
 
 import br.com.ipet.ordering.domain.model.DomainException;
 

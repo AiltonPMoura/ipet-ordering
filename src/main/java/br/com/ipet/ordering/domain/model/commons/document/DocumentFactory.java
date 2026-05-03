@@ -1,7 +1,6 @@
 package br.com.ipet.ordering.domain.model.commons.document;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.DocumentIsNotValidException;
 
 public final class DocumentFactory {
 

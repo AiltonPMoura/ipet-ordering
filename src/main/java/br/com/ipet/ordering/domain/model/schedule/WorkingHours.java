@@ -8,8 +8,8 @@ import java.time.OffsetTime;
 public record WorkingHours(OffsetTime startTime, OffsetTime endTime) {
 
     private static final int MINIMUM_WORKING_HOURS = 1;
-    private static final int MINIMUM_START_WORKING = 6;
-    private static final int MAXIMUM_START_WORKING = 21;
+    private static final int MINIMUM_START_WORKING = 8;
+    private static final int MAXIMUM_START_WORKING = 17;
 
     public WorkingHours {
         FieldValidator.requiresNonNull("starTime", startTime);

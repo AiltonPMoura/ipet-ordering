@@ -12,7 +12,7 @@ public record ScheduleId(UUID value) {
     }
 
     public ScheduleId {
-        FieldValidator.requiresNonNull("agenda id", value);
+        FieldValidator.requiresNonNull("schedule id", value);
     }
 
 }
