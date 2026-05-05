@@ -13,15 +13,15 @@ public final class OrderPersistenceSpecification {
 
     public static Specification<OrderPersistenceEntity> customerIdEquals(UUID customerId) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.join("customer").get("customerId"), customerId);
+                criteriaBuilder.equal(root.get("customer").get("id"), customerId);
     }
 
-    public static Specification<OrderPersistenceEntity> placedAtBetween(OffsetDateTime startTime, OffsetDateTime endTime) {
+    public static Specification<OrderPersistenceEntity> placedAtBetween(OffsetDateTime placedAtFrom, OffsetDateTime placedAtTo) {
         return (root, query, criteriaBuilder) -> {
-            if (Objects.isNull(startTime) || Objects.isNull(endTime))
+            if (Objects.isNull(placedAtFrom) || Objects.isNull(placedAtTo))
                 return criteriaBuilder.conjunction();
 
-            return criteriaBuilder.between(root.get("placedAt"), startTime, endTime);
+            return criteriaBuilder.between(root.get("placedAt"), placedAtFrom, placedAtTo);
         };
     }
 
@@ -30,7 +30,7 @@ public final class OrderPersistenceSpecification {
             if (!StringUtils.hasText(status))
                 return criteriaBuilder.conjunction();
 
-            return criteriaBuilder.equal(criteriaBuilder.upper(root.get("status")), status.toUpperCase());
+            return criteriaBuilder.equal(root.get("status"), status.toUpperCase());
         };
     }
 

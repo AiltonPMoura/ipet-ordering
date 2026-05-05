@@ -5,6 +5,7 @@ import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
+import lombok.AccessLevel;
 import lombok.Builder;
 
 import java.util.Objects;
@@ -16,7 +17,7 @@ public class OrderItem {
     private Quantity quantity;
     private Money totalAmount;
 
-    @Builder(builderClassName = "CreateOrderItemBuilder", builderMethodName = "createNew")
+    @Builder(builderClassName = "CreateOrderItemBuilder", builderMethodName = "createNew", access = AccessLevel.PACKAGE)
     private static OrderItem create(OrderId orderId, Product product, Quantity quantity) {
         var orderItem = new OrderItem(
                 new OrderItemId(),

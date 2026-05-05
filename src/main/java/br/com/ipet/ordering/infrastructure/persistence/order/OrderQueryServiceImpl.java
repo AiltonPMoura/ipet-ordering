@@ -43,7 +43,7 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     private Specification<OrderPersistenceEntity> toSpecification(OrderFilter filter) {
         return customerIdEquals(filter.getCustomerId())
                 .and(
-                        placedAtBetween(filter.getStartTime(), filter.getEndTime())
+                        placedAtBetween(filter.getPlacedAtFrom(), filter.getPlacedAtTo())
                         .or(statusEquals(filter.getStatus()))
                 );
     }

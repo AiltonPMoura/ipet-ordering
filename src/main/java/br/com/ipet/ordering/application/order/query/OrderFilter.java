@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class OrderFilter {
     private UUID customerId;
-    private OffsetDateTime startTime;
-    private OffsetDateTime endTime;
+    private OffsetDateTime placedAtFrom;
+    private OffsetDateTime placedAtTo;
     private String status;
 }
