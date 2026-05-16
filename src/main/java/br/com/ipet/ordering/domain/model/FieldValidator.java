@@ -3,8 +3,8 @@ package br.com.ipet.ordering.domain.model;
 import br.com.ipet.ordering.domain.model.commons.exception.DateMustBeLaterThanNowException;
 import br.com.ipet.ordering.domain.model.commons.exception.DateTimeMustBeLaterThanNowException;
 import br.com.ipet.ordering.domain.model.commons.exception.EmailValidatorException;
-import br.com.ipet.ordering.domain.model.commons.exception.EndDateOrTimeMustBeLaterThanStartException;
 import br.com.ipet.ordering.domain.model.commons.exception.FieldCannotBeEmptyException;
+import br.com.ipet.ordering.domain.model.commons.exception.StartTimeMustBeBeforeEndTimeException;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.util.StringUtils;
 
@@ -49,13 +49,8 @@ public class FieldValidator {
             throw new DateMustBeLaterThanNowException(field);
     }
 
-    public static void requireEndTimeIsAfterStartTime(OffsetTime startTime, OffsetTime endTime) {
-        if (!endTime.isAfter(startTime))
-            throw new EndDateOrTimeMustBeLaterThanStartException(startTime.toString(), endTime.toString());
-    }
-
-    public static void requireEndDateIsAfterStartDate(LocalDate startDate, LocalDate endDate) {
-        if (!endDate.isAfter(startDate))
-            throw new EndDateOrTimeMustBeLaterThanStartException(startDate.toString(), endDate.toString());
+    public static void requireStartTimeIsBeforeEndTime(OffsetTime startTime, OffsetTime endTime) {
+        if (!startTime.isBefore(endTime))
+            throw new StartTimeMustBeBeforeEndTimeException(startTime.toString(), endTime.toString());
     }
 }
