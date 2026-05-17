@@ -11,38 +11,42 @@ public record WorkingHours(OffsetTime startTime, OffsetTime endTime) {
 
     private static final OffsetTime MINIMUM_START_WORKING = OffsetTime.of(8, 0, 0, 0, ZoneOffset.UTC);
     private static final OffsetTime MAXIMUM_END_WORKING = OffsetTime.of(18, 0, 0, 0, ZoneOffset.UTC);
-    private static final int MINIMUM_WORKING_HOURS_IN_MINUTES = 30;
-    private static final int WORKING_HOURS_INTERVAL_IN_MINUTES = 30;
+    private static final int WORKING_HOURS_INTERVAL_IN_MINUTES = 60;
+    private static final int MINIMUM_WORKING_HOURS_IN_MINUTES = 60;
 
     public WorkingHours {
         requiresNonNull("startTime", startTime);
         requiresNonNull("endTime", endTime);
         requireStartTimeIsBeforeEndTime(startTime, endTime);
-        this.verifyValidStartTime(startTime);
-        this.verifyValidEndTime(endTime);
-        this.verifyValidInterval(startTime, endTime);
+        this.verifyMinimumStartTime(startTime);
+        this.verifyMaximumEndTime(endTime);
         this.verifyMinimumWorkingMinutes(startTime, endTime);
+        this.verifyValidInterval(startTime, endTime);
     }
 
-    void verifyMinimumWorkingMinutes(long minutesToSubtract) {
-        var workingMinutes = this.calculateWorkingMinutes(startTime, endTime);
+    public boolean contains(OffsetTime startTime, OffsetTime endTime) {
+        requiresNonNull("startTime", startTime);
+        requiresNonNull("endTime", endTime);
 
-        if ((workingMinutes - minutesToSubtract) < MINIMUM_WORKING_HOURS_IN_MINUTES)
-            throw new WorkingHoursCanNotBeLessThanHalfHourException();
+        return !startTime.isBefore(this.startTime) && !endTime.isAfter(this.endTime);
     }
 
-    private void verifyValidStartTime(OffsetTime startTime) {
-        var maximumStartTime = MAXIMUM_END_WORKING.minusMinutes(30);
+    public boolean notContains(OffsetTime startTime, OffsetTime endTime) {
+        return !contains(startTime, endTime);
+    }
 
-        if (startTime.isBefore(MINIMUM_START_WORKING) || startTime.isAfter(maximumStartTime)) {
+    public long workingMinutes() {
+        return Duration.between(startTime, endTime).toMinutes();
+    }
+
+    private void verifyMinimumStartTime(OffsetTime startTime) {
+        if (startTime.isBefore(MINIMUM_START_WORKING)) {
             throw new MinimumStartWorkingException();
         }
     }
 
-    private void verifyValidEndTime(OffsetTime endTime) {
-        var minimumEndTime = MINIMUM_START_WORKING.plusMinutes(30);
-
-        if (endTime.isAfter(MAXIMUM_END_WORKING) || endTime.isBefore(minimumEndTime))
+    private void verifyMaximumEndTime(OffsetTime endTime) {
+        if (endTime.isAfter(MAXIMUM_END_WORKING))
             throw new MaximumEndWorkingException();
     }
 
@@ -55,15 +59,10 @@ public record WorkingHours(OffsetTime startTime, OffsetTime endTime) {
     }
 
     private void verifyMinimumWorkingMinutes(OffsetTime startTime, OffsetTime endTime) {
-        var workingMinutes = this.calculateWorkingMinutes(startTime, endTime);
+        var workingMinutes = Duration.between(startTime, endTime).toMinutes();
 
         if (workingMinutes < MINIMUM_WORKING_HOURS_IN_MINUTES)
-            throw new WorkingHoursCanNotBeLessThanHalfHourException();
-    }
-
-
-    private long calculateWorkingMinutes(OffsetTime startTime, OffsetTime endTime) {
-        return Duration.between(startTime, endTime).toMinutes();
+            throw new WorkingHoursCanNotBeLessThanOneHourException();
     }
 
 }

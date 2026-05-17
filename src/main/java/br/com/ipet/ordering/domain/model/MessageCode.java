@@ -29,8 +29,10 @@ public class MessageCode {
     public static final String ERROR_PRODUCT_DESCRIPTION_CANNOT_BE_VERY_SMALL = "error.product.description.cannot.be.very.small";
     public static final String ERROR_SERVICE_NAME_CANNOT_BE_VERY_SMALL = "error.service.name.cannot.be.very.small";
     public static final String ERROR_SERVICE_DESCRIPTION_CANNOT_BE_VERY_SMALL = "error.service.description.cannot.be.very.small";
-    public static final String ERROR_WORKING_HOURS_CANNOT_BE_LESS_THAN_ONE = "working.hours.cannot.be.less.than.one";
-    public static final String ERROR_START_TIME_CANNOT_BE_GREATER_THAN_OR_EQUALS_END_TIME = "start.time.cannot.be.greater.than.or.equals.end.time";
+    public static final String ERROR_WORKING_HOURS_CANNOT_BE_LESS_THAN_ONE = "error.working.hours.cannot.be.less.than.one";
+    public static final String ERROR_INVALID_INTERVAL_LOCKED_TIME = "error.invalid.interval.locked.time";
+    public static final String ERROR_START_TIME_CANNOT_BE_GREATER_THAN_END_TIME = "start.time.cannot.be.greater.than.end.time";
+    public static final String ERROR_START_DATE_CANNOT_BE_GREATER_THAN_END_DATE = "start.date.cannot.be.greater.than.end.date";
     public static final String ERROR_DATE_TIME_MUST_BE_LATTER_THAN_NOW = "error.date.time.must.be.latter.than.now";
     public static final String ERROR_DATE_MUST_BE_LATTER_THAN_NOW = "error.date.must.be.latter.than.now";
     public static final String ERROR_CANNOT_CHANGE_SCHEDULING_AT = "error.cannot.change.scheduling.at";

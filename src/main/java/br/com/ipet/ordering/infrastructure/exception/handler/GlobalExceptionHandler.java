@@ -4,7 +4,7 @@ import br.com.ipet.ordering.domain.model.schedule.AgendaIsNotDraftToChangeExcept
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.exception.DateTimeMustBeLaterThanNowException;
 import br.com.ipet.ordering.domain.model.commons.exception.EmailValidatorException;
-import br.com.ipet.ordering.domain.model.commons.exception.EndDateOrTimeMustBeLaterThanStartException;
+import br.com.ipet.ordering.domain.model.commons.exception.StartTimeMustBeBeforeEndTimeException;
 import br.com.ipet.ordering.domain.model.commons.exception.FieldCannotBeEmptyException;
 import br.com.ipet.ordering.domain.model.commons.exception.NumberCannotBeNegativeException;
 import br.com.ipet.ordering.domain.model.commons.exception.QuantityNeedsGreaterThanZeroException;
@@ -125,8 +125,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(EndDateOrTimeMustBeLaterThanStartException.class)
-    public ResponseEntity<ExceptionResponse> endDateOrTimeMustBeLaterThanStartHandler(EndDateOrTimeMustBeLaterThanStartException ex, WebRequest request) {
+    @ExceptionHandler(StartTimeMustBeBeforeEndTimeException.class)
+    public ResponseEntity<ExceptionResponse> endDateOrTimeMustBeLaterThanStartHandler(StartTimeMustBeBeforeEndTimeException ex, WebRequest request) {
         return new ResponseEntity<>(
                 getMessageResponse(ex.getMessage(), request, ex.getValues()),
                 HttpStatus.BAD_REQUEST);
