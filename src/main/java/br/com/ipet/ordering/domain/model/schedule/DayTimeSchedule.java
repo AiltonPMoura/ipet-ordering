@@ -19,15 +19,16 @@ public class DayTimeSchedule
 
     static DayTimeSchedule create(CompanyId companyId, ScheduleName name) {
         return new DayTimeSchedule(new ScheduleId(), companyId, name,
-                ScheduleStatus.DRAFT, new HashSet<>(), null, OffsetDateTime.now(), new HashSet<>());
+                ScheduleStatus.DRAFT, new HashSet<>(), null,
+                OffsetDateTime.now(), new HashSet<>());
     }
 
     @Builder(builderClassName = "ExistingDayTimeScheduledBuilder", builderMethodName = "existing")
     public DayTimeSchedule(ScheduleId id, CompanyId companyId, ScheduleName name,
-                           ScheduleStatus status, Set<LockedDay> lockedDays,
+                           ScheduleStatus status, Set<LockedDate> lockedDates,
                            LocalDate startedAt, OffsetDateTime createdAt,
                            Set<WorkDayTime> workingDays) {
-        super(id, companyId, name, status, lockedDays, startedAt, createdAt);
+        super(id, companyId, name, status, lockedDates, startedAt, createdAt);
         this.setWorkingDays(workingDays);
     }
 

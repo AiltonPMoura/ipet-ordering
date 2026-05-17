@@ -1,25 +1,51 @@
 package br.com.ipet.ordering.domain.model.schedule;
 
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
-import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Objects;
+import java.util.Set;
+
+import static br.com.ipet.ordering.domain.model.FieldValidator.*;
 
 public abstract class Schedule extends AbstractEventSourceEntity {
     private ScheduleId id;
     private CompanyId companyId;
     private ScheduleName name;
     private ScheduleStatus status;
+    private Set<LockedDate> lockedDates;
+    private LocalDate startedAt;
     private OffsetDateTime createdAt;
 
-    protected Schedule(ScheduleId id, CompanyId companyId, ScheduleName name, ScheduleStatus status, OffsetDateTime createdAt) {
+    protected Schedule(ScheduleId id, CompanyId companyId, ScheduleName name,
+                       ScheduleStatus status, Set<LockedDate> lockedDates, LocalDate startedAt, OffsetDateTime createdAt) {
         this.setId(id);
         this.setCompanyId(companyId);
         this.setName(name);
         this.setStatus(status);
+        this.setLockedDays(lockedDates);
+        this.setStartedAt(startedAt);
         this.setCreatedAt(createdAt);
+    }
+
+    protected void addlockedDays(Set<LockedDate> lockedDates) {
+        requiresNonNull("lockedDay", lockedDates);
+
+        if (isDraft())
+            throw new CannotAddLockedDateInStatusDraft("");
+
+        if (isInactived())
+            throw new CannotAddLockedDateInStatusInactived("");
+
+        this.lockedDates.addAll(lockedDates);
+    }
+
+    protected void removelockedDays(Set<LockedDate> lockedDates) {
+        requiresNonNull("lockedDays", lockedDates);
+        this.lockedDates.removeAll(lockedDates);
     }
 
     protected void changeName(ScheduleName name) {
@@ -28,14 +54,18 @@ public abstract class Schedule extends AbstractEventSourceEntity {
 
     protected void active() {
         this.changeStatus(ScheduleStatus.ACTIVED);
+
+        if (Objects.isNull(startedAt)) {
+            this.setStartedAt(LocalDate.now());
+        }
     }
 
-    protected void changeToStandBy() {
-        this.changeStatus(ScheduleStatus.STAND_BY);
+    protected void lock() {
+        this.changeStatus(ScheduleStatus.LOCKED);
     }
 
-    protected void changeToblock() {
-        this.changeStatus(ScheduleStatus.BLOCKED);
+    protected void inactive() {
+        this.changeStatus(ScheduleStatus.INACTIVED);
     }
 
     public boolean isDraft() {
@@ -46,12 +76,12 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         return ScheduleStatus.ACTIVED.equals(this.status);
     }
 
-    public boolean isStantBy() {
-        return ScheduleStatus.STAND_BY.equals(this.status);
+    public boolean isLocked() {
+        return ScheduleStatus.LOCKED.equals(this.status);
     }
 
-    public boolean isblocked() {
-        return ScheduleStatus.BLOCKED.equals(this.status);
+    public boolean isInactived() {
+        return ScheduleStatus.INACTIVED.equals(this.status);
     }
 
     private void changeStatus(ScheduleStatus status) {
@@ -61,30 +91,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.setStatus(status);
     }
 
-
-
-    /*public void addStandByDates(StandByDates standByDates) {
-        FieldValidator.requiresNonNull("standByDates", standByDates);
-        this.verifyIsAlreadyStandBy(standByDates);
-
-        this.standByDates.add(standByDates);
-    }
-
-
-
-    public void verifyIsAlreadyStandBy(StandByDates standByDates) {
-        this.standByDates.stream()
-                .filter(dates ->
-                        dates.isBetween(standByDates.startDate()) || dates.isBetween(standByDates.endDate()))
-                .findAny()
-                .ifPresent(dates -> {
-                    throw new RuntimeException("dates: " + dates.startDate() + " e " + dates.endDate());
-                });
-    }
-
-
-
-    public List<AvailableDateTimes> avaliableDatesTimes() {
+    /*public List<AvailableDateTimes> avaliableDatesTimes() {
         var date = LocalDate.now().plusDays(1);
 
         return IntStream.range(0, this.bookingWindow.value())
@@ -118,7 +125,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     private void setId(ScheduleId id) {
-        FieldValidator.requiresNonNull("id", id);
+        requiresNonNull("id", id);
         this.id = id;
     }
 
@@ -127,7 +134,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     private void setCompanyId(CompanyId companyId) {
-        FieldValidator.requiresNonNull("company id", id);
+        requiresNonNull("company id", id);
         this.companyId = companyId;
     }
 
@@ -136,7 +143,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     private void setName(ScheduleName name) {
-        FieldValidator.requiresNonNull("name", name);
+        requiresNonNull("name", name);
         this.name = name;
     }
 
@@ -145,8 +152,24 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     private void setStatus(ScheduleStatus status) {
-        FieldValidator.requiresNonNull("status", status);
+        requiresNonNull("status", status);
         this.status = status;
+    }
+
+    public Set<LockedDate> lockedDays() {
+        return lockedDates;
+    }
+
+    private void setLockedDays(Set<LockedDate> lockedDates) {
+        this.lockedDates = lockedDates;
+    }
+
+    public LocalDate startedAt() {
+        return startedAt;
+    }
+
+    private void setStartedAt(LocalDate startedAt) {
+        this.startedAt = startedAt;
     }
 
     public OffsetDateTime createdAt() {
@@ -154,7 +177,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     private void setCreatedAt(OffsetDateTime createdAt) {
-        FieldValidator.requiresNonNull("createdAt", createdAt);
+        requiresNonNull("createdAt", createdAt);
         this.createdAt = createdAt;
     }
 
