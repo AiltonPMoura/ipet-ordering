@@ -8,7 +8,7 @@ import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.product.ProductDoesNotBelongsToTheCompany;
+import br.com.ipet.ordering.domain.model.product.ProductDoesNotBelongsToCompany;
 import br.com.ipet.ordering.domain.model.product.ProductId;
 import lombok.Builder;
 
@@ -54,8 +54,8 @@ public class ShoppingCart
     }
 
     public void addItem(Product product, Quantity quantity, CustomerId customerId) {
-        this.verifyIfShoppingCartBelongToTheCustomer(customerId);
-        this.verifyProductBelongsToTheCompany(product);
+        this.verifyBelongsToCustomer(customerId);
+        this.verifyProductBelongsToCompany(product);
 
         var shoppingCartItem = ShoppingCartItem.create(this.id, product, quantity);
 
@@ -69,7 +69,7 @@ public class ShoppingCart
     }
 
     public void removeItem(ShoppingCartItemId itemId, CustomerId customerId) {
-        this.verifyIfShoppingCartBelongToTheCustomer(customerId);
+        this.verifyBelongsToCustomer(customerId);
         var shoppingCartItem = this.findItem(itemId);
         this.items.remove(shoppingCartItem);
         this.recalculateTotals();
@@ -78,14 +78,14 @@ public class ShoppingCart
     }
 
     public void changeItemQuantity(ShoppingCartItemId itemId, Quantity quantity, CustomerId customerId) {
-        this.verifyIfShoppingCartBelongToTheCustomer(customerId);
+        this.verifyBelongsToCustomer(customerId);
         var shoppingCartItem = this.findItem(itemId);
         shoppingCartItem.changeQuantity(quantity);
         this.recalculateTotals();
     }
 
     public void empty(CustomerId customerId) {
-        this.verifyIfShoppingCartBelongToTheCustomer(customerId);
+        this.verifyBelongsToCustomer(customerId);
         this.items.clear();
         this.totalAmount = Money.ZERO;
         this.totalItems = Quantity.ZERO;
@@ -106,7 +106,7 @@ public class ShoppingCart
     }
 
     public void discard(CustomerId customerId) {
-        this.verifyIfShoppingCartBelongToTheCustomer(customerId);
+        this.verifyBelongsToCustomer(customerId);
         this.publishDomainEvent(new ShoppingCartDiscartedEvent(
                 this.id, this.customerId, this.companyId, OffsetDateTime.now()));
     }
@@ -155,14 +155,14 @@ public class ShoppingCart
                 .findFirst();
     }
 
-    private void verifyIfShoppingCartBelongToTheCustomer(CustomerId customerId) {
+    private void verifyBelongsToCustomer(CustomerId customerId) {
         if (!this.customerId.equals(customerId))
-            throw new ShoppingCartDoesNotBelongToTheCustomer("");
+            throw new ShoppingCartDoesNotBelongToCustomer("");
     }
 
-    private void verifyProductBelongsToTheCompany(Product product) {
+    private void verifyProductBelongsToCompany(Product product) {
         if (!this.companyId.equals(product.companyId()))
-            throw new ProductDoesNotBelongsToTheCompany("");
+            throw new ProductDoesNotBelongsToCompany("");
     }
 
     @Override

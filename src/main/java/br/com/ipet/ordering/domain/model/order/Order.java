@@ -9,7 +9,7 @@ import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.product.ProductDoesNotBelongsToTheCompany;
+import br.com.ipet.ordering.domain.model.product.ProductDoesNotBelongsToCompany;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -274,7 +274,7 @@ public class Order
                 item.product().companyId().equals(this.companyId));
 
         if (notBelongsCompany)
-            throw new ProductDoesNotBelongsToTheCompany("");
+            throw new ProductDoesNotBelongsToCompany("");
     }
 
     public OrderId id() {
