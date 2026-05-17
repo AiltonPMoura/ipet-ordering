@@ -1,24 +1,26 @@
 package br.com.ipet.ordering.domain.model.schedule;
 
-import br.com.ipet.ordering.domain.model.customer.CompanyId;
+import br.com.ipet.ordering.domain.model.company.Companies;
+import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class ScheduleService {
+public class DayTimeScheduleRegistrationService {
 
-    private final Schedules schedules;
+    private final DayTimeSchedules dayTimeSchedules;
+    private final Companies companies;
 
-    public Schedule generate(CompanyId companyId, ScheduleName name, ServiceSubCategory subCategory) {
-        if (schedules.existsByCompanyId(companyId))
+    public DayTimeSchedule register(CompanyId companyId, ScheduleName name) {
+        if (companies.exists(companyId))
+            throw new CompanyNotFoundException("");
+
+        if (dayTimeSchedules.existsByCompanyId(companyId))
             throw new ScheduleAlreadyExistsException();
 
-        return Schedule.createNew()
-                .companyId(companyId)
-                .name(name)
-                .subCategory(subCategory)
-                .build();
+        return DayTimeSchedule.create(companyId, name);
     }
 
     /*private final Bookings bookingRepository;

@@ -1,7 +1,6 @@
 package br.com.ipet.ordering.domain.model.schedule;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
-import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import lombok.Builder;
 
@@ -10,6 +9,8 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import static br.com.ipet.ordering.domain.model.FieldValidator.*;
 
 public class DayTimeSchedule
         extends Schedule
@@ -32,15 +33,23 @@ public class DayTimeSchedule
         this.setWorkingDays(workingDays);
     }
 
-    void addWorkDay(DayOfWeek dayOfWeek, WorkingHours workingHours) {
-        FieldValidator.requiresNonNull("dayOfWeek", dayOfWeek);
+    void addWorkDay(DayOfWeek dayOfWeek, WorkingHours workingHours, CompanyId companyId) {
+        requiresNonNull("dayOfWeek", dayOfWeek);
+        requiresNonNull("workingHours", workingHours);
+        requiresNonNull("companyId", companyId);
+
+        this.verifyBelongToCompany(companyId);
         this.verifyExistingWorkingDay(dayOfWeek);
 
         var workingDay = WorkDayTime.createNew(this.id(), dayOfWeek, workingHours);
         this.workingDays.add(workingDay);
     }
 
-    void removeWorkDay(WorkingDayTimeId workingDayTimeId) {
+    void removeWorkDay(WorkingDayTimeId workingDayTimeId, CompanyId companyId) {
+        requiresNonNull("companyId", companyId);
+
+        this.verifyBelongToCompany(companyId);
+
         // Verificar se existe agendamento nesse dia
         var workingDay = this.findWorkingDay(workingDayTimeId);
         this.workingDays.remove(workingDay);
@@ -49,12 +58,14 @@ public class DayTimeSchedule
     }
 
     @Override
-    protected void active() {
+    protected void active(CompanyId companyId) {
+        this.verifyBelongToCompany(companyId);
+
         if (workingDays.isEmpty()) {
             throw new DayTimeScheduleCannotBeActivedException("");
         }
 
-        super.active();
+        super.active(companyId);
     }
 
     void changeDayOfWeekWorkDay(WorkingDayTimeId workingDayTimeId, DayOfWeek dayOfWeek) {
@@ -82,7 +93,7 @@ public class DayTimeSchedule
     }
 
     private WorkDayTime findWorkingDay(WorkingDayTimeId workingDayTimeId) {
-        FieldValidator.requiresNonNull("workingDayId", workingDayTimeId);
+        requiresNonNull("workingDayId", workingDayTimeId);
 
         return this.workingDays.stream()
                 .filter(workDayTime -> workDayTime.id().equals(workingDayTimeId))

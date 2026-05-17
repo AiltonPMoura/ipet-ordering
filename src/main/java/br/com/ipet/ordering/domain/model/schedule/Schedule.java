@@ -52,7 +52,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.setName(name);
     }
 
-    protected void active() {
+    protected void active(CompanyId companyId) {
         this.changeStatus(ScheduleStatus.ACTIVED);
 
         if (Objects.isNull(startedAt)) {
@@ -66,6 +66,11 @@ public abstract class Schedule extends AbstractEventSourceEntity {
 
     protected void inactive() {
         this.changeStatus(ScheduleStatus.INACTIVED);
+    }
+
+    protected void verifyBelongToCompany(CompanyId companyId) {
+        if (!this.companyId().equals(companyId))
+            throw new ScheduleDoesNotBelongToCompany("");
     }
 
     public boolean isDraft() {
