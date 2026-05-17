@@ -6,23 +6,28 @@ import br.com.ipet.ordering.domain.model.company.CompanyId;
 import lombok.Builder;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DayTimeSchedule extends Schedule implements AggregateRoot<ScheduleId> {
+public class DayTimeSchedule
+        extends Schedule
+        implements AggregateRoot<ScheduleId> {
 
-    private Set<WorkDay> workingDays;
+    private Set<WorkDayTime> workingDays;
 
     static DayTimeSchedule create(CompanyId companyId, ScheduleName name) {
         return new DayTimeSchedule(new ScheduleId(), companyId, name,
-                ScheduleStatus.DRAFT, OffsetDateTime.now(), new HashSet<>());
+                ScheduleStatus.DRAFT, new HashSet<>(), null, OffsetDateTime.now(), new HashSet<>());
     }
 
     @Builder(builderClassName = "ExistingDayTimeScheduledBuilder", builderMethodName = "existing")
     public DayTimeSchedule(ScheduleId id, CompanyId companyId, ScheduleName name,
-                           ScheduleStatus status, OffsetDateTime createdAt, Set<WorkDay> workingDays) {
-        super(id, companyId, name, status, createdAt);
+                           ScheduleStatus status, Set<LockedDay> lockedDays,
+                           LocalDate startedAt, OffsetDateTime createdAt,
+                           Set<WorkDayTime> workingDays) {
+        super(id, companyId, name, status, lockedDays, startedAt, createdAt);
         this.setWorkingDays(workingDays);
     }
 
@@ -30,44 +35,56 @@ public class DayTimeSchedule extends Schedule implements AggregateRoot<ScheduleI
         FieldValidator.requiresNonNull("dayOfWeek", dayOfWeek);
         this.verifyExistingWorkingDay(dayOfWeek);
 
-        var workingDay = WorkDay.createNew(dayOfWeek, workingHours);
+        var workingDay = WorkDayTime.createNew(this.id(), dayOfWeek, workingHours);
         this.workingDays.add(workingDay);
     }
 
-    void removeWorkDay(WorkingDayId workingDayId) {
-        var workingDay = this.findWorkingDay(workingDayId);
+    void removeWorkDay(WorkingDayTimeId workingDayTimeId) {
+        // Verificar se existe agendamento nesse dia
+        var workingDay = this.findWorkingDay(workingDayTimeId);
         this.workingDays.remove(workingDay);
+
+        //Verificar qual status deve estar se remover todos workingDays
     }
 
-    void changeDayOfWeekWorkDay(WorkingDayId workingDayId, DayOfWeek dayOfWeek) {
-        var workingDay = this.findWorkingDay(workingDayId);
+    @Override
+    protected void active() {
+        if (workingDays.isEmpty()) {
+            throw new DayTimeScheduleCannotBeActivedException("");
+        }
+
+        super.active();
+    }
+
+    void changeDayOfWeekWorkDay(WorkingDayTimeId workingDayTimeId, DayOfWeek dayOfWeek) {
+        var workingDay = this.findWorkingDay(workingDayTimeId);
         this.verifyExistingWorkingDay(dayOfWeek);
         workingDay.changeDayOfWeek(dayOfWeek);
     }
 
-    void changeWorkingHoursWorkDay(WorkingDayId workingDayId, WorkingHours workingHours) {
-        var workingDay = this.findWorkingDay(workingDayId);
+    void changeWorkingHoursWorkDay(WorkingDayTimeId workingDayTimeId, WorkingHours workingHours) {
+        var workingDay = this.findWorkingDay(workingDayTimeId);
         workingDay.changeWorkingHours(workingHours);
     }
 
-    void changeLockedTimeWorkDay(WorkingDayId workingDayId, Set<LockedTime> lockedTimes) {
-        var workingDay = this.findWorkingDay(workingDayId);
+    void changeLockedTimeWorkDay(WorkingDayTimeId workingDayTimeId, Set<LockedTime> lockedTimes) {
+        var workingDay = this.findWorkingDay(workingDayTimeId);
         workingDay.changeLockedTime(lockedTimes);
     }
 
     private void verifyExistingWorkingDay(DayOfWeek dayOfWeek) {
         var existingWorkDay = this.workingDays.stream()
-                .anyMatch(workDay -> workDay.dayOfWeek().equals(dayOfWeek));
+                .anyMatch(workDayTime -> workDayTime.dayOfWeek().equals(dayOfWeek));
 
         if (existingWorkDay)
             throw new WorkDayAlreadyExistsException();
     }
 
-    private WorkDay findWorkingDay(WorkingDayId workingDayId) {
-        FieldValidator.requiresNonNull("workingDayId", workingDayId);
+    private WorkDayTime findWorkingDay(WorkingDayTimeId workingDayTimeId) {
+        FieldValidator.requiresNonNull("workingDayId", workingDayTimeId);
 
         return this.workingDays.stream()
-                .filter(workDay -> workDay.id().equals(workingDayId))
+                .filter(workDayTime -> workDayTime.id().equals(workingDayTimeId))
                 .findFirst()
                 .orElseThrow(() -> new WorkinDayNotFoundException(""));
     }
@@ -118,11 +135,11 @@ public class DayTimeSchedule extends Schedule implements AggregateRoot<ScheduleI
     }*/
 
 
-    public Set<WorkDay> workingDays() {
+    public Set<WorkDayTime> workingDays() {
         return workingDays;
     }
 
-    public void setWorkingDays(Set<WorkDay> workingDays) {
+    private void setWorkingDays(Set<WorkDayTime> workingDays) {
         this.workingDays = workingDays;
     }
 
