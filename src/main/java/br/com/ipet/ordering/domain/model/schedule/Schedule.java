@@ -3,6 +3,7 @@ package br.com.ipet.ordering.domain.model.schedule;
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.schedule.category.ServiceSubcategory;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -15,18 +16,22 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     private ScheduleId id;
     private CompanyId companyId;
     private ScheduleName name;
+    private ServiceSubcategory subcategory;
     private ScheduleStatus status;
     private Set<LockedDate> lockedDates;
     private LocalDate startedAt;
     private OffsetDateTime createdAt;
 
-    protected Schedule(ScheduleId id, CompanyId companyId, ScheduleName name,
-                       ScheduleStatus status, Set<LockedDate> lockedDates, LocalDate startedAt, OffsetDateTime createdAt) {
+    protected Schedule(ScheduleId id, CompanyId companyId,
+                       ScheduleName name, ServiceSubcategory subcategory,
+                       ScheduleStatus status, Set<LockedDate> lockedDates,
+                       LocalDate startedAt, OffsetDateTime createdAt) {
         this.setId(id);
         this.setCompanyId(companyId);
         this.setName(name);
+        this.setSubcategory(subcategory);
         this.setStatus(status);
-        this.setLockedDays(lockedDates);
+        this.setLockedDates(lockedDates);
         this.setStartedAt(startedAt);
         this.setCreatedAt(createdAt);
     }
@@ -152,6 +157,15 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.name = name;
     }
 
+    public ServiceSubcategory subcategory() {
+        return subcategory;
+    }
+
+    private void setSubcategory(ServiceSubcategory subcategory) {
+        requiresNonNull("subcategory", subcategory);
+        this.subcategory = subcategory;
+    }
+
     public ScheduleStatus status() {
         return status;
     }
@@ -165,7 +179,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         return lockedDates;
     }
 
-    private void setLockedDays(Set<LockedDate> lockedDates) {
+    private void setLockedDates(Set<LockedDate> lockedDates) {
         this.lockedDates = lockedDates;
     }
 

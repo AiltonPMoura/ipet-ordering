@@ -2,6 +2,7 @@ package br.com.ipet.ordering.domain.model.schedule;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.schedule.category.ServiceSubcategory;
 import lombok.Builder;
 
 import java.time.DayOfWeek;
@@ -18,18 +19,18 @@ public class DayTimeSchedule
 
     private Set<WorkDayTime> workingDays;
 
-    static DayTimeSchedule create(CompanyId companyId, ScheduleName name) {
-        return new DayTimeSchedule(new ScheduleId(), companyId, name,
+    static DayTimeSchedule create(CompanyId companyId, ScheduleName name, ServiceSubcategory subcategory) {
+        return new DayTimeSchedule(new ScheduleId(), companyId, name, subcategory,
                 ScheduleStatus.DRAFT, new HashSet<>(), null,
                 OffsetDateTime.now(), new HashSet<>());
     }
 
     @Builder(builderClassName = "ExistingDayTimeScheduledBuilder", builderMethodName = "existing")
-    public DayTimeSchedule(ScheduleId id, CompanyId companyId, ScheduleName name,
+    public DayTimeSchedule(ScheduleId id, CompanyId companyId, ScheduleName name, ServiceSubcategory subcategory,
                            ScheduleStatus status, Set<LockedDate> lockedDates,
                            LocalDate startedAt, OffsetDateTime createdAt,
                            Set<WorkDayTime> workingDays) {
-        super(id, companyId, name, status, lockedDates, startedAt, createdAt);
+        super(id, companyId, name, subcategory, status, lockedDates, startedAt, createdAt);
         this.setWorkingDays(workingDays);
     }
 

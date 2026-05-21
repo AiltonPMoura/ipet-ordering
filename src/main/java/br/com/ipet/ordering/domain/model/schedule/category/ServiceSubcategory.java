@@ -1,13 +1,12 @@
-package br.com.ipet.ordering.domain.model.schedule;
+package br.com.ipet.ordering.domain.model.schedule.category;
 
 import lombok.RequiredArgsConstructor;
 
-import static br.com.ipet.ordering.domain.model.schedule.ServiceCategory.CAT;
-import static br.com.ipet.ordering.domain.model.schedule.ServiceCategory.DOG;
-import static br.com.ipet.ordering.domain.model.schedule.WorkShift.*;
+import static br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory.CAT;
+import static br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory.DOG;
 
 @RequiredArgsConstructor
-public enum ServiceSubCategory {
+public enum ServiceSubcategory {
     DOG_HYGIENE("Higienização para cães", DOG),
     DOG_HEALTH("Saúde para cães", DOG),
     DOG_DAYCARE("Creche para cães", DOG),

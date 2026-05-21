@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.infrastructure.exception.handler;
 
-import br.com.ipet.ordering.domain.model.schedule.AgendaIsNotDraftToChangeException;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleNotDraftToChangeException;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.exception.DateTimeMustBeLaterThanNowException;
 import br.com.ipet.ordering.domain.model.commons.exception.EmailValidatorException;
@@ -62,8 +62,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AgendaIsNotDraftToChangeException.class)
-    public ResponseEntity<ExceptionResponse> agendaIsNotDraftToChangeExceptionHandler(AgendaIsNotDraftToChangeException ex, WebRequest request) {
+    @ExceptionHandler(ScheduleNotDraftToChangeException.class)
+    public ResponseEntity<ExceptionResponse> scheduleIsNotDraftToChangeExceptionHandler(ScheduleNotDraftToChangeException ex, WebRequest request) {
         return new ResponseEntity<>(
                 getMessageResponse(ex.getMessage(), request, ex.getAgendaId()),
                 HttpStatus.BAD_REQUEST);

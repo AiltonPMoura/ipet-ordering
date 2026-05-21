@@ -1,6 +1,5 @@
 package br.com.ipet.ordering.infrastructure.persistence.entity;
 
-import br.com.ipet.ordering.domain.model.company.Company;
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -29,8 +28,8 @@ import java.util.UUID;
 @ToString(of = "id")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "agenda")
-public class AgendaPersistenceEntity {
+@Table(name = "day_time_schedule")
+public class DayTimeSchedulePersistenceEntity {
 
     @Id
     @EqualsAndHashCode.Include
