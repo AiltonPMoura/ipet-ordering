@@ -31,7 +31,7 @@ public class WorkingDayPersistenceEntity {
     private UUID id;
 
     @ManyToOne(optional = false)
-    private AgendaPersistenceEntity agenda;
+    private DayTimeSchedulePersistenceEntity agenda;
 
     private DayOfWeek dayOfWeek;
     private OffsetTime startTime;

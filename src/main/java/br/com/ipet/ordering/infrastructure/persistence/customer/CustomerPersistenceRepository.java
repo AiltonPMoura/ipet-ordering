@@ -6,8 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.UUID;
 
 public interface CustomerPersistenceRepository
-        extends JpaRepository<CustomerPersistenceEntity, UUID>,
-        JpaSpecificationExecutor<CustomerPersistenceEntity> {
+        extends JpaRepository<CustomerPersistenceEntity, UUID>, JpaSpecificationExecutor<CustomerPersistenceEntity> {
 
     boolean existsByEmailAndIdNot(String email, UUID id);
 
