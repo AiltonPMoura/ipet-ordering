@@ -79,11 +79,7 @@ public class Order
     public void addItem(Product product, Quantity quantity) {
         this.verifyIfChangeable();
 
-        var orderItem = OrderItem.createNew()
-                .orderId(this.id)
-                .product(product)
-                .quantity(quantity)
-                .build();
+        var orderItem = OrderItem.create(this.id, product, quantity);
 
         this.items.add(orderItem);
         this.recalculateTotals();
