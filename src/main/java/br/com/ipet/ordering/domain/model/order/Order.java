@@ -202,8 +202,8 @@ public class Order
 
     private void verifyIfCanChangeToPlaced(CustomerId customerId, CompanyId companyId) {
         this.verifyIfOrderBelongsToTheCustomer(customerId);
-        this.verifyOrderAssociatedWithCompany(companyId);
-        this.veryfyProductsBelongsToTheCompany();
+        this.verifyIfOrderAssociatedWithCompany(companyId);
+        this.verifyIfProductsBelongsToTheCompany();
 
         if (this.items.isEmpty())
             throw OrderCannotBePlacedException.noItems(this.id.toString());
@@ -260,12 +260,12 @@ public class Order
             throw new OrderDoesNotBelongsToTheCustomer("");
     }
 
-    private void verifyOrderAssociatedWithCompany(CompanyId companyId) {
+    private void verifyIfOrderAssociatedWithCompany(CompanyId companyId) {
         if (!this.companyId.equals(companyId))
             throw new OrderDoesNotAssociatedWithCompany("");
     }
 
-    private void veryfyProductsBelongsToTheCompany() {
+    private void verifyIfProductsBelongsToTheCompany() {
         var notBelongsCompany = this.items.stream().noneMatch(item ->
                 item.product().companyId().equals(this.companyId));
 
