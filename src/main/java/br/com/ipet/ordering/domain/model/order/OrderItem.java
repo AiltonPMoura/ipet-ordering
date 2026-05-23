@@ -16,26 +16,21 @@ public class OrderItem {
     private Money totalAmount;
 
     static OrderItem create(OrderId orderId, Product product, Quantity quantity) {
-        var orderItem = new OrderItem(
-                new OrderItemId(),
-                orderId,
-                product,
-                quantity,
-                Money.ZERO
-        );
+        var orderItem = new OrderItem(new OrderItemId(), orderId, product, quantity, Money.ZERO);
 
         orderItem.reCalculateTotals();
+
         return orderItem;
     }
 
     @Builder(builderClassName = "ExistingOrderItemBuilder", builderMethodName = "existing")
     private OrderItem(OrderItemId id, OrderId orderId,
                       Product product, Quantity quantity, Money totalAmount) {
-        setId(id);
-        setOrderId(orderId);
-        setProduct(product);
-        setQuantity(quantity);
-        setTotalAmount(totalAmount);
+        this.setId(id);
+        this.setOrderId(orderId);
+        this.setProduct(product);
+        this.setQuantity(quantity);
+        this.setTotalAmount(totalAmount);
     }
 
     void changeQuantity(Quantity quantity) {
