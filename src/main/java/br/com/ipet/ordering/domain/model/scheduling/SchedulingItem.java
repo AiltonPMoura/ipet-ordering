@@ -27,10 +27,17 @@ public class SchedulingItem {
     }
 
     void changePet(Pet pet) {
-        if (!this.pet.size().equalsIgnoreCase(pet.size()))
-            throw new CannotChangePetException(this.pet.size(), pet.size());
+        if (!this.pet.size().equals(pet.size()))
+            throw new CannotChangePetException(this.pet.size().name(), pet.size().name());
 
         this.setPet(pet);
+    }
+
+    void changeService(Service service) {
+        if (!this.service.petSize().equals(service.petSize()))
+            throw new CannotChangeServiceException(this.service.petSize().name(), service.petSize().name());
+
+        this.setService(service);
     }
 
     public SchedulingItemId id() {

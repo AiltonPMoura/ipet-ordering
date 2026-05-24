@@ -5,14 +5,14 @@ import br.com.ipet.ordering.domain.model.IdGenerator;
 
 import java.util.UUID;
 
-public record SchedulingPetId(UUID value) {
+public record SchedulingItemId(UUID value) {
 
-    public SchedulingPetId() {
+    public SchedulingItemId() {
         this(IdGenerator.generateTimeBasedEpochRandomGenerator());
     }
 
-    public SchedulingPetId {
-        FieldValidator.requiresNonNull("schedulingPetId", value);
+    public SchedulingItemId {
+        FieldValidator.requiresNonNull("scheduling item id", value);
     }
 
 }
