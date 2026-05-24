@@ -5,12 +5,12 @@ import lombok.Builder;
 
 @Builder
 public record PetProfile(PetName name,
-                         Type type, Breed breed, Gender gender,
-                         Size size, PetWeight weight, PetAge age) {
+                         PetType petType, Breed breed, PetGender gender,
+                         PetSize size, PetWeight weight, PetAge age) {
 
     public PetProfile {
         FieldValidator.requiresNonNull("name", name);
-        FieldValidator.requiresNonNull("type", type);
+        FieldValidator.requiresNonNull("type", petType);
         FieldValidator.requiresNonNull("breed", breed);
         FieldValidator.requiresNonNull("gender", gender);
         FieldValidator.requiresNonNull("size", size);

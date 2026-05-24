@@ -21,7 +21,7 @@ public class PetService {
         return Pet.createNew()
                 .customerId(customerId)
                 .name(petProfile.name())
-                .type(petProfile.type())
+                .petType(petProfile.petType())
                 .breed(petProfile.breed())
                 .gender(petProfile.gender())
                 .size(petProfile.size())
@@ -38,7 +38,7 @@ public class PetService {
         this.verifyIfBelongsToTheCustomer(customerId, pet);
 
         pet.changeName(petProfile.name());
-        pet.changeType(petProfile.type());
+        pet.changeType(petProfile.petType());
         pet.changeBreed(petProfile.breed());
         pet.changeGender(petProfile.gender());
         pet.changeSize(petProfile.size());

@@ -4,12 +4,12 @@ import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.pet.PetAge;
 import br.com.ipet.ordering.domain.model.pet.PetId;
 import br.com.ipet.ordering.domain.model.pet.PetName;
+import br.com.ipet.ordering.domain.model.pet.PetType;
 import br.com.ipet.ordering.domain.model.pet.PetWeight;
 import br.com.ipet.ordering.domain.model.pet.Breed;
-import br.com.ipet.ordering.domain.model.pet.Gender;
+import br.com.ipet.ordering.domain.model.pet.PetGender;
 import br.com.ipet.ordering.domain.model.pet.Pet;
-import br.com.ipet.ordering.domain.model.pet.Size;
-import br.com.ipet.ordering.domain.model.pet.Type;
+import br.com.ipet.ordering.domain.model.pet.PetSize;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,10 +20,10 @@ public class PetMapper {
                 .id(new PetId(petPersistence.getId()))
                 .customerId(new CustomerId(petPersistence.getCustomerId()))
                 .name(new PetName(petPersistence.getName()))
-                .type(Type.valueOf(petPersistence.getType()))
+                .petType(PetType.valueOf(petPersistence.getType()))
                 .breed(Breed.valueOf(petPersistence.getBreed()))
-                .size(Size.valueOf(petPersistence.getSize()))
-                .gender(Gender.valueOf(petPersistence.getGender()))
+                .size(PetSize.valueOf(petPersistence.getSize()))
+                .gender(PetGender.valueOf(petPersistence.getGender()))
                 .weight(new PetWeight(petPersistence.getWeight()))
                 .age(new PetAge(petPersistence.getAge()))
                 .build();

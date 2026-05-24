@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.domain.model.pet;
 
-public enum Type {
+public enum PetType {
     DOG,
     CAT
 }

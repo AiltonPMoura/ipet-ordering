@@ -2,6 +2,7 @@ package br.com.ipet.ordering.domain.model.pet;
 
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Photo;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.AccessLevel;
@@ -15,31 +16,32 @@ public class Pet
     private PetId id;
     private CustomerId customerId;
     private PetName name;
-    private Type type;
+    private PetType petType;
     private Breed breed;
-    private Gender gender;
-    private Size size;
+    private PetGender gender;
+    private PetSize petSize;
     private PetWeight weight;
     private PetAge age;
+    private Photo photo;
 
     @Builder(builderClassName = "createNewPetBuilder", builderMethodName = "createNew", access = AccessLevel.PACKAGE)
     private static Pet create(PetName name, CustomerId customerId,
-                              Type type, Breed breed, Gender gender,
-                              Size size, PetWeight weight, PetAge age) {
-        return new Pet(new PetId(), customerId, name, type, breed, gender, size, weight, age);
+                              PetType petType, Breed breed, PetGender gender,
+                              PetSize size, PetWeight weight, PetAge age) {
+        return new Pet(new PetId(), customerId, name, petType, breed, gender, size, weight, age);
     }
 
     @Builder(builderClassName = "createExistingPetBuilder", builderMethodName = "existing")
     private Pet(PetId id, CustomerId customerId,
-                PetName name, Type type, Breed breed,
-                Gender gender, Size size, PetWeight weight, PetAge age) {
+                PetName name, PetType petType, Breed breed,
+                PetGender gender, PetSize size, PetWeight weight, PetAge age) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.setName(name);
-        this.setType(type);
+        this.setPetType(petType);
         this.setBreed(breed);
-        this.setGender(gender);
-        this.setSize(size);
+        this.setPetGender(gender);
+        this.setPetSize(size);
         this.setWeight(weight);
         this.setAge(age);
     }
@@ -48,20 +50,20 @@ public class Pet
         this.setName(name);
     }
 
-    void changeType(Type type) {
-        this.setType(type);
+    void changeType(PetType petType) {
+        this.setPetType(petType);
     }
 
     void changeBreed(Breed breed) {
         this.setBreed(breed);
     }
 
-    void changeGender(Gender gender) {
-        this.setGender(gender);
+    void changeGender(PetGender petGender) {
+        this.setPetGender(petGender);
     }
 
-    void changeSize(Size size) {
-        this.setSize(size);
+    void changeSize(PetSize petSize) {
+        this.setPetSize(petSize);
     }
 
     void changeWeight(PetWeight weight) {
@@ -101,13 +103,13 @@ public class Pet
         this.name = name;
     }
 
-    public Type type() {
-        return type;
+    public PetType type() {
+        return petType;
     }
 
-    private void setType(Type type) {
-        FieldValidator.requiresNonNull("pet type", type);
-        this.type = type;
+    private void setPetType(PetType petType) {
+        FieldValidator.requiresNonNull("pet type", petType);
+        this.petType = petType;
     }
 
     public Breed breed() {
@@ -119,22 +121,22 @@ public class Pet
         this.breed = breed;
     }
 
-    public Gender gender() {
+    public PetGender gender() {
         return gender;
     }
 
-    private void setGender(Gender gender) {
+    private void setPetGender(PetGender petGender) {
         FieldValidator.requiresNonNull("pet gender", gender);
         this.gender = gender;
     }
 
-    public Size size() {
-        return size;
+    public PetSize size() {
+        return petSize;
     }
 
-    private void setSize(Size size) {
+    private void setPetSize(PetSize size) {
         FieldValidator.requiresNonNull("pet size", size);
-        this.size = size;
+        this.petSize = size;
     }
 
     public PetWeight weight() {
