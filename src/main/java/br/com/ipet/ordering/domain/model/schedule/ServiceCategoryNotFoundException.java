@@ -4,8 +4,8 @@ import br.com.ipet.ordering.domain.model.DomainException;
 
 import java.util.UUID;
 
-public class SubCategoryServiceNotFoundException extends DomainException {
-    public SubCategoryServiceNotFoundException(UUID companyId) {
+public class ServiceCategoryNotFoundException extends DomainException {
+    public ServiceCategoryNotFoundException(UUID companyId) {
         super(companyId.toString());
     }
 }

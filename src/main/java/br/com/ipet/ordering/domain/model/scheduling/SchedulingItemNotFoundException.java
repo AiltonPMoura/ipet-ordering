@@ -5,11 +5,11 @@ import br.com.ipet.ordering.domain.model.MessageCode;
 import lombok.Getter;
 
 @Getter
-public class SchedulingPetNotFoundException extends DomainException {
+public class SchedulingItemNotFoundException extends DomainException {
 
     private final String[] fields;
 
-    public SchedulingPetNotFoundException(String... fields) {
+    public SchedulingItemNotFoundException(String... fields) {
         super(MessageCode.ERROR_SCHEDULING_PET_NOT_FOUND);
         this.fields = fields;
     }
