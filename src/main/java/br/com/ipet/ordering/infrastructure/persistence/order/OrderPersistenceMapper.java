@@ -2,7 +2,7 @@ package br.com.ipet.ordering.infrastructure.persistence.order;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.product.Product;
-import br.com.ipet.ordering.domain.model.order.Billing;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.order.DeliveryCompany;
 import br.com.ipet.ordering.domain.model.order.Order;
 import br.com.ipet.ordering.domain.model.order.OrderItem;
@@ -90,12 +90,12 @@ public class OrderPersistenceMapper {
 
     private BillingEmbeddable toBillingEmbeddable(Billing billing) {
         return BillingEmbeddable.builder()
-                .firstName(billing.fullName().firstName())
-                .lastName(billing.fullName().lastName())
-                .document(billing.document().value())
-                .phone(billing.phone().value())
-                .email(billing.email().value())
-                .address(this.toAddressEmbeddable(billing.address()))
+                .firstName(billing.customer().fullName().firstName())
+                .lastName(billing.customer().fullName().lastName())
+                .document(billing.customer().document().value())
+                .phone(billing.customer().phone().value())
+                .email(billing.customer().email().value())
+                .address(this.toAddressEmbeddable(billing.customer().address()))
                 .build();
     }
 
@@ -109,11 +109,11 @@ public class OrderPersistenceMapper {
 
     private DeliveryCompanyEmbeddable toDeliveryCompany(DeliveryCompany deliveryCompany) {
         return DeliveryCompanyEmbeddable.builder()
-                .companyName(deliveryCompany.companyName().value())
-                .document(deliveryCompany.document().value())
-                .phone(deliveryCompany.phone().value())
-                .email(deliveryCompany.email().value())
-                .address(this.toAddressEmbeddable(deliveryCompany.address()))
+                .companyName(deliveryCompany.company().companyName().value())
+                .document(deliveryCompany.company().document().value())
+                .phone(deliveryCompany.company().phone().value())
+                .email(deliveryCompany.company().email().value())
+                .address(this.toAddressEmbeddable(deliveryCompany.company().address()))
                 .build();
     }
 

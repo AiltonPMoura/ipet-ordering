@@ -2,6 +2,8 @@ package br.com.ipet.ordering.infrastructure.persistence.order;
 
 import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Company;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Customer;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
@@ -11,7 +13,7 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.company.CompanyName;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.order.Billing;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.order.DeliveryCompany;
 import br.com.ipet.ordering.domain.model.order.Order;
 import br.com.ipet.ordering.domain.model.order.OrderId;
@@ -88,23 +90,25 @@ public class OrderMapper {
     }
 
     private Billing toBilling(BillingEmbeddable billingEmbeddable) {
-        return Billing.builder()
+        return new Billing(Customer.builder()
                 .fullName(new FullName(billingEmbeddable.getFirstName(), billingEmbeddable.getLastName()))
                 .document(DocumentFactory.from(billingEmbeddable.getDocument()))
                 .phone(new Phone(billingEmbeddable.getPhone()))
                 .email(new Email(billingEmbeddable.getEmail()))
                 .address(this.toAddress(billingEmbeddable.getAddress()))
-                .build();
+                .build()
+        );
     }
 
     private DeliveryCompany toDeliveryCompany(DeliveryCompanyEmbeddable deliveryCompany) {
-        return DeliveryCompany.builder()
+        return new DeliveryCompany(Company.builder()
                 .companyName(new CompanyName(deliveryCompany.getCompanyName()))
                 .document(DocumentFactory.from(deliveryCompany.getDocument()))
                 .phone(new Phone(deliveryCompany.getPhone()))
                 .email(new Email(deliveryCompany.getEmail()))
                 .address(this.toAddress(deliveryCompany.getAddress()))
-                .build();
+                .build()
+        );
     }
 
     private Address toAddress(AddressEmbeddable addressEmbeddable) {

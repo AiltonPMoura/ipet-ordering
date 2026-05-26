@@ -23,9 +23,27 @@ public class OrderManagementApplicationService {
         orders.add(order);
     }
 
-    public void markAsReady(UUID orderId) {
+    public void readyForDelivery(UUID orderId) {
         var order = this.findOrderById(orderId);
-        order.markAsReady();
+        order.readyForDelivery();
+        orders.add(order);
+    }
+
+    public void outForDelivery(UUID orderId) {
+        var order = this.findOrderById(orderId);
+        order.outForDelivery();
+        orders.add(order);
+    }
+
+    public void delivered(UUID orderId) {
+        var order = this.findOrderById(orderId);
+        order.deliver();
+        orders.add(order);
+    }
+
+    public void complete(UUID orderId) {
+        var order = this.findOrderById(orderId);
+        order.complete();
         orders.add(order);
     }
 

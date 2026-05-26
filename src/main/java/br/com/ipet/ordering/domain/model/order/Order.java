@@ -4,6 +4,7 @@ import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
@@ -141,8 +142,8 @@ public class Order
         this.publishDomainEvent(new OrderPaidEvent(this.id, this.customerId, this.companyId, this.paidAt));
     }
 
-    public void markAsReady() {
-        this.changeStatus(OrderStatus.READY);
+    public void readyForDelivery() {
+        this.changeStatus(OrderStatus.READY_FOR_DELIVERY);
         this.setReadyAt(OffsetDateTime.now());
         this.publishDomainEvent(new OrderReadyEvent(this.id, this.customerId, this.companyId, this.readyAt));
     }
@@ -153,10 +154,16 @@ public class Order
         this.publishDomainEvent(new OrderOutForDeliveredEvent(this.id, this.customerId, this.companyId, this.outForDeliveryAt));
     }
 
-    public void delivered() {
+    public void deliver() {
         this.changeStatus(OrderStatus.DELIVERED);
         this.setDeliveredAt(OffsetDateTime.now());
         this.publishDomainEvent(new OrderDeliveredEvent(this.id, this.customerId, this.companyId, this.deliveredAt));
+    }
+
+    public void complete() {
+        this.changeStatus(OrderStatus.COMPLETED);
+        this.setCompletedAt(OffsetDateTime.now());
+        this.publishDomainEvent(new OrderCompletedEvent(this.id, this.customerId, this.companyId, this.completedAt));
     }
 
     public void cancel() {
@@ -177,8 +184,8 @@ public class Order
         return OrderStatus.PAID.equals(this.status);
     }
 
-    public boolean isReady() {
-        return OrderStatus.READY.equals(this.status);
+    public boolean isReadyForDelivery() {
+        return OrderStatus.READY_FOR_DELIVERY.equals(this.status);
     }
 
     public boolean isOutForDelivery() {
