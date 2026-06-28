@@ -46,7 +46,7 @@ public class CustomerManagementApplicationService {
         return customer.id().value();
     }
 
-    public UUID addAddress(UUID customerId, AddressData address) {
+    public UUID createAddress(UUID customerId, AddressData address) {
         FieldValidator.requiresNonNull("customerId", customerId);
         FieldValidator.requiresNonNull("address", address);
 
@@ -77,16 +77,14 @@ public class CustomerManagementApplicationService {
         var customer = this.findById(customerId);
 
         customer.changeName(new FullName(input.getFirstName(), input.getLastName()));
-        customer.changeDocument(DocumentFactory.from(input.getDocument()));
         customer.changePhone(new Phone(input.getPhone()));
-        customer.changeBirthDate(new BirthDate(input.getBirthDate()));
 
         customers.add(customer);
     }
 
-    public void changeEmail(String newEmail, UUID customerId) {
-        FieldValidator.requiresNonNull("email", newEmail);
+    public void changeEmail(UUID customerId, String newEmail) {
         FieldValidator.requiresNonNull("customerId", customerId);
+        FieldValidator.requiresNonNull("email", newEmail);
 
         var customer = this.findById(customerId);
 

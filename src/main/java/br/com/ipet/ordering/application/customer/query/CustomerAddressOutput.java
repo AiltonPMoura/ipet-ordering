@@ -1,16 +1,24 @@
 package br.com.ipet.ordering.application.customer.query;
 
-import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerAddressOutput {
-    private Address address;
+    private UUID id;
+    private String street;
+    private Integer number;
+    private String neighborhood;
+    private String complement;
+    private String city;
+    private String state;
+    private String zipCode;
     private boolean isPrincipal;
 }

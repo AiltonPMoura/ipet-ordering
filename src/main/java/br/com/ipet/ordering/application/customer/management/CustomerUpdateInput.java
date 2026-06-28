@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,6 +13,4 @@ public class CustomerUpdateInput {
     private String firstName;
     private String lastName;
     private String phone;
-    private String document;
-    private LocalDate birthDate;
 }

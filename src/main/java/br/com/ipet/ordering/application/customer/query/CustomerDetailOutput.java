@@ -24,5 +24,5 @@ public class CustomerDetailOutput {
     private String document;
     private LocalDate birthDate;
     private Set<CustomerAddressOutput> customerAddress;
-    private OffsetDateTime registerAt;
+    private OffsetDateTime registeredAt;
 }
