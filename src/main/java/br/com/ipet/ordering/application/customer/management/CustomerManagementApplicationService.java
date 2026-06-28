@@ -82,13 +82,13 @@ public class CustomerManagementApplicationService {
         customers.add(customer);
     }
 
-    public void changeEmail(UUID customerId, String newEmail) {
+    public void changeEmail(UUID customerId, EmailInput emailInput) {
         FieldValidator.requiresNonNull("customerId", customerId);
-        FieldValidator.requiresNonNull("email", newEmail);
+        FieldValidator.requiresNonNull("email", emailInput);
 
         var customer = this.findById(customerId);
 
-        customerRegistrationService.changeEmail(customer, new Email(newEmail));
+        customerRegistrationService.changeEmail(customer, new Email(emailInput.getEmail()));
 
         customers.add(customer);
     }

@@ -5,13 +5,14 @@ import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.document.Document;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import lombok.AccessLevel;
 import lombok.Builder;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -26,82 +27,35 @@ public class Customer
     private Phone phone;
     private Document document;
     private BirthDate birthDate;
-    private Set<CustomerAddress> address;
-    private OffsetDateTime registerAt;
+    private Set<CustomerAddress> addresses;
+    private OffsetDateTime registeredAt;
 
     @Builder(builderClassName = "CreateNewCustomerBuilder", builderMethodName = "createNew", access = AccessLevel.PACKAGE)
     private static Customer create(FullName fullName, Email email, Phone phone,
                                    Document document, BirthDate birthDate, Address address) {
 
         var customer = new Customer(new CustomerId(), fullName, email,
-                phone, document, birthDate, new HashSet<>(), OffsetDateTime.now());
+                phone, document, birthDate, new HashSet<>(), OffsetDateTime.now(ZoneOffset.UTC));
 
-        var customerAddress = CustomerAddress.create(customer.id, address, true);
+            var customerAddress = CustomerAddress.create(customer.id, address, true);
+            customer.addresses.add(customerAddress);
 
-        customer.address.add(customerAddress);
-
-        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id, customer.fullName, customer.email, customer.registerAt));
+        customer.publishDomainEvent(new CustomerRegisteredEvent(customer.id, customer.fullName, customer.email, customer.registeredAt));
 
         return customer;
     }
 
     @Builder(builderClassName = "CreateExistingCustomerBuilder", builderMethodName = "existing")
     private Customer(CustomerId id, FullName fullName, Email email, Phone phone, Document document,
-                     BirthDate birthDate, Set<CustomerAddress> address, OffsetDateTime registerAt) {
+                     BirthDate birthDate, Set<CustomerAddress> addresses, OffsetDateTime registeredAt) {
         this.setId(id);
         this.setFullName(fullName);
         this.setEmail(email);
         this.setPhone(phone);
         this.setDocument(document);
         this.setBirthDate(birthDate);
-        this.setAddress(address);
-        this.setRegisterAt(registerAt);
-    }
-
-    public OffsetDateTime registerAt() {
-        return registerAt;
-    }
-
-    public CustomerAddressId addAddress(Address address) {
-        FieldValidator.requiresNonNull("address", address);
-
-        var customerAddress = CustomerAddress.create(this.id, address, false);
-
-        this.address.add(customerAddress);
-
-        return customerAddress.id();
-    }
-
-    public void removeAddress(CustomerAddressId addressId) {
-        var customerAddress = this.findCustomerAddress(addressId);
-
-        if (customerAddress.isPrincipal())
-            throw new CannotDeletePrincipalAddress("");
-
-        this.address.remove(customerAddress);
-    }
-
-    public void changeAddress(CustomerAddressId addressId, Address address) {
-        var customerAddress = this.findCustomerAddress(addressId);
-        customerAddress.changeAddress(address);
-    }
-
-    public void changePrincipalAddress(CustomerAddressId addressId) {
-        var customerAddress = this.findCustomerAddress(addressId);
-        this.disableCurrentPrincipalAddress();
-        customerAddress.changePrincipal(true);
-    }
-
-    public Address principalAddress() {
-        return this.address.stream()
-                .filter(CustomerAddress::isPrincipal)
-                .findFirst()
-                .map(CustomerAddress::address)
-                .orElseThrow(() -> new CustomerDoesNotContainPrincipalAddressException(""));
-    }
-
-    public Address findAddress(CustomerAddressId customerAddressId) {
-        return this.findCustomerAddress(customerAddressId).address();
+        this.setAddresses(addresses);
+        this.setRegisteredAt(registeredAt);
     }
 
     public void changeName(FullName fullName) {
@@ -116,25 +70,53 @@ public class Customer
         this.setPhone(phone);
     }
 
-    public void changeDocument(Document document) {
-        this.setDocument(document);
+    public CustomerAddressId addAddress(Address address) {
+        FieldValidator.requiresNonNull("address", address);
+        var customerAddress = CustomerAddress.create(this.id, address, false);
+        this.addresses.add(customerAddress);
+        return customerAddress.id();
     }
 
-    public void changeBirthDate(BirthDate birthDate) {
-        this.setBirthDate(birthDate);
+    public void removeAddress(CustomerAddressId addressId) {
+        var customerAddress = this.findCustomerAddress(addressId);
+        if (customerAddress.isPrincipal()) throw new CannotDeletePrincipalAddress("");
+        this.addresses.remove(customerAddress);
+    }
+
+    public void changeAddress(CustomerAddressId addressId, Address address) {
+        var customerAddress = this.findCustomerAddress(addressId);
+        customerAddress.changeAddress(address);
+    }
+
+    public void changePrincipalAddress(CustomerAddressId addressId) {
+        var customerAddress = this.findCustomerAddress(addressId);
+        this.disableCurrentPrincipalAddress();
+        customerAddress.changePrincipal(true);
+    }
+
+    public Address principalAddress() {
+        return this.addresses.stream()
+                .filter(CustomerAddress::isPrincipal)
+                .findFirst()
+                .map(CustomerAddress::address)
+                .orElseThrow(() -> new CustomerDoesNotContainPrincipalAddressException(""));
+    }
+
+    public Address findAddress(CustomerAddressId customerAddressId) {
+        return this.findCustomerAddress(customerAddressId).address();
     }
 
     private CustomerAddress findCustomerAddress(CustomerAddressId customerAddressId) {
         FieldValidator.requiresNonNull("addressId", customerAddressId);
 
-        return this.address.stream()
+        return this.addresses.stream()
                 .filter(customerAddress -> customerAddress.id().equals(customerAddressId))
                 .findFirst()
                 .orElseThrow(() -> new CustomerAddressNotFoundException(""));
     }
 
     private void disableCurrentPrincipalAddress() {
-        this.address.stream()
+        this.addresses.stream()
                 .filter(CustomerAddress::isPrincipal)
                 .findFirst()
                 .ifPresent(principalAddress -> principalAddress.changePrincipal(false));
@@ -195,17 +177,21 @@ public class Customer
     }
 
     public Set<CustomerAddress> customerAddresses() {
-        return Collections.unmodifiableSet(address);
+        return Collections.unmodifiableSet(addresses);
     }
 
-    private void setAddress(Set<CustomerAddress> customerAddresses) {
+    private void setAddresses(Set<CustomerAddress> customerAddresses) {
         FieldValidator.requiresNonNull("customerAddresses", customerAddresses);
-        this.address = customerAddresses;
+        this.addresses = customerAddresses;
     }
 
-    private void setRegisterAt(OffsetDateTime registerAt) {
-        FieldValidator.requiresNonNull("registerAt", registerAt);
-        this.registerAt = registerAt;
+    public OffsetDateTime registeredAt() {
+        return registeredAt;
+    }
+
+    private void setRegisteredAt(OffsetDateTime registeredAt) {
+        FieldValidator.requiresNonNull("registeredAt", registeredAt);
+        this.registeredAt = registeredAt;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.customer;
 
+import br.com.ipet.ordering.application.customer.query.CustomerAddressOutput;
 import br.com.ipet.ordering.application.customer.query.CustomerDetailOutput;
 import br.com.ipet.ordering.application.customer.query.CustomerFilter;
 import br.com.ipet.ordering.application.customer.query.CustomerQueryService;
@@ -13,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 import static br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceSpecification.emailLike;
@@ -36,8 +38,12 @@ public class CustomerQueryServiceImpl implements CustomerQueryService {
     @Override
     public Page<CustomerSummaryOutput> filter(CustomerFilter filter, Pageable pageable) {
         return repository.findAll(toSpecification(filter), pageable)
-                .map(customerPersistenceEntity ->
-                        mapper.convert(customerPersistenceEntity, CustomerSummaryOutput.class));
+                .map(customerPersistenceEntity -> mapper.convert(customerPersistenceEntity, CustomerSummaryOutput.class));
+    }
+
+    @Override
+    public List<CustomerAddressOutput> findAddressesByCustomerId(UUID customerId) {
+        return repository.findAddressesByCustomerId(customerId);
     }
 
     private Specification<CustomerPersistenceEntity> toSpecification(CustomerFilter filter) {

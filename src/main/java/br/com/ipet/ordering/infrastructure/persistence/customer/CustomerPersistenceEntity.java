@@ -56,7 +56,7 @@ public class CustomerPersistenceEntity
     private LocalDate birthDate;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private Set<CustomerAddressPersistenceEntity> customerAddress = new HashSet<>();
+    private Set<CustomerAddressPersistenceEntity> customerAddresses = new HashSet<>();
 
     @Column
     private OffsetDateTime registerAt;
@@ -70,9 +70,9 @@ public class CustomerPersistenceEntity
     @LastModifiedDate
     private OffsetDateTime lastModifiedAt;
 
-    public void setAddress(Set<CustomerAddressPersistenceEntity> customerAddress) {
-        customerAddress.forEach(address -> address.setCustomer(this));
-        this.customerAddress = customerAddress;
+    public void setCustomerAddresses(Set<CustomerAddressPersistenceEntity> customerAddresses) {
+        customerAddresses.forEach(customerAddress -> customerAddress.setCustomer(this));
+        this.customerAddresses = customerAddresses;
     }
 
     public Collection<Object> getEvents() {

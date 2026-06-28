@@ -26,21 +26,21 @@ public class CustomerPersistenceMapper {
         customerPersistence.setDocument(customer.document().value());
         customerPersistence.setBirthDate(customer.birthDate().value());
         customerPersistence.setPhone(customer.phone().value());
-        customerPersistence.setAddress(this.mergeAddress(customerPersistence, customer));
-        customerPersistence.setRegisterAt(customer.registerAt());
+        customerPersistence.setCustomerAddresses(this.mergeAddresses(customerPersistence, customer));
+        customerPersistence.setRegisterAt(customer.registeredAt());
         customerPersistence.addEvents(customer.domainEvents());
         return customerPersistence;
     }
 
-    private Set<CustomerAddressPersistenceEntity> mergeAddress(CustomerPersistenceEntity customerPersistence, Customer customer) {
-        var customerAddressPersistence = customerPersistence.getCustomerAddress();
+    private Set<CustomerAddressPersistenceEntity> mergeAddresses(CustomerPersistenceEntity customerPersistence, Customer customer) {
+        var customerAddressesPersistence = customerPersistence.getCustomerAddresses();
         var customerAddresses = customer.customerAddresses();
 
-        if (customerAddressPersistence.isEmpty())
+        if (customerAddressesPersistence.isEmpty())
             return customerAddresses.stream().map(this::fromDomainCustomerAddress)
                     .collect(Collectors.toSet());
 
-        var customerAddressPersistenceMap = customerAddressPersistence.stream()
+        var customerAddressPersistenceMap = customerAddressesPersistence.stream()
                 .collect(Collectors.toMap(CustomerAddressPersistenceEntity::getId, address -> address));
 
         return customerAddresses.stream().map(customerAddress -> {

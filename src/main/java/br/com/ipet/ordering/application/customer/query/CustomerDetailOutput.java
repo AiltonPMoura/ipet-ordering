@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -23,6 +22,5 @@ public class CustomerDetailOutput {
     private String phone;
     private String document;
     private LocalDate birthDate;
-    private Set<CustomerAddressOutput> customerAddress;
     private OffsetDateTime registeredAt;
 }
