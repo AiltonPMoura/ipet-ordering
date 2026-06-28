@@ -2,6 +2,7 @@ package br.com.ipet.ordering.application.customer.management;
 
 import br.com.ipet.ordering.application.commons.AddressData;
 import br.com.ipet.ordering.application.commons.AddressMapper;
+import br.com.ipet.ordering.application.commons.EmailInput;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;

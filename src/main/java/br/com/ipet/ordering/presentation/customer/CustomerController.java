@@ -3,7 +3,7 @@ package br.com.ipet.ordering.presentation.customer;
 import br.com.ipet.ordering.application.customer.management.CustomerInput;
 import br.com.ipet.ordering.application.customer.management.CustomerManagementApplicationService;
 import br.com.ipet.ordering.application.customer.management.CustomerUpdateInput;
-import br.com.ipet.ordering.application.customer.management.EmailInput;
+import br.com.ipet.ordering.application.commons.EmailInput;
 import br.com.ipet.ordering.application.customer.query.CustomerDetailOutput;
 import br.com.ipet.ordering.application.customer.query.CustomerFilter;
 import br.com.ipet.ordering.application.customer.query.CustomerQueryService;
