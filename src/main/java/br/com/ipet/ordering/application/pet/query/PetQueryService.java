@@ -6,6 +6,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface PetQueryService {
-    PetDetailOutput findById(UUID petId);
-    Page<PetSummaryOutput> filter(PetFilter petFilter, Pageable pageable);
+    PetDetailOutput findById(UUID customerId, UUID petId);
+    Page<PetSummaryOutput> filter(UUID customerId, PetFilter petFilter, Pageable pageable);
 }

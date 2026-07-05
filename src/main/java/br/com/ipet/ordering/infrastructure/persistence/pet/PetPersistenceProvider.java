@@ -1,8 +1,8 @@
 package br.com.ipet.ordering.infrastructure.persistence.pet;
 
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.pet.PetId;
 import br.com.ipet.ordering.domain.model.pet.Pet;
+import br.com.ipet.ordering.domain.model.pet.PetId;
 import br.com.ipet.ordering.domain.model.pet.Pets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -64,5 +64,15 @@ public class PetPersistenceProvider implements Pets {
                 .stream()
                 .map(petMapper::toDomain)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public void remove(Pet pet) {
+        petRepository.deleteById(pet.id().value());
+    }
+
+    @Override
+    public void remove(PetId id) {
+        petRepository.deleteById(id.value());
     }
 }

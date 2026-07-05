@@ -15,7 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static br.com.ipet.ordering.infrastructure.persistence.pet.PetPersistenceSpecification.*;
+import static br.com.ipet.ordering.infrastructure.persistence.pet.PetPersistenceSpecification.breed;
+import static br.com.ipet.ordering.infrastructure.persistence.pet.PetPersistenceSpecification.customerId;
+import static br.com.ipet.ordering.infrastructure.persistence.pet.PetPersistenceSpecification.name;
+import static br.com.ipet.ordering.infrastructure.persistence.pet.PetPersistenceSpecification.size;
+import static br.com.ipet.ordering.infrastructure.persistence.pet.PetPersistenceSpecification.type;
 
 @Component
 @RequiredArgsConstructor
@@ -26,19 +30,19 @@ public class PetQueryServiceImpl implements PetQueryService {
     private final Mapper mapper;
 
     @Override
-    public PetDetailOutput findById(UUID petId) {
-        var petPersistence = petRepository.findById(petId).orElseThrow(() -> new PetNotFoundException(""));
+    public PetDetailOutput findById(UUID customerId, UUID petId) {
+        var petPersistence = petRepository.findByIdAndCustomer_Id(customerId, petId).orElseThrow(() -> new PetNotFoundException(""));
         return mapper.convert(petPersistence, PetDetailOutput.class);
     }
 
     @Override
-    public Page<PetSummaryOutput> filter(PetFilter petFilter, Pageable pageable) {
-        return petRepository.findAll(this.toSpecification(petFilter), pageable)
+    public Page<PetSummaryOutput> filter(UUID customerId, PetFilter petFilter, Pageable pageable) {
+        return petRepository.findAll(this.toSpecification(customerId, petFilter), pageable)
                 .map(petPersistence -> mapper.convert(petPersistence, PetSummaryOutput.class));
     }
 
-    private Specification<PetPersistenceEntity> toSpecification(PetFilter petFilter) {
-        return customerId(petFilter.getCustomerId())
+    private Specification<PetPersistenceEntity> toSpecification(UUID customerId, PetFilter petFilter) {
+        return customerId(customerId)
                 .and(name(petFilter.getName())
                         .or(type(petFilter.getType()))
                         .or(size(petFilter.getSize()))

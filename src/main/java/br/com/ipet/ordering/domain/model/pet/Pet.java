@@ -2,9 +2,9 @@ package br.com.ipet.ordering.domain.model.pet;
 
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Photo;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.AccessLevel;
 import lombok.Builder;
 
@@ -46,34 +46,52 @@ public class Pet
         this.setAge(age);
     }
 
-    void changeName(PetName name) {
+    public void changeName(PetName name, CustomerId customerId) {
+        this.verifyIfBelongsToTheCustomer(customerId);
         this.setName(name);
     }
 
-    void changeType(PetType petType) {
+    public void changeType(PetType petType, CustomerId customerId) {
+        this.verifyIfBelongsToTheCustomer(customerId);
         this.setPetType(petType);
     }
 
-    void changeBreed(Breed breed) {
+    public void changeBreed(Breed breed, CustomerId customerId) {
+        this.verifyIfBelongsToTheCustomer(customerId);
         this.setBreed(breed);
     }
 
-    void changeGender(PetGender petGender) {
+    public void changeGender(PetGender petGender, CustomerId customerId) {
+        this.verifyIfBelongsToTheCustomer(customerId);
         this.setPetGender(petGender);
     }
 
-    void changeSize(PetSize petSize) {
+    public void changeSize(PetSize petSize, CustomerId customerId) {
+        this.verifyIfBelongsToTheCustomer(customerId);
         this.setPetSize(petSize);
     }
 
-    void changeWeight(PetWeight weight) {
+    public void changeWeight(PetWeight weight, CustomerId customerId) {
+        this.verifyIfBelongsToTheCustomer(customerId);
         FieldValidator.requiresNonNull("pet weight", weight);
         this.setWeight(weight);
     }
 
-    void changeAge(PetAge age) {
+    public void changeAge(PetAge age, CustomerId customerId) {
+        this.verifyIfBelongsToTheCustomer(customerId);
         FieldValidator.requiresNonNull("pet age", age);
         this.setAge(age);
+    }
+
+    public void discard(CustomerId customerId) {
+        this.verifyIfBelongsToTheCustomer(customerId);
+        /*this.publishDomainEvent(new PetDiscartedEvent(
+                this.id, this.customerId, OffsetDateTime.now()));*/
+    }
+
+    private void verifyIfBelongsToTheCustomer(CustomerId customerId) {
+        if (!this.customerId().equals(customerId))
+            throw new PetDoesNotBelongToTheCustomer();
     }
 
     public PetId id() {
@@ -125,7 +143,7 @@ public class Pet
         return gender;
     }
 
-    private void setPetGender(PetGender petGender) {
+    private void setPetGender(PetGender gender) {
         FieldValidator.requiresNonNull("pet gender", gender);
         this.gender = gender;
     }
