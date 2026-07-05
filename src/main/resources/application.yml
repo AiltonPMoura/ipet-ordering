@@ -18,7 +18,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: drop-and-create
     show-sql: true
 
 ipet:
@@ -26,4 +26,4 @@ ipet:
     shipping:
       url: "http://localhost:8780"
     catalog:
-      url: "http://localhost:8081"
+      url: "http://localhost:8081/api"

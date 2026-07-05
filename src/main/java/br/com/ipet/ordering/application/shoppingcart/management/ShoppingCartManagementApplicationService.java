@@ -40,7 +40,7 @@ public class ShoppingCartManagementApplicationService {
 
         var shoppingCart = this.findShoppingCart(input.getShoppingCartId());
 
-        var product = productCatalogService.ofId(new ProductId(input.getProductId()))
+        var product = productCatalogService.ofId(new CompanyId(input.getCompanyId()), new ProductId(input.getProductId()))
                 .orElseThrow(() -> new ProductNotFoundException(""));
 
         shoppingCart.addItem(product, new Quantity(input.getQuantity()), new CustomerId(input.getCustomerId()));

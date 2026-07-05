@@ -1,11 +1,12 @@
 package br.com.ipet.ordering.domain.model.commons.valueobject;
 
-import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.exception.NumberCannotBeNegativeException;
 import br.com.ipet.ordering.domain.model.commons.exception.QuantityNeedsGreaterThanZeroException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
+import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
 public record Money (BigDecimal value) implements Comparable<Money> {
 
@@ -17,7 +18,7 @@ public record Money (BigDecimal value) implements Comparable<Money> {
     }
 
     public Money(BigDecimal value) {
-        FieldValidator.requiresNonNull("money value", value);
+        requiresNonNull("money value", value);
         this.value = value.setScale(2, roundingMode);
 
         if (value.signum() == -1)
@@ -25,7 +26,7 @@ public record Money (BigDecimal value) implements Comparable<Money> {
     }
 
     public Money multiply(Quantity quantity) {
-        FieldValidator.requiresNonNull("quantity", quantity);
+        requiresNonNull("quantity", quantity);
 
         if (quantity.value() < 1)
             throw new QuantityNeedsGreaterThanZeroException();
@@ -34,12 +35,12 @@ public record Money (BigDecimal value) implements Comparable<Money> {
     }
 
     public Money add(Money money) {
-        FieldValidator.requiresNonNull("money", money);
+        requiresNonNull("money", money);
         return new Money(value.add(money.value));
     }
 
     public Money divide(Money money) {
-        FieldValidator.requiresNonNull("money", money);
+        requiresNonNull("money", money);
         return new Money(value.divide(money.value, roundingMode));
     }
 

@@ -14,6 +14,7 @@ import java.util.UUID;
 public class ShoppingCartItemInput {
     private UUID shoppingCartId;
     private UUID customerId;
+    private UUID companyId;
     private UUID productId;
     private Integer quantity;
 }
