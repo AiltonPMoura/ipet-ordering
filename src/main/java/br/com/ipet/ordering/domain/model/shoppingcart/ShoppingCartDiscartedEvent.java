@@ -7,6 +7,5 @@ import java.time.OffsetDateTime;
 
 public record ShoppingCartDiscartedEvent(ShoppingCartId shoppingCartId,
                                          CustomerId customerId,
-                                         CompanyId companyId,
                                          OffsetDateTime discartedAt) {
 }

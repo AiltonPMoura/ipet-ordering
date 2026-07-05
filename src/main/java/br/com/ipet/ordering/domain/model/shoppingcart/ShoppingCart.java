@@ -4,16 +4,15 @@ import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.product.ProductDoesNotBelongsToCompany;
+import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.product.ProductId;
 import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -25,28 +24,26 @@ public class ShoppingCart
         implements AggregateRoot<ShoppingCartId> {
     private ShoppingCartId id;
     private CustomerId customerId;
-    private CompanyId companyId;
     private Set<ShoppingCartItem> items;
     private Quantity totalItems;
     private Money totalAmount;
     private OffsetDateTime createdAt;
 
-    static ShoppingCart startShopping(CustomerId customerId, CompanyId companyId) {
-        var shoppingCart = new ShoppingCart(new ShoppingCartId(), customerId, companyId,
-                new HashSet<>(), Quantity.ZERO, Money.ZERO, OffsetDateTime.now());
+    static ShoppingCart startShopping(CustomerId customerId) {
+        var shoppingCart = new ShoppingCart(new ShoppingCartId(), customerId,
+                new HashSet<>(), Quantity.ZERO, Money.ZERO, OffsetDateTime.now(ZoneOffset.UTC));
 
         shoppingCart.publishDomainEvent(new ShoppingCartCreatedEvent(
-                shoppingCart.id, customerId, companyId, shoppingCart.createdAt));
+                shoppingCart.id, customerId, shoppingCart.createdAt));
 
         return shoppingCart;
     }
 
     @Builder(builderClassName = "ExistingShoppingCartBuilder", builderMethodName = "existing")
-    private ShoppingCart(ShoppingCartId id, CustomerId customerId, CompanyId companyId, Set<ShoppingCartItem> items,
+    private ShoppingCart(ShoppingCartId id, CustomerId customerId, Set<ShoppingCartItem> items,
                          Quantity totalItems, Money totalAmount, OffsetDateTime createdAt) {
         this.setId(id);
         this.setCustomerId(customerId);
-        this.setCompanyId(companyId);
         this.setItems(items);
         this.setTotalItems(totalItems);
         this.setTotalAmount(totalAmount);
@@ -55,7 +52,6 @@ public class ShoppingCart
 
     public void addItem(Product product, Quantity quantity, CustomerId customerId) {
         this.verifyBelongsToCustomer(customerId);
-        this.verifyProductBelongsToCompany(product);
 
         var shoppingCartItem = ShoppingCartItem.create(this.id, product, quantity);
 
@@ -65,7 +61,7 @@ public class ShoppingCart
 
         this.recalculateTotals();
         this.publishDomainEvent(new ShoppingCartItemAddedEvent(
-                this.id, this.customerId, this.companyId, product.id(), OffsetDateTime.now()));
+                this.id, this.customerId, product.id(), OffsetDateTime.now(ZoneOffset.UTC)));
     }
 
     public void removeItem(ShoppingCartItemId itemId, CustomerId customerId) {
@@ -74,7 +70,7 @@ public class ShoppingCart
         this.items.remove(shoppingCartItem);
         this.recalculateTotals();
         this.publishDomainEvent(new ShoppingCartItemRemovedEvent(
-                this.id, this.customerId, this.companyId, shoppingCartItem.product().id(), OffsetDateTime.now()));
+                this.id, this.customerId, shoppingCartItem.product().id(), OffsetDateTime.now(ZoneOffset.UTC)));
     }
 
     public void changeItemQuantity(ShoppingCartItemId itemId, Quantity quantity, CustomerId customerId) {
@@ -90,7 +86,7 @@ public class ShoppingCart
         this.totalAmount = Money.ZERO;
         this.totalItems = Quantity.ZERO;
         this.publishDomainEvent(new ShoppingCartEmpitiedEvent(
-                this.id, this.customerId, this.companyId, OffsetDateTime.now()));
+                this.id, this.customerId, OffsetDateTime.now(ZoneOffset.UTC)));
     }
 
     public void refreshItem(Product product) {
@@ -108,7 +104,7 @@ public class ShoppingCart
     public void discard(CustomerId customerId) {
         this.verifyBelongsToCustomer(customerId);
         this.publishDomainEvent(new ShoppingCartDiscartedEvent(
-                this.id, this.customerId, this.companyId, OffsetDateTime.now()));
+                this.id, this.customerId, OffsetDateTime.now(ZoneOffset.UTC)));
     }
 
     private ShoppingCartItem findItem(ProductId productId) {
@@ -160,11 +156,6 @@ public class ShoppingCart
             throw new ShoppingCartDoesNotBelongToCustomer("");
     }
 
-    private void verifyProductBelongsToCompany(Product product) {
-        if (!this.companyId.equals(product.companyId()))
-            throw new ProductDoesNotBelongsToCompany("");
-    }
-
     @Override
     public ShoppingCartId id() {
         return id;
@@ -182,15 +173,6 @@ public class ShoppingCart
     private void setCustomerId(CustomerId customerId) {
         FieldValidator.requiresNonNull("customerId", customerId);
         this.customerId = customerId;
-    }
-
-    public CompanyId companyId() {
-        return companyId;
-    }
-
-    private void setCompanyId(CompanyId companyId) {
-        FieldValidator.requiresNonNull("companyId", companyId);
-        this.companyId = companyId;
     }
 
     public Set<ShoppingCartItem> items() {

@@ -162,8 +162,8 @@ public class Order
 
     public void complete() {
         this.changeStatus(OrderStatus.COMPLETED);
-        this.setCompletedAt(OffsetDateTime.now());
-        this.publishDomainEvent(new OrderCompletedEvent(this.id, this.customerId, this.companyId, this.completedAt));
+        //this.setCompletedAt(OffsetDateTime.now());
+        //this.publishDomainEvent(new OrderCompletedEvent(this.id, this.customerId, this.companyId, this.completedAt));
     }
 
     public void cancel() {

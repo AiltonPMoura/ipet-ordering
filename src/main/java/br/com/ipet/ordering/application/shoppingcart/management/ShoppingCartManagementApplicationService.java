@@ -28,22 +28,22 @@ public class ShoppingCartManagementApplicationService {
     private final ShoppingCarts shoppingCarts;
     private final ProductCatalogService productCatalogService;
 
-    public UUID create(UUID customerId, UUID companyId) {
-        var shoppingCart = shoppingService.startShopping(new CustomerId(customerId), new CompanyId(companyId));
+    public UUID create(UUID customerId) {
+        var shoppingCart = shoppingService.startShopping(new CustomerId(customerId));
         shoppingCarts.add(shoppingCart);
 
         return shoppingCart.id().value();
     }
 
-    public void addItem(ShoppingCartItemInput input) {
+    public void addItem(UUID customerId, UUID shoppingCartId, ShoppingCartItemInput input) {
         FieldValidator.requiresNonNull("input", input);
 
-        var shoppingCart = this.findShoppingCart(input.getShoppingCartId());
+        var shoppingCart = this.findShoppingCart(shoppingCartId);
 
-        var product = productCatalogService.ofId(new CompanyId(input.getCompanyId()), new ProductId(input.getProductId()))
+        var product = productCatalogService.ofId(new ProductId(input.getProductId()))
                 .orElseThrow(() -> new ProductNotFoundException(""));
 
-        shoppingCart.addItem(product, new Quantity(input.getQuantity()), new CustomerId(input.getCustomerId()));
+        shoppingCart.addItem(product, new Quantity(input.getQuantity()), new CustomerId(customerId));
 
         shoppingCarts.add(shoppingCart);
     }
