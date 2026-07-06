@@ -10,8 +10,8 @@ import java.util.UUID;
 
 public interface CatalogAPIClient {
 
-    @GetExchange(value = "/v1/companies/{companyId}/products/{productId}", accept = "application/json")
-    ProductResponse findProductById(UUID companyId, UUID productId);
+    @GetExchange(value = "/v1/products/{productId}", accept = "application/json")
+    ProductResponse findProductById(@PathVariable UUID productId);
 
     @GetExchange(value = "/v1/companies/{companyId}/services/subcategory", accept = "application/json")
     ServiceCategory findSubcategory(@PathVariable CompanyId companyId);
