@@ -28,6 +28,7 @@ public class ProductCatalogServiceImpl implements ProductCatalogService {
                 .name(new ProductName(productResponse.name()))
                 .description(new ProductDescription(productResponse.description()))
                 .price(new Money(productResponse.price()))
+                .inStock(productResponse.inStock())
                 .build());
     }
 }

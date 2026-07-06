@@ -11,13 +11,15 @@ public record Product(
         CompanyId companyId,
         ProductName name,
         ProductDescription description,
-        Money price) {
+        Money price,
+        boolean inStock) {
 
     public Product {
         FieldValidator.requiresNonNull("product id", id);
         FieldValidator.requiresNonNull("companyId", companyId);
         FieldValidator.requiresNonNull("product name", name);
         FieldValidator.requiresNonNull("product price", price);
+        FieldValidator.requiresNonNull("inStock", inStock);
     }
 
 }

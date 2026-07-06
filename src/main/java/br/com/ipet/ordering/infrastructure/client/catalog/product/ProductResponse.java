@@ -7,5 +7,6 @@ public record ProductResponse(UUID id,
                               UUID companyId,
                               String name,
                               String description,
-                              BigDecimal price) {
+                              BigDecimal price,
+                              boolean inStock) {
 }
