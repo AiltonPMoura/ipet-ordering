@@ -119,7 +119,7 @@ public class CustomerManagementApplicationService {
 
     private Customer findById(UUID customerId) {
         return customers.ofId(new CustomerId(customerId))
-                .orElseThrow(() -> new CustomerNotFoundException(""));
+                .orElseThrow(() -> new CustomerNotFoundException(customerId.toString()));
     }
 
 }

@@ -16,7 +16,7 @@ public final class DocumentFactory {
         if (value.length() == 14)
             return new Cnpj(value);
 
-        throw new DocumentIsNotValidException("documento inválido");
+        throw new DocumentIsNotValidException();
     }
 
 }

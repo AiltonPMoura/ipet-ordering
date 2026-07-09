@@ -7,10 +7,7 @@ import lombok.Getter;
 @Getter
 public class OrderCannotBeEditedException extends DomainException {
 
-    private final String[] fields;
-
-    public OrderCannotBeEditedException(String... fields) {
-        super(MessageCode.ERROR_ORDER_CANNOT_BE_EDITED);
-        this.fields = fields;
+    public OrderCannotBeEditedException(String... values) {
+        super(MessageCode.ERROR_ORDER_CANNOT_BE_EDITED, values);
     }
 }

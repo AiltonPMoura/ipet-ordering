@@ -31,7 +31,7 @@ public class CustomerQueryServiceImpl implements CustomerQueryService {
 
     @Override
     public CustomerDetailOutput findById(UUID customerId) {
-        var customer = repository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException(""));
+        var customer = repository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException(customerId.toString()));
         return mapper.convert(customer, CustomerDetailOutput.class);
     }
 

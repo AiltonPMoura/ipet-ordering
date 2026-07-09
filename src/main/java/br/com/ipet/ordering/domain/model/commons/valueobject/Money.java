@@ -11,7 +11,6 @@ import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 public record Money (BigDecimal value) implements Comparable<Money> {
 
     public static final Money ZERO = new Money(BigDecimal.ZERO);
-    public static final RoundingMode roundingMode = RoundingMode.HALF_EVEN;
 
     public Money(String value) {
         this(new BigDecimal(value));
@@ -19,7 +18,7 @@ public record Money (BigDecimal value) implements Comparable<Money> {
 
     public Money(BigDecimal value) {
         requiresNonNull("money value", value);
-        this.value = value.setScale(2, roundingMode);
+        this.value = value.setScale(2, RoundingMode.HALF_EVEN);
 
         if (value.signum() == -1)
             throw new NumberCannotBeNegativeException("money value");
@@ -41,7 +40,7 @@ public record Money (BigDecimal value) implements Comparable<Money> {
 
     public Money divide(Money money) {
         requiresNonNull("money", money);
-        return new Money(value.divide(money.value, roundingMode));
+        return new Money(value.divide(money.value, RoundingMode.HALF_EVEN));
     }
 
     @Override

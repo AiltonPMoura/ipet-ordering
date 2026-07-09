@@ -8,6 +8,7 @@ import br.com.ipet.ordering.application.customer.query.CustomerDetailOutput;
 import br.com.ipet.ordering.application.customer.query.CustomerFilter;
 import br.com.ipet.ordering.application.customer.query.CustomerQueryService;
 import br.com.ipet.ordering.application.customer.query.CustomerSummaryOutput;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +37,7 @@ public class CustomerController {
     private final CustomerQueryService customerQueryService;
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody CustomerInput input) {
+    public ResponseEntity<Void> create(@RequestBody @Valid CustomerInput input) {
         var uuid = customerManagementApplicationService.create(input);
 
         var url = ServletUriComponentsBuilder.fromCurrentRequest()

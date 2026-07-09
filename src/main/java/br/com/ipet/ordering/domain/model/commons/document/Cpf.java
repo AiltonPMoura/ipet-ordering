@@ -8,7 +8,7 @@ public record Cpf(String value) implements Document {
         FieldValidator.requiresNonBlank("cpf", value);
 
         if (!value.matches("\\d{11}"))
-            throw new DocumentIsNotValidException("cpf inválido");
+            throw new DocumentIsNotValidException(value);
     }
 
 }
