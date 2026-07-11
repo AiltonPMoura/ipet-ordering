@@ -1,14 +1,13 @@
 package br.com.ipet.ordering.domain.model.pet;
 
+import br.com.ipet.ordering.domain.model.DomainEntityNotFoundException;
 import br.com.ipet.ordering.domain.model.DomainException;
 import br.com.ipet.ordering.domain.model.MessageCode;
 
-public class PetNotFoundException extends DomainException {
+public class PetNotFoundException extends DomainEntityNotFoundException {
 
-    private final String[] fields;
-
-    public PetNotFoundException(String... fields) {
-        super(MessageCode.ERROR_PET_NOT_FOUND);
-        this.fields = fields;
+    public PetNotFoundException(String value) {
+        super(MessageCode.Pet.NOT_FOUND, value);
     }
+
 }

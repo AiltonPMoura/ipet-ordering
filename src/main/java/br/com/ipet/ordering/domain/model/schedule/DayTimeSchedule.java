@@ -1,17 +1,21 @@
 package br.com.ipet.ordering.domain.model.schedule;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
+import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.schedule.category.ServiceSubcategory;
+import br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory;
 import lombok.Builder;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.Set;
 
-import static br.com.ipet.ordering.domain.model.FieldValidator.*;
+import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
+import static br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory.HEALTH;
+import static br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory.HIGIENE;
 
 public class DayTimeSchedule
         extends Schedule
@@ -19,22 +23,27 @@ public class DayTimeSchedule
 
     private Set<WorkDayTime> workingDays;
 
-    static DayTimeSchedule create(CompanyId companyId, ScheduleName name, ServiceSubcategory subcategory) {
-        return new DayTimeSchedule(new ScheduleId(), companyId, name, subcategory,
+    private static final Set<ServiceCategory> SUPPORTED_CATEGORIES = Set.of(HIGIENE, HEALTH);
+
+    static DayTimeSchedule create(CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory) {
+        if (!supports(serviceCategory))
+            throw new ScheduleDontSupportSubcategoryException(serviceCategory);
+
+        return new DayTimeSchedule(new ScheduleId(), companyId, name, serviceCategory,
                 ScheduleStatus.DRAFT, new HashSet<>(), null,
-                OffsetDateTime.now(), new HashSet<>());
+                OffsetDateTime.now(ZoneOffset.UTC), new HashSet<>());
     }
 
     @Builder(builderClassName = "ExistingDayTimeScheduledBuilder", builderMethodName = "existing")
-    public DayTimeSchedule(ScheduleId id, CompanyId companyId, ScheduleName name, ServiceSubcategory subcategory,
+    public DayTimeSchedule(ScheduleId id, CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory,
                            ScheduleStatus status, Set<LockedDate> lockedDates,
                            LocalDate startedAt, OffsetDateTime createdAt,
                            Set<WorkDayTime> workingDays) {
-        super(id, companyId, name, subcategory, status, lockedDates, startedAt, createdAt);
+        super(id, companyId, name, serviceCategory, status, lockedDates, startedAt, createdAt);
         this.setWorkingDays(workingDays);
     }
 
-    void addWorkDay(DayOfWeek dayOfWeek, WorkingHours workingHours, CompanyId companyId) {
+    void addWorkingDayTime(DayOfWeek dayOfWeek, WorkingHours workingHours, CompanyId companyId) {
         requiresNonNull("dayOfWeek", dayOfWeek);
         requiresNonNull("workingHours", workingHours);
         requiresNonNull("companyId", companyId);
@@ -46,17 +55,17 @@ public class DayTimeSchedule
         this.workingDays.add(workingDay);
     }
 
-    void removeWorkDay(WorkingDayTimeId workingDayTimeId, CompanyId companyId) {
+    void removeWorkingDayTime(WorkingDayTimeId workingDayTimeId, CompanyId companyId) {
         requiresNonNull("companyId", companyId);
 
         this.verifyBelongToCompany(companyId);
 
-        // Verificar se existe agendamento nesse dia
-        var workingDay = this.findWorkingDay(workingDayTimeId);
+        var workingDay = this.findWorkingDayTime(workingDayTimeId);
         this.workingDays.remove(workingDay);
 
         //Verificar qual status deve estar se remover todos workingDays
     }
+
 
     @Override
     protected void active(CompanyId companyId) {
@@ -70,19 +79,24 @@ public class DayTimeSchedule
     }
 
     void changeDayOfWeekWorkDay(WorkingDayTimeId workingDayTimeId, DayOfWeek dayOfWeek) {
-        var workingDay = this.findWorkingDay(workingDayTimeId);
+        var workingDay = this.findWorkingDayTime(workingDayTimeId);
         this.verifyExistingWorkingDay(dayOfWeek);
         workingDay.changeDayOfWeek(dayOfWeek);
     }
 
     void changeWorkingHoursWorkDay(WorkingDayTimeId workingDayTimeId, WorkingHours workingHours) {
-        var workingDay = this.findWorkingDay(workingDayTimeId);
+        var workingDay = this.findWorkingDayTime(workingDayTimeId);
         workingDay.changeWorkingHours(workingHours);
     }
 
     void changeLockedTimeWorkDay(WorkingDayTimeId workingDayTimeId, Set<LockedTime> lockedTimes) {
-        var workingDay = this.findWorkingDay(workingDayTimeId);
+        var workingDay = this.findWorkingDayTime(workingDayTimeId);
         workingDay.changeLockedTime(lockedTimes);
+    }
+
+    private static boolean supports(ServiceCategory serviceCategory) {
+        FieldValidator.requiresNonNull("serviceCategory", serviceCategory);
+        return SUPPORTED_CATEGORIES.contains(serviceCategory);
     }
 
     private void verifyExistingWorkingDay(DayOfWeek dayOfWeek) {
@@ -93,7 +107,7 @@ public class DayTimeSchedule
             throw new WorkDayAlreadyExistsException();
     }
 
-    private WorkDayTime findWorkingDay(WorkingDayTimeId workingDayTimeId) {
+    private WorkDayTime findWorkingDayTime(WorkingDayTimeId workingDayTimeId) {
         requiresNonNull("workingDayId", workingDayTimeId);
 
         return this.workingDays.stream()
@@ -101,7 +115,6 @@ public class DayTimeSchedule
                 .findFirst()
                 .orElseThrow(() -> new WorkinDayNotFoundException(""));
     }
-
 
 
 

@@ -6,9 +6,11 @@ import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.infrastructure.persistence.repository.DayTimeSchedulePersistenceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Component
 @RequiredArgsConstructor
 public class DayTimeScheduleProvider implements DayTimeSchedules {
 

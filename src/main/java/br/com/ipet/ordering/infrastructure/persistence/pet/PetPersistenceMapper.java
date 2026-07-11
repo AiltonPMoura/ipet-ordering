@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PetPersistenceMapper {
 
-    private CustomerPersistenceRepository customerRepository;
+    private final CustomerPersistenceRepository customerRepository;
 
     public PetPersistenceEntity fromDomain(Pet pet) {
         return this.merge(new PetPersistenceEntity(), pet);
@@ -19,6 +19,7 @@ public class PetPersistenceMapper {
         petPersistence.setId(pet.id().value());
         petPersistence.setCustomer(customerRepository.getReferenceById(pet.customerId().value()));
         petPersistence.setName(pet.name().value());
+        petPersistence.setType(pet.type().name());
         petPersistence.setSize(pet.size().name());
         petPersistence.setBreed(pet.breed().name());
         petPersistence.setGender(pet.gender().name());

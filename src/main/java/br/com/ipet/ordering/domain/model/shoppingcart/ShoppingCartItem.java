@@ -15,10 +15,11 @@ public class ShoppingCartItem {
     private Product product;
     private Quantity quantity;
     private Money totalAmount;
+    private boolean inStock;
 
     static ShoppingCartItem create(ShoppingCartId shoppingCartId, Product product, Quantity quantity) {
         var shoppingCartItem = new ShoppingCartItem(new ShoppingCartItemId(), shoppingCartId,
-                product, quantity, Money.ZERO);
+                product, quantity, Money.ZERO, product.inStock());
 
         shoppingCartItem.recalculateTotals();
 
@@ -27,12 +28,13 @@ public class ShoppingCartItem {
 
     @Builder(builderClassName = "ExistingShoppingCartItemBuilder", builderMethodName = "existing")
     private ShoppingCartItem(ShoppingCartItemId id, ShoppingCartId shoppingCartId,
-                             Product product, Quantity quantity, Money totalAmount) {
+                             Product product, Quantity quantity, Money totalAmount, boolean inStock) {
         this.setId(id);
         this.setShoppingCartId(shoppingCartId);
         this.setProduct(product);
         this.setQuantity(quantity);
         this.setTotalAmount(totalAmount);
+        this.setInStock(inStock);
     }
 
     void changeQuantity(Quantity quantity) {
@@ -103,6 +105,15 @@ public class ShoppingCartItem {
     private void setTotalAmount(Money totalAmount) {
         FieldValidator.requiresNonNull("totalAmount", totalAmount);
         this.totalAmount = totalAmount;
+    }
+
+    public boolean inStock() {
+        return inStock;
+    }
+
+    private void setInStock(boolean inStock) {
+        FieldValidator.requiresNonNull("inStock", inStock);
+        this.inStock = inStock;
     }
 
     @Override

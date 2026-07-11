@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 @Component
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class ShippingCostServiceImpl implements ShippingCostService {
 
         return CalculationResult.builder()
                 .cost(new Money(response.getDeliveryCost()))
-                .expetedDate(LocalDate.now().plusDays(response.getEstimatedDaysToDelivery()))
+                .expetedDate(LocalDate.now(ZoneOffset.UTC).plusDays(response.getEstimatedDaysToDelivery()))
                 .build();
     }
 }

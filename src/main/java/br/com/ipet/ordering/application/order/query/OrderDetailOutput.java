@@ -32,5 +32,5 @@ public class OrderDetailOutput {
     private OffsetDateTime outForDeliveryAt;
     private OffsetDateTime deliveredAt;
     private OffsetDateTime canceledAt;
-    private List<OrderItemDetailOutput> items = new ArrayList<>();
+    private List<OrderItemDetailOutput> items;
 }

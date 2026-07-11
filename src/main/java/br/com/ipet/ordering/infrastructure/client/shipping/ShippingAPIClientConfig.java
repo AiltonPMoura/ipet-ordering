@@ -11,9 +11,8 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 public class ShippingAPIClientConfig {
 
     @Bean
-    public ShippingAPIClient shippingApiClient(RestClient.Builder builder,
-                                               @Value("${ipet.integrations.shipping.url}") String shippingUrl) {
-        var restClient = builder.baseUrl(shippingUrl).build();
+    public ShippingAPIClient shippingApiClient(@Value("${ipet.integrations.shipping.url}") String shippingUrl) {
+        var restClient = RestClient.builder().baseUrl(shippingUrl).build();
         var restClientAdapter = RestClientAdapter.create(restClient);
         var httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(restClientAdapter).build();
         return httpServiceProxyFactory.createClient(ShippingAPIClient.class);

@@ -1,4 +1,5 @@
-package br.com.ipet.ordering.domain.model.scheduling;
+/*
+package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.DomainException;
 import br.com.ipet.ordering.domain.model.MessageCode;
@@ -27,3 +28,4 @@ public class SchedulingCannotBePlacedException extends DomainException {
     }
 
 }
+

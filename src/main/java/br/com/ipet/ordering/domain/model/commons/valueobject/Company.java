@@ -1,19 +1,16 @@
-package br.com.ipet.ordering.domain.model.order;
+package br.com.ipet.ordering.domain.model.commons.valueobject;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.document.Document;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
-import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
+import br.com.ipet.ordering.domain.model.company.CompanyName;
 import lombok.Builder;
 
 @Builder
-public record Billing(FullName fullName, Document document,
+public record Company(CompanyName companyName, Document document,
                       Phone phone, Email email, Address address) {
 
-    public Billing {
-        FieldValidator.requiresNonNull("fullName", fullName);
+    public Company {
+        FieldValidator.requiresNonNull("companyName", companyName);
         FieldValidator.requiresNonNull("document", document);
         FieldValidator.requiresNonNull("celPhone", phone);
         FieldValidator.requiresNonNull("email", email);

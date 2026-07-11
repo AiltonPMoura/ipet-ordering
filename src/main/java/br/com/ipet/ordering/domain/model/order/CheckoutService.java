@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model.order;
 
+import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCart;
@@ -17,7 +18,7 @@ public class CheckoutService {
         if (shoppingCart.isEmpty())
             throw new ShoppingCartCantProceedToCheckoutException("");
 
-        var order = Order.draft(shoppingCart.customerId(), shoppingCart.companyId());
+        var order = Order.draft(shoppingCart.customerId(), companyId);
         order.changeBilling(billing);
         order.changeShipping(shipping);
         order.changeDeliveryCompany(deliveryCompany);

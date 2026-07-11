@@ -1,22 +1,22 @@
-package br.com.ipet.ordering.domain.model.scheduling;
+package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.valueobject.ServiceId;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.pet.PetSize;
 import br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory;
 import lombok.Builder;
 
-import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.UUID;
 
 @Builder
 public record Service(
-        ServiceId serviceId,
+        UUID serviceId,
         String description,
         ServiceCategory category,
         Duration duration,
         PetSize petSize,
-        BigDecimal price) {
+        Money price) {
 
     public Service {
         FieldValidator.requiresNonNull("serviceId", serviceId);

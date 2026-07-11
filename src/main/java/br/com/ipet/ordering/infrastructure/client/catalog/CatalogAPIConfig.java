@@ -11,9 +11,8 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 public class CatalogAPIConfig {
 
     @Bean
-    public CatalogAPIClient catalogAPIClient(RestClient.Builder builder,
-                                             @Value("${ipet.integrations.catalog.url}") String catalogUrl) {
-        var restClient = builder.baseUrl(catalogUrl).build();
+    public CatalogAPIClient catalogAPIClient(@Value("${ipet.integrations.catalog.url}") String catalogUrl) {
+        var restClient = RestClient.builder().baseUrl(catalogUrl).build();
         var restClientAdapter = RestClientAdapter.create(restClient);
         var httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(restClientAdapter).build();
         return httpServiceProxyFactory.createClient(CatalogAPIClient.class);

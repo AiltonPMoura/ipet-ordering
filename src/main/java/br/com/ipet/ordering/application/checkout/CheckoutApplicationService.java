@@ -1,6 +1,8 @@
 package br.com.ipet.ordering.application.checkout;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Company;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Customer;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
@@ -9,7 +11,7 @@ import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
 import br.com.ipet.ordering.domain.model.customer.Customers;
-import br.com.ipet.ordering.domain.model.order.Billing;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.order.CheckoutService;
 import br.com.ipet.ordering.domain.model.order.DeliveryCompany;
 import br.com.ipet.ordering.domain.model.order.Orders;
@@ -57,25 +59,27 @@ public class CheckoutApplicationService {
                 shoppingCart,
                 new CustomerId(customer.id().value()),
                 new CompanyId(company.id().value()),
-                Billing.builder()
+                new Billing(Customer.builder()
                         .fullName(customer.fullName())
                         .document(customer.document())
                         .email(customer.email())
                         .phone(customer.phone())
                         .address(customer.principalAddress())
-                        .build(),
+                        .build()
+                ),
                 Shipping.builder()
                         .address(customerAddress)
                         .cost(shippingCost.cost())
                         .expectedDate(shippingCost.expetedDate())
                         .build(),
-                DeliveryCompany.builder()
+                new DeliveryCompany(Company.builder()
                         .companyName(company.name())
                         .document(company.document())
                         .email(company.email())
                         .phone(company.phone())
                         .address(company.address())
-                        .build(),
+                        .build()
+                ),
                 PaymentMethod.valueOf(input.getPaymentMethod())
         );
 

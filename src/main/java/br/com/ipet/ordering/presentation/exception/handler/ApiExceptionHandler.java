@@ -70,7 +70,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                     emailsNotUnique.getMessage(),
                     emailsNotUnique.getValues()
             );
-            default -> buildProblemDetail(HttpStatus.UNPROCESSABLE_ENTITY,
+            default -> buildProblemDetail(HttpStatus.UNPROCESSABLE_CONTENT,
                     "Unprocessable Entity",
                     "/errors/unprocessable-entity",
                     ex.getMessage(),

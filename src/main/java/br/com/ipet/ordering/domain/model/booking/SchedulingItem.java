@@ -1,6 +1,6 @@
-package br.com.ipet.ordering.domain.model.scheduling;
+package br.com.ipet.ordering.domain.model.booking;
 
-import br.com.ipet.ordering.domain.model.commons.valueobject.SchedulingId;
+import br.com.ipet.ordering.domain.model.commons.valueobject.BookingId;
 import br.com.ipet.ordering.domain.model.commons.valueobject.SchedulingItemId;
 import lombok.Builder;
 
@@ -10,18 +10,18 @@ import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
 public class SchedulingItem {
     private SchedulingItemId id;
-    private SchedulingId schedulingId;
+    private BookingId bookingId;
     private Pet pet;
     private Service service;
 
-    static SchedulingItem create(SchedulingId schedulingId, Pet pet, Service service) {
-        return new SchedulingItem(new SchedulingItemId(), schedulingId, pet, service);
+    static SchedulingItem create(BookingId bookingId, Pet pet, Service service) {
+        return new SchedulingItem(new SchedulingItemId(), bookingId, pet, service);
     }
 
     @Builder(builderClassName = "ExistingSchedulingItemBuilder", builderMethodName = "existing")
-    private SchedulingItem(SchedulingItemId id, SchedulingId schedulingId, Pet pet, Service service) {
+    private SchedulingItem(SchedulingItemId id, BookingId bookingId, Pet pet, Service service) {
         this.setId(id);
-        this.setSchedulingId(schedulingId);
+        this.setBookingId(bookingId);
         this.setPet(pet);
         this.setService(service);
     }
@@ -33,13 +33,6 @@ public class SchedulingItem {
         this.setPet(pet);
     }
 
-    void changeService(Service service) {
-        if (!this.service.petSize().equals(service.petSize()))
-            throw new CannotChangeServiceException(this.service.petSize().name(), service.petSize().name());
-
-        this.setService(service);
-    }
-
     public SchedulingItemId id() {
         return id;
     }
@@ -49,13 +42,13 @@ public class SchedulingItem {
         this.id = id;
     }
 
-    public SchedulingId schedulingId() {
-        return schedulingId;
+    public BookingId schedulingId() {
+        return bookingId;
     }
 
-    private void setSchedulingId(SchedulingId schedulingId) {
-        requiresNonNull("scheduling id", schedulingId);
-        this.schedulingId = schedulingId;
+    private void setBookingId(BookingId bookingId) {
+        requiresNonNull("scheduling id", bookingId);
+        this.bookingId = bookingId;
     }
 
     public Service service() {

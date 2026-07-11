@@ -3,33 +3,33 @@ package br.com.ipet.ordering.domain.model.schedule;
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.schedule.category.ServiceSubcategory;
+import br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.Set;
 
-import static br.com.ipet.ordering.domain.model.FieldValidator.*;
+import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
 public abstract class Schedule extends AbstractEventSourceEntity {
     private ScheduleId id;
     private CompanyId companyId;
     private ScheduleName name;
-    private ServiceSubcategory subcategory;
+    private ServiceCategory serviceCategory;
     private ScheduleStatus status;
     private Set<LockedDate> lockedDates;
     private LocalDate startedAt;
     private OffsetDateTime createdAt;
 
     protected Schedule(ScheduleId id, CompanyId companyId,
-                       ScheduleName name, ServiceSubcategory subcategory,
+                       ScheduleName name, ServiceCategory serviceCategory,
                        ScheduleStatus status, Set<LockedDate> lockedDates,
                        LocalDate startedAt, OffsetDateTime createdAt) {
         this.setId(id);
         this.setCompanyId(companyId);
         this.setName(name);
-        this.setSubcategory(subcategory);
+        this.setServiceCategory(serviceCategory);
         this.setStatus(status);
         this.setLockedDates(lockedDates);
         this.setStartedAt(startedAt);
@@ -144,7 +144,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     private void setCompanyId(CompanyId companyId) {
-        requiresNonNull("company id", id);
+        requiresNonNull("company id", companyId);
         this.companyId = companyId;
     }
 
@@ -157,13 +157,13 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.name = name;
     }
 
-    public ServiceSubcategory subcategory() {
-        return subcategory;
+    public ServiceCategory serviceCategory() {
+        return serviceCategory;
     }
 
-    private void setSubcategory(ServiceSubcategory subcategory) {
-        requiresNonNull("subcategory", subcategory);
-        this.subcategory = subcategory;
+    private void setServiceCategory(ServiceCategory serviceCategory) {
+        requiresNonNull("serviceCategory", serviceCategory);
+        this.serviceCategory = serviceCategory;
     }
 
     public ScheduleStatus status() {

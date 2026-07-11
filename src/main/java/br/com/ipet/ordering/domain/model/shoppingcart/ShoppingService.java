@@ -1,7 +1,6 @@
 package br.com.ipet.ordering.domain.model.shoppingcart;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
 import br.com.ipet.ordering.domain.model.customer.Customers;
@@ -14,7 +13,6 @@ public class ShoppingService {
 
     private final ShoppingCarts shoppingCarts;
     private final Customers customers;
-    private final Companies companies;
 
     public ShoppingCart startShopping(CustomerId customerId) {
         FieldValidator.requiresNonNull("customerId", customerId);

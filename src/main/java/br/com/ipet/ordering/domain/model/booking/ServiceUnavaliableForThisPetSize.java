@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.domain.model.scheduling;
+package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.DomainException;
 

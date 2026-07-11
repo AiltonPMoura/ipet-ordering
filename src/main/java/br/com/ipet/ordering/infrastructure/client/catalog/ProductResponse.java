@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.infrastructure.client.catalog.product;
+package br.com.ipet.ordering.infrastructure.client.catalog;
 
 import java.math.BigDecimal;
 import java.util.UUID;

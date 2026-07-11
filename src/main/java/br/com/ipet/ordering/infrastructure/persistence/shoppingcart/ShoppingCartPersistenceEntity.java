@@ -1,6 +1,5 @@
 package br.com.ipet.ordering.infrastructure.persistence.shoppingcart;
 
-import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,10 +10,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
@@ -25,8 +24,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
-@Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(of = "id")
@@ -44,10 +43,6 @@ public class ShoppingCartPersistenceEntity
     @ManyToOne(optional = false)
     private CustomerPersistenceEntity customer;
 
-    @JoinColumn
-    @ManyToOne(optional = false)
-    private CompanyPersistenceEntity company;
-
     @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private Set<ShoppingCartItemPersistenceEntity> items = new HashSet<>();
 
@@ -62,10 +57,6 @@ public class ShoppingCartPersistenceEntity
 
     public UUID getCustomerId() {
         return this.customer.getId();
-    }
-
-    public UUID getCompanyId() {
-        return this.company.getId();
     }
 
     public void setItems(Set<ShoppingCartItemPersistenceEntity> items) {
