@@ -12,7 +12,7 @@ public record BookingId(UUID value) {
     }
 
     public BookingId {
-        FieldValidator.requiresNonNull("booking id", value);
+        FieldValidator.requiresNonNull("schedulingId", value);
     }
 
 }

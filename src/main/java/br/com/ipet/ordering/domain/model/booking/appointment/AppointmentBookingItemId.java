@@ -1,17 +1,17 @@
-package br.com.ipet.ordering.domain.model.commons.valueobject;
+package br.com.ipet.ordering.domain.model.booking.appointment;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.IdGenerator;
 
 import java.util.UUID;
 
-public record SchedulingId(UUID value) {
+public record AppointmentBookingItemId(UUID value) {
 
-    public SchedulingId() {
+    public AppointmentBookingItemId() {
         this(IdGenerator.generateTimeBasedEpochRandomGenerator());
     }
 
-    public SchedulingId {
+    public AppointmentBookingItemId {
         FieldValidator.requiresNonNull("schedulingId", value);
     }
 

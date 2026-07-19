@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.domain.model.booking;
+package br.com.ipet.ordering.domain.model.booking.appointment;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Company;

@@ -1,29 +1,26 @@
 package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
-import br.com.ipet.ordering.domain.model.pet.PetSize;
-import br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory;
 import lombok.Builder;
 
-import java.time.Duration;
 import java.util.UUID;
 
 @Builder
 public record Service(
         UUID serviceId,
+        String type,
+        String category,
         String description,
-        ServiceCategory category,
-        Duration duration,
-        PetSize petSize,
-        Money price) {
+        Integer duration,
+        Double price) {
 
     public Service {
         FieldValidator.requiresNonNull("serviceId", serviceId);
-        FieldValidator.requiresNonNull("service description", description);
-        FieldValidator.requiresNonNull("service category", category);
-        FieldValidator.requiresNonNull("service duration", duration);
-        FieldValidator.requiresNonNull("service price", price);
+        FieldValidator.requiresNonNull("type", type);
+        FieldValidator.requiresNonNull("category", category);
+        FieldValidator.requiresNonNull("description", description);
+        FieldValidator.requiresNonNull("duration", duration);
+        FieldValidator.requiresNonNull("price", price);
     }
 
 }

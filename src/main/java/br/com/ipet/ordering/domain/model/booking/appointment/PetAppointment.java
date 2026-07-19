@@ -1,53 +1,54 @@
-package br.com.ipet.ordering.domain.model.booking;
+package br.com.ipet.ordering.domain.model.booking.appointment;
 
-import br.com.ipet.ordering.domain.model.commons.valueobject.BookingId;
-import br.com.ipet.ordering.domain.model.commons.valueobject.SchedulingItemId;
+import br.com.ipet.ordering.domain.model.booking.BookingId;
+import br.com.ipet.ordering.domain.model.booking.Pet;
+import br.com.ipet.ordering.domain.model.booking.Service;
 import lombok.Builder;
 
 import java.util.Objects;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
-public class SchedulingItem {
-    private SchedulingItemId id;
+public class PetAppointment {
+    private AppointmentBookingItemId id;
     private BookingId bookingId;
-    private Pet pet;
     private Service service;
+    private Pet pet;
 
-    static SchedulingItem create(BookingId bookingId, Pet pet, Service service) {
-        return new SchedulingItem(new SchedulingItemId(), bookingId, pet, service);
+    static PetAppointment create(BookingId bookingId, Pet pet, Service service) {
+        return new PetAppointment(new AppointmentBookingItemId(), bookingId, pet, service);
     }
 
     @Builder(builderClassName = "ExistingSchedulingItemBuilder", builderMethodName = "existing")
-    private SchedulingItem(SchedulingItemId id, BookingId bookingId, Pet pet, Service service) {
+    private PetAppointment(AppointmentBookingItemId id, BookingId bookingId, Pet pet, Service service) {
         this.setId(id);
         this.setBookingId(bookingId);
         this.setPet(pet);
         this.setService(service);
     }
 
-    void changePet(Pet pet) {
+    /*void changePet(Pet pet) {
         if (!this.pet.size().equals(pet.size()))
             throw new CannotChangePetException(this.pet.size().name(), pet.size().name());
 
         this.setPet(pet);
-    }
+    }*/
 
-    public SchedulingItemId id() {
+    public AppointmentBookingItemId id() {
         return id;
     }
 
-    private void setId(SchedulingItemId id) {
+    private void setId(AppointmentBookingItemId id) {
         requiresNonNull("scheduling pet id", id);
         this.id = id;
     }
 
-    public BookingId schedulingId() {
+    public BookingId bookingId() {
         return bookingId;
     }
 
     private void setBookingId(BookingId bookingId) {
-        requiresNonNull("scheduling id", bookingId);
+        requiresNonNull("booking id", bookingId);
         this.bookingId = bookingId;
     }
 
@@ -72,7 +73,7 @@ public class SchedulingItem {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        SchedulingItem that = (SchedulingItem) o;
+        PetAppointment that = (PetAppointment) o;
         return Objects.equals(id, that.id);
     }
 
