@@ -36,7 +36,7 @@ public class OrderCannotBePlacedException extends DomainException {
     }
 
     public static OrderCannotBePlacedException invalidExpectedDeliveryDate(String value) {
-        return new OrderCannotBePlacedException(MessageCode.Order.ERROR_CANNOT_BE_PLACE_INVALID_DELIBERY_DATE, value);
+        return new OrderCannotBePlacedException(MessageCode.Order.ERROR_CANNOT_BE_PLACE_INVALID_DELIVERY_DATE, value);
     }
 
 }

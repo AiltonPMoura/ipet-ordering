@@ -6,7 +6,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-public enum AppointmentStatus {
+public enum AppointmentBookingStatus {
     DRAFT,
     REQUESTED,
     PAID,
@@ -20,10 +20,10 @@ public enum AppointmentStatus {
     CANCELED,
     REFUNDED;
 
-    private static final Map<AppointmentStatus, Set<AppointmentStatus>> ALLOWED_TRANSITIONS;
+    private static final Map<AppointmentBookingStatus, Set<AppointmentBookingStatus>> ALLOWED_TRANSITIONS;
 
     static {
-        var statusAllowed = new EnumMap<AppointmentStatus, Set<AppointmentStatus>>(AppointmentStatus.class);
+        var statusAllowed = new EnumMap<AppointmentBookingStatus, Set<AppointmentBookingStatus>>(AppointmentBookingStatus.class);
         statusAllowed.put(DRAFT, EnumSet.of(REQUESTED));
         statusAllowed.put(REQUESTED, EnumSet.of(PAID, CANCELED));
         statusAllowed.put(PAID, EnumSet.of(SCHEDULED, CANCELED));
@@ -33,18 +33,18 @@ public enum AppointmentStatus {
         statusAllowed.put(READY, EnumSet.of(DROPPING_OFF, RETURNED));
         statusAllowed.put(DROPPING_OFF, EnumSet.of(RETURNED));
         statusAllowed.put(RETURNED, EnumSet.of(COMPLETED, REFUNDED));
-        statusAllowed.put(COMPLETED, EnumSet.noneOf(AppointmentStatus.class));
+        statusAllowed.put(COMPLETED, EnumSet.noneOf(AppointmentBookingStatus.class));
         statusAllowed.put(CANCELED, EnumSet.of(REFUNDED));
-        statusAllowed.put(REFUNDED, EnumSet.noneOf(AppointmentStatus.class));
+        statusAllowed.put(REFUNDED, EnumSet.noneOf(AppointmentBookingStatus.class));
         ALLOWED_TRANSITIONS = Collections.unmodifiableMap(statusAllowed);
     }
 
-    public boolean canChangeTo(AppointmentStatus newStatus) {
+    public boolean canChangeTo(AppointmentBookingStatus newStatus) {
         if (newStatus == null) return false;
         return ALLOWED_TRANSITIONS.getOrDefault(this, Collections.emptySet()).contains(newStatus);
     }
 
-    public boolean canNotChangeTo(AppointmentStatus newStatus) {
+    public boolean canNotChangeTo(AppointmentBookingStatus newStatus) {
         return !canChangeTo(newStatus);
     }
 

@@ -3,6 +3,7 @@ package br.com.ipet.ordering.domain.model.booking;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Builder
@@ -12,7 +13,8 @@ public record Service(
         String category,
         String description,
         Integer duration,
-        Double price) {
+        BigDecimal price,
+        String petSize) {
 
     public Service {
         FieldValidator.requiresNonNull("serviceId", serviceId);
@@ -21,6 +23,7 @@ public record Service(
         FieldValidator.requiresNonNull("description", description);
         FieldValidator.requiresNonNull("duration", duration);
         FieldValidator.requiresNonNull("price", price);
+        FieldValidator.requiresNonNull("petSize", petSize);
     }
 
 }

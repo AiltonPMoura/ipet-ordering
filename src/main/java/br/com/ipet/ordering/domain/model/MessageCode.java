@@ -11,7 +11,7 @@ public class MessageCode {
         public static final String ERROR_CANNOT_BE_PLACE_HAS_NO_BILLING = "error.order.cannot.be.placed.has.no.billing";
         public static final String ERROR_CANNOT_BE_PLACE_HAS_NO_DELIVERY_COMPANY = "error.order.cannot.be.placed.has.no.delivery.company";
         public static final String ERROR_CANNOT_BE_PLACE_INVALID_SHIPPING_COST = "error.order.cannot.be.placed.invalid.shipping.cost";
-        public static final String ERROR_CANNOT_BE_PLACE_INVALID_DELIBERY_DATE = "error.order.cannot.be.placed.invalid.delivery.date";
+        public static final String ERROR_CANNOT_BE_PLACE_INVALID_DELIVERY_DATE = "error.order.cannot.be.placed.invalid.delivery.date";
     }
 
     public static class Customer {
@@ -23,6 +23,15 @@ public class MessageCode {
     public static class Pet {
         private Pet(){}
         public static final String NOT_FOUND = "pet.not.found";
+    }
+
+    public static class Booking {
+        private Booking(){}
+        public static final String ERROR_CANNOT_BE_REQUEST_HAS_NO_APPOINTMENTS = "error.appointment.cannot.be.request.has.no.appointments";
+        public static final String ERROR_CANNOT_BE_REQUEST_HAS_NO_PAYMENT_METHOD = "error.appointment.cannot.be.request.has.no.payment.method";
+        public static final String ERROR_CANNOT_BE_PLACE_HAS_NO_BILLING = "error.appointment.cannot.be.placed.has.no.billing";
+        public static final String ERROR_CANNOT_BE_REQUEST_HAS_NO_PET_TRANSPORT = "error.appointment.cannot.be.request.has.no.pet.trasnport";
+        public static final String ERROR_APPOINTMENT_BOOKING_IS_NOT_DRAFT_TO_CHANGE = "error.appointment.is.not.draft.to.change";
     }
 
     public static final String ERROR_FIELD_CANNOT_BE_EMPTY = "error.field.cannot.be.empty";

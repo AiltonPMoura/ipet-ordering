@@ -2,7 +2,6 @@ package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.booking.appointment.PetAppointment;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
@@ -12,18 +11,9 @@ import br.com.ipet.ordering.domain.model.order.OrderDoesNotAssociatedWithCompany
 import br.com.ipet.ordering.domain.model.order.OrderDoesNotBelongsToTheCustomer;
 import br.com.ipet.ordering.domain.model.order.PaymentMethod;
 
-import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
-import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentStatus.CANCELED;
-import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentStatus.COMPLETED;
-import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentStatus.DRAFT;
-import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentStatus.IN_PROGRESS;
-import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentStatus.PAID;
-import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentStatus.REQUESTED;
-import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentStatus.SCHEDULED;
 
 public abstract class Booking extends AbstractEventSourceEntity {
 
@@ -41,6 +31,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
     private OffsetDateTime completedAt;
     private OffsetDateTime canceledAt;
     private OffsetDateTime refundedAt;
+    private String cancelationReason;
 
 
     protected Booking(BookingId id, CustomerId customerId, CompanyId companyId,
@@ -64,48 +55,6 @@ public abstract class Booking extends AbstractEventSourceEntity {
         this.setRefundedAt(refundedAt);
     }
 
-    private PetAppointment findSchedulingItemById(SchedulingItemId schedulingItemId) {
-        return this.items.stream()
-                .filter(appointmentBookingItem -> appointmentBookingItem.id().equals(schedulingItemId))
-                .findFirst()
-                .orElseThrow(() -> new SchedulingItemNotFoundException(this.id.value().toString(), id.value().toString()));
-    }
-
-    private void recalculateTotals() {
-        var quantity = new Quantity(this.items.size());
-        var total = this.items.stream()
-                .map(item -> item.service().price().value())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        this.setTotalAmount(new Money(total));
-        this.setTotalItems(quantity);
-    }
-
-    private void recalculateCheckout() {
-        var totalDuration = this.items.stream()
-                .map(item -> item.service().duration())
-                .reduce(Duration.ZERO, Duration::plus);
-
-        this.setCheckOut(checkIn.plus(totalDuration));
-    }
-
-    private void verifyIfChangeable() {
-        if (!isDraft())
-            throw new SchedulingIsNotDraftToChangeException(this.id.toString());
-    }
-
-    /*private void changeStatus(AppointmentBookingStatus newStatus) {
-        if (this.status.canNotChangeTo(newStatus))
-            throw new CannotChangeStatusException(this.status.name(), newStatus.name());
-
-        this.setStatus(newStatus);
-    }*/
-
-    private void verifyIfServiceSupportsPetSize(Pet pet, Service service) {
-        if (!pet.size().equals(service.petSize()))
-            throw new ServiceDoesNotSupportPetSizeException(pet.size().name(), service.petSize().name());
-    }
-
     private void verifyIfSchedulingBelongsToTheCustomer(CustomerId customerId) {
         if (!this.customerId.equals(customerId))
             throw new OrderDoesNotBelongsToTheCustomer("");
@@ -115,7 +64,6 @@ public abstract class Booking extends AbstractEventSourceEntity {
         if (!this.companyId.equals(companyId))
             throw new OrderDoesNotAssociatedWithCompany("");
     }
-
 
     public BookingId id() {
         return id;
@@ -148,7 +96,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
         return totalItems;
     }
 
-    private void setTotalItems(Quantity totalItems) {
+    protected void setTotalItems(Quantity totalItems) {
         requiresNonNull("totalItems", totalItems);
         this.totalItems = totalItems;
     }
@@ -157,7 +105,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
         return totalAmount;
     }
 
-    private void setTotalAmount(Money totalAmount) {
+    protected void setTotalAmount(Money totalAmount) {
         requiresNonNull("totalAmount", totalAmount);
         this.totalAmount = totalAmount;
     }
@@ -166,7 +114,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
         return paymentMethod;
     }
 
-    private void setPaymentMethod(PaymentMethod paymentMethod) {
+    protected void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
@@ -208,7 +156,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
         return requestedAt;
     }
 
-    private void setRequestedAt(OffsetDateTime requestedAt) {
+    protected void setRequestedAt(OffsetDateTime requestedAt) {
         this.requestedAt = requestedAt;
     }
 
@@ -216,7 +164,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
         return paidAt;
     }
 
-    private void setPaidAt(OffsetDateTime paidAt) {
+    protected void setPaidAt(OffsetDateTime paidAt) {
         this.paidAt = paidAt;
     }
 
@@ -224,7 +172,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
         return scheduledAt;
     }
 
-    private void setScheduledAt(OffsetDateTime scheduledAt) {
+    protected void setScheduledAt(OffsetDateTime scheduledAt) {
         this.scheduledAt = scheduledAt;
     }
 
@@ -240,7 +188,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
         return completedAt;
     }
 
-    private void setCompletedAt(OffsetDateTime completedAt) {
+    protected void setCompletedAt(OffsetDateTime completedAt) {
         this.completedAt = completedAt;
     }
 
@@ -248,7 +196,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
         return canceledAt;
     }
 
-    private void setCanceledAt(OffsetDateTime canceledAt) {
+    protected void setCanceledAt(OffsetDateTime canceledAt) {
         this.canceledAt = canceledAt;
     }
 
@@ -256,8 +204,16 @@ public abstract class Booking extends AbstractEventSourceEntity {
         return refundedAt;
     }
 
-    private void setRefundedAt(OffsetDateTime refundedAt) {
+    protected void setRefundedAt(OffsetDateTime refundedAt) {
         this.refundedAt = refundedAt;
+    }
+
+    public String cancelationReason() {
+        return cancelationReason;
+    }
+
+    protected void setCancelationReason(String cancelationReason) {
+        this.cancelationReason = cancelationReason;
     }
 
 }

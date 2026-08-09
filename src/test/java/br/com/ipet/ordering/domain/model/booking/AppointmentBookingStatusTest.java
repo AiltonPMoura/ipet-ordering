@@ -2,26 +2,26 @@ package br.com.ipet.ordering.domain.model.booking;
 
 import org.junit.jupiter.api.Test;
 
-import static br.com.ipet.ordering.domain.model.booking.TimeSlotBookingStatus.*;
+import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TimeSlotBookingStatusTest {
+class AppointmentBookingStatusTest {
     
     // ============= Transições válidas (positivas) =============
 
     @Test
     void givenDraft_whenToPaid_thenAllowed() {
-        assertThat(DRAFT.canChangeTo(PLACED)).isTrue();
+        assertThat(DRAFT.canChangeTo(REQUESTED)).isTrue();
     }
 
     @Test
     void givenPlaced_whenToDraft_thenAllowed() {
-        assertThat(PLACED.canChangeTo(DRAFT)).isTrue();
+        assertThat(REQUESTED.canChangeTo(DRAFT)).isTrue();
     }
 
     @Test
     void givenPlaced_whenToPaid_thenAllowed() {
-        assertThat(PLACED.canChangeTo(PAID)).isTrue();
+        assertThat(REQUESTED.canChangeTo(PAID)).isTrue();
     }
 
     @Test
@@ -78,22 +78,22 @@ class TimeSlotBookingStatusTest {
 
     @Test
     void givenPlaced_whenToScheduled_thenNotAllowed() {
-        assertThat(PLACED.canChangeTo(SCHEDULED)).isFalse();
+        assertThat(REQUESTED.canChangeTo(SCHEDULED)).isFalse();
     }
 
     @Test
     void givenPlaced_whenToInProgress_thenNotAllowed() {
-        assertThat(PLACED.canChangeTo(IN_PROGRESS)).isFalse();
+        assertThat(REQUESTED.canChangeTo(IN_PROGRESS)).isFalse();
     }
 
     @Test
     void givenPlaced_whenToCompleted_thenNotAllowed() {
-        assertThat(PLACED.canChangeTo(COMPLETED)).isFalse();
+        assertThat(REQUESTED.canChangeTo(COMPLETED)).isFalse();
     }
 
     @Test
     void givenPlaced_whenToCanceled_thenNotAllowed() {
-        assertThat(PLACED.canChangeTo(CANCELED)).isFalse();
+        assertThat(REQUESTED.canChangeTo(CANCELED)).isFalse();
     }
 
     @Test
@@ -103,7 +103,7 @@ class TimeSlotBookingStatusTest {
 
     @Test
     void givenPaid_whenToPlaced_thenNotAllowed() {
-        assertThat(PAID.canChangeTo(PLACED)).isFalse();
+        assertThat(PAID.canChangeTo(REQUESTED)).isFalse();
     }
 
     @Test
@@ -128,7 +128,7 @@ class TimeSlotBookingStatusTest {
 
     @Test
     void givenScheduled_whenToPlaced_thenNotAllowed() {
-        assertThat(SCHEDULED.canChangeTo(PLACED)).isFalse();
+        assertThat(SCHEDULED.canChangeTo(REQUESTED)).isFalse();
     }
 
     @Test
@@ -148,7 +148,7 @@ class TimeSlotBookingStatusTest {
 
     @Test
     void givenInProgress_whenToPlaced_thenNotAllowed() {
-        assertThat(IN_PROGRESS.canChangeTo(PLACED)).isFalse();
+        assertThat(IN_PROGRESS.canChangeTo(REQUESTED)).isFalse();
     }
 
     @Test
@@ -168,7 +168,7 @@ class TimeSlotBookingStatusTest {
 
     @Test
     void givenCompleted_whenToPlaced_thenNotAllowed() {
-        assertThat(COMPLETED.canChangeTo(PLACED)).isFalse();
+        assertThat(COMPLETED.canChangeTo(REQUESTED)).isFalse();
     }
 
     @Test
@@ -198,7 +198,7 @@ class TimeSlotBookingStatusTest {
 
     @Test
     void givenCanceled_whenToPlaced_thenNotAllowed() {
-        assertThat(CANCELED.canChangeTo(PLACED)).isFalse();
+        assertThat(CANCELED.canChangeTo(REQUESTED)).isFalse();
     }
 
     @Test
@@ -230,7 +230,7 @@ class TimeSlotBookingStatusTest {
 
     @Test
     void givenPlaced_whenToPlaced_thenNotAllowed() {
-        assertThat(PLACED.canChangeTo(PLACED)).isFalse();
+        assertThat(REQUESTED.canChangeTo(REQUESTED)).isFalse();
     }
 
     @Test
@@ -264,7 +264,7 @@ class TimeSlotBookingStatusTest {
     @Test
     void givenAny_whenToNull_thenNotAllowed() {
         assertThat(DRAFT.canChangeTo(null)).isFalse();
-        assertThat(PLACED.canChangeTo(null)).isFalse();
+        assertThat(REQUESTED.canChangeTo(null)).isFalse();
         assertThat(PAID.canChangeTo(null)).isFalse();
         assertThat(SCHEDULED.canChangeTo(null)).isFalse();
         assertThat(IN_PROGRESS.canChangeTo(null)).isFalse();
