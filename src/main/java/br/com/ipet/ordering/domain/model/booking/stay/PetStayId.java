@@ -1,18 +1,18 @@
-package br.com.ipet.ordering.domain.model.booking.appointment;
+package br.com.ipet.ordering.domain.model.booking.stay;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.IdGenerator;
 
 import java.util.UUID;
 
-public record AppointmentBookingItemId(UUID value) {
+public record PetStayId(UUID value) {
 
-    public AppointmentBookingItemId() {
+    public PetStayId() {
         this(IdGenerator.generateTimeBasedEpochRandomGenerator());
     }
 
-    public AppointmentBookingItemId {
-        FieldValidator.requiresNonNull("schedulingId", value);
+    public PetStayId {
+        FieldValidator.requiresNonNull("id", value);
     }
 
     @Override

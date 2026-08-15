@@ -20,7 +20,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
     private BookingId id;
     private CustomerId customerId;
     private CompanyId companyId;
-    private Quantity totalItems;
+    private Quantity totalPets;
     private Money totalAmount;
     private PaymentMethod paymentMethod;
     private Billing billing;
@@ -35,14 +35,14 @@ public abstract class Booking extends AbstractEventSourceEntity {
 
 
     protected Booking(BookingId id, CustomerId customerId, CompanyId companyId,
-                      Quantity totalItems, Money totalAmount, PaymentMethod paymentMethod, Billing billing,
+                      Quantity totalPets, Money totalAmount, PaymentMethod paymentMethod, Billing billing,
                       OffsetDateTime createdAt, OffsetDateTime requestedAt,
                       OffsetDateTime paidAt, OffsetDateTime scheduledAt,
                       OffsetDateTime completedAt, OffsetDateTime canceledAt, OffsetDateTime refundedAt) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.setCompanyId(companyId);
-        this.setTotalItems(totalItems);
+        this.setTotalPets(totalPets);
         this.setTotalAmount(totalAmount);
         this.setPaymentMethod(paymentMethod);
         this.setBilling(billing);
@@ -92,13 +92,13 @@ public abstract class Booking extends AbstractEventSourceEntity {
         this.companyId = companyId;
     }
 
-    public Quantity totalItems() {
-        return totalItems;
+    public Quantity totalPets() {
+        return totalPets;
     }
 
-    protected void setTotalItems(Quantity totalItems) {
-        requiresNonNull("totalItems", totalItems);
-        this.totalItems = totalItems;
+    protected void setTotalPets(Quantity totalPets) {
+        requiresNonNull("totalPets", totalPets);
+        this.totalPets = totalPets;
     }
 
     public Money totalAmount() {
@@ -116,23 +116,6 @@ public abstract class Booking extends AbstractEventSourceEntity {
 
     protected void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
-    }
-
-    public OffsetDateTime checkIn() {
-        return checkIn;
-    }
-
-    private void setCheckIn(OffsetDateTime checkIn) {
-        FieldValidator.requiresNonNull("checkIn", checkIn);
-        this.checkIn = checkIn;
-    }
-
-    public OffsetDateTime checkOut() {
-        return checkOut;
-    }
-
-    private void setCheckOut(OffsetDateTime checkOut) {
-        this.checkOut = checkOut;
     }
 
     public Billing billing() {

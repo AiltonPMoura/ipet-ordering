@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.domain.model.booking;
+package br.com.ipet.ordering.domain.model.booking.appointment;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Builder
-public record Service(
+public record AppointmentService(
         UUID serviceId,
         String type,
         String category,
@@ -16,7 +16,7 @@ public record Service(
         BigDecimal price,
         String petSize) {
 
-    public Service {
+    public AppointmentService {
         FieldValidator.requiresNonNull("serviceId", serviceId);
         FieldValidator.requiresNonNull("type", type);
         FieldValidator.requiresNonNull("category", category);

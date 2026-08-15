@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.domain.model.booking.appointment;
+package br.com.ipet.ordering.domain.model.booking.stay;
 
 import br.com.ipet.ordering.domain.model.booking.BookingId;
 import br.com.ipet.ordering.domain.model.booking.Pet;
@@ -8,18 +8,18 @@ import java.util.Objects;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
-public class PetAppointment {
-    private PetAppointmentId id;
+public class PetStay {
+    private PetStayId id;
     private BookingId bookingId;
     private Pet pet;
-    private AppointmentService service;
+    private StayService service;
 
-    static PetAppointment create(BookingId bookingId, Pet pet, AppointmentService service) {
-        return new PetAppointment(new PetAppointmentId(), bookingId, pet, service);
+    static PetStay create(BookingId bookingId, Pet pet, StayService service) {
+        return new PetStay(new PetStayId(), bookingId, pet, service);
     }
 
-    @Builder(builderClassName = "ExistingPetAppointmentBuilder", builderMethodName = "existing")
-    private PetAppointment(PetAppointmentId id, BookingId bookingId, Pet pet, AppointmentService service) {
+    @Builder(builderClassName = "ExistingPetStayBuilder", builderMethodName = "existing")
+    private PetStay(PetStayId id, BookingId bookingId, Pet pet, StayService service) {
         this.setId(id);
         this.setBookingId(bookingId);
         this.setPet(pet);
@@ -33,11 +33,11 @@ public class PetAppointment {
         this.setPet(pet);
     }*/
 
-    public PetAppointmentId id() {
+    public PetStayId id() {
         return id;
     }
 
-    private void setId(PetAppointmentId id) {
+    private void setId(PetStayId id) {
         requiresNonNull("pet id", id);
         this.id = id;
     }
@@ -51,11 +51,11 @@ public class PetAppointment {
         this.bookingId = bookingId;
     }
 
-    public AppointmentService service() {
+    public StayService service() {
         return service;
     }
 
-    private void setService(AppointmentService service) {
+    private void setService(StayService service) {
         requiresNonNull("service", service);
         this.service = service;
     }
@@ -72,7 +72,7 @@ public class PetAppointment {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        PetAppointment that = (PetAppointment) o;
+        PetStay that = (PetStay) o;
         return Objects.equals(id, that.id);
     }
 
@@ -80,4 +80,5 @@ public class PetAppointment {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
 }
