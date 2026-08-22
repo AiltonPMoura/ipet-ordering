@@ -10,6 +10,7 @@ public enum StayBookingStatus {
     DRAFT,
     REQUESTED,
     PAID,
+    PENDING_APPROVAL,
     SCHEDULED,
     CHECKED_IN,
     READY_FOR_CHECKOUT,
@@ -25,7 +26,8 @@ public enum StayBookingStatus {
         var statusAllowed = new EnumMap<StayBookingStatus, Set<StayBookingStatus>>(StayBookingStatus.class);
         statusAllowed.put(DRAFT, EnumSet.of(REQUESTED));
         statusAllowed.put(REQUESTED, EnumSet.of(PAID, CANCELED));
-        statusAllowed.put(PAID, EnumSet.of(SCHEDULED, CANCELED));
+        statusAllowed.put(PAID, EnumSet.of(PENDING_APPROVAL, CANCELED));
+        statusAllowed.put(PENDING_APPROVAL, EnumSet.of(SCHEDULED, CANCELED));
         statusAllowed.put(SCHEDULED, EnumSet.of(CHECKED_IN, CANCELED));
         statusAllowed.put(CHECKED_IN, EnumSet.of(READY_FOR_CHECKOUT, CANCELED));
         statusAllowed.put(READY_FOR_CHECKOUT, EnumSet.of(CHECKED_OUT));

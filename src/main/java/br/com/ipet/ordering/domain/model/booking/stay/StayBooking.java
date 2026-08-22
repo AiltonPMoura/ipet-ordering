@@ -76,7 +76,7 @@ public class StayBooking extends Booking
         var item = PetStay.create(this.id(), pet, service);
         this.stays.add(item);
         this.recalculateTotals();
-        this.recalculateSchedule();
+        //this.recalculateSchedule();
     }
 
     public void removePetStay(PetStayId petStayId) {
@@ -84,7 +84,7 @@ public class StayBooking extends Booking
         var petStay = this.findPetStayById(petStayId);
         this.stays.remove(petStay);
         this.recalculateTotals();
-        this.recalculateSchedule();
+        //this.recalculateSchedule();
     }
 
     public void request(CustomerId customerId, CompanyId companyId) {
@@ -93,9 +93,34 @@ public class StayBooking extends Booking
         this.setRequestedAt(OffsetDateTime.now(ZoneOffset.UTC));
     }
 
-    public void markAsPaid() {
+    public void confirmPayment(OffsetDateTime paymentApprovedAt, boolean isSlotStillAvailable) {
+        var expirationTime = this.requestedAt().plusMinutes(20);
+
+        if (OffsetDateTime.now(ZoneOffset.UTC).isAfter(expirationTime)) {
+            boolean clientPaidOnTime = paymentApprovedAt.isBefore(this.requestedAt().plusMinutes(15));
+
+            if (!clientPaidOnTime) {
+                this.cancel("Webhook de pagamento recebido após os 20 minutos de tolerância.");
+                throw new StayBookingExpiredException("Tempo limite esgotado. Iniciando fluxo de estorno.");
+            }
+
+            if (!isSlotStillAvailable) {
+                this.cancel("O banco atrasou a confirmação e outro cliente reservou o horário. Estorno automático.");
+                throw new StayBookingExpiredException("Slot não está mais disponível.");
+            }
+        }
+
         this.changeStatus(PAID);
         this.setPaidAt(OffsetDateTime.now(ZoneOffset.UTC));
+    }
+
+    public void approveBooking() {
+        this.changeStatus(SCHEDULED);
+    }
+
+    public void rejectBooking(String reason) {
+        this.cancel(reason);
+        //evento de estorno
     }
 
     public void markAsScheduled() {
@@ -120,7 +145,7 @@ public class StayBooking extends Booking
 
     public void cancel(String reason) {
         this.changeStatus(CANCELED);
-        this.setCanceledAt(OffsetDateTime.now());
+        this.setCanceledAt(OffsetDateTime.now(ZoneOffset.UTC));
         this.setCancelationReason(reason);
     }
 
@@ -189,13 +214,13 @@ public class StayBooking extends Booking
         this.setTotalPets(new Quantity(this.stays.size()));
     }
 
-    private void recalculateSchedule() {
+    /*private void recalculateSchedule() {
         var totalDuration = this.stays.stream()
                 .mapToLong(petStay -> petStay.service().duration())
                 .sum();
 
         this.setScheduledEnd(this.scheduledStart().plusMinutes(totalDuration));
-    }
+    }*/
 
     private PetStay findPetStayById(PetStayId petStayId) {
         return this.stays.stream()
