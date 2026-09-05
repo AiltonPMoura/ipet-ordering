@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
-class DayTimeScheduleTest {
+class AppointmentScheduleTest {
 
     private CompanyId companyId;
     private ScheduleName name;
@@ -25,7 +25,7 @@ class DayTimeScheduleTest {
 
     @Test
     void givenSupportedServiceCategory_whenCreate_thenReturnDaytimeSchedule() {
-        var schedule = DayTimeSchedule.create(companyId, name, ServiceCategory.HIGIENE);
+        var schedule = AppointmentSchedule.create(companyId, name, ServiceCategory.HIGIENE);
 
         assertThat(schedule).isNotNull();
         assertThat(schedule.id()).isNotNull();
@@ -39,25 +39,25 @@ class DayTimeScheduleTest {
 
     @Test
     void givenUnsupportedServiceCategory_whenCreate_thenThrow() {
-        assertThatThrownBy(() -> DayTimeSchedule.create(companyId, name, ServiceCategory.DAYCARE))
+        assertThatThrownBy(() -> AppointmentSchedule.create(companyId, name, ServiceCategory.DAYCARE))
                 .isInstanceOf(ScheduleDontSupportSubcategoryException.class);
     }
 
     @Test
     void givenNullName_whenCreate_thenThrowFieldCannotBeEmptyException() {
-        assertThatThrownBy(() -> DayTimeSchedule.create(companyId, null, ServiceCategory.HIGIENE))
+        assertThatThrownBy(() -> AppointmentSchedule.create(companyId, null, ServiceCategory.HIGIENE))
                 .isInstanceOf(FieldCannotBeEmptyException.class);
     }
 
     @Test
     void givenNullCompanyId_whenCreate_thenReturnFieldCannotBeEmptyException() {
-        assertThatThrownBy(() -> DayTimeSchedule.create(null, name, ServiceCategory.HIGIENE))
+        assertThatThrownBy(() -> AppointmentSchedule.create(null, name, ServiceCategory.HIGIENE))
                 .isInstanceOf(FieldCannotBeEmptyException.class);
     }
 
     @Test
     void givenNullServiceCategory_whenCreate_thenThrowFieldCannotBeEmptyException() {
-        assertThatThrownBy(() -> DayTimeSchedule.create(companyId, name, null))
+        assertThatThrownBy(() -> AppointmentSchedule.create(companyId, name, null))
                 .isInstanceOf(FieldCannotBeEmptyException.class);
     }
 

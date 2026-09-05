@@ -15,8 +15,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.Period;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,8 +29,8 @@ import java.util.UUID;
 @ToString(of = "id")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "day_time_schedule")
-public class DayTimeSchedulePersistenceEntity {
+@Table(name = "appointment_schedule")
+public class AppointmentSchedulePersistenceEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -44,9 +45,9 @@ public class DayTimeSchedulePersistenceEntity {
     private String name;
     private String status;
     private OffsetDateTime activedAt;
-    private OffsetDateTime standByAt;
+    private OffsetDateTime standedByAt;
     private OffsetDateTime blockedAt;
-    private Period lockedDays;
+    private List<LocalDate> lockedDays;
 
     private OffsetDateTime createdAt;
 

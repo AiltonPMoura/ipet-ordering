@@ -1,4 +1,4 @@
 package br.com.ipet.ordering.application.schedule.query;
 
-public class DayTimeScheduleDetailOutput {
+public class AppointmentScheduleSummaryOutput {
 }

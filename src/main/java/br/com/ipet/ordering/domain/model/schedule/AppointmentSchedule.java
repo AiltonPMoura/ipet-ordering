@@ -14,31 +14,32 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
+import static br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory.ACTIVITY;
 import static br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory.HEALTH;
 import static br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory.HIGIENE;
 
-public class DayTimeSchedule
+public class AppointmentSchedule
         extends Schedule
         implements AggregateRoot<ScheduleId> {
 
     private Set<WorkDayTime> workingDays;
 
-    private static final Set<ServiceCategory> SUPPORTED_CATEGORIES = Set.of(HIGIENE, HEALTH);
+    static AppointmentSchedule create(CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory) {
+        FieldValidator.requiresNonNull("serviceCategory", serviceCategory);
 
-    static DayTimeSchedule create(CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory) {
-        if (!supports(serviceCategory))
+        if (Set.of(HIGIENE, HEALTH, ACTIVITY).stream().noneMatch(serviceCategory::equals))
             throw new ScheduleDontSupportSubcategoryException(serviceCategory);
 
-        return new DayTimeSchedule(new ScheduleId(), companyId, name, serviceCategory,
+        return new AppointmentSchedule(new ScheduleId(), companyId, name, serviceCategory,
                 ScheduleStatus.DRAFT, new HashSet<>(), null,
                 OffsetDateTime.now(ZoneOffset.UTC), new HashSet<>());
     }
 
     @Builder(builderClassName = "ExistingDayTimeScheduledBuilder", builderMethodName = "existing")
-    public DayTimeSchedule(ScheduleId id, CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory,
-                           ScheduleStatus status, Set<LockedDate> lockedDates,
-                           LocalDate startedAt, OffsetDateTime createdAt,
-                           Set<WorkDayTime> workingDays) {
+    public AppointmentSchedule(ScheduleId id, CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory,
+                               ScheduleStatus status, Set<LockedDate> lockedDates,
+                               LocalDate startedAt, OffsetDateTime createdAt,
+                               Set<WorkDayTime> workingDays) {
         super(id, companyId, name, serviceCategory, status, lockedDates, startedAt, createdAt);
         this.setWorkingDays(workingDays);
     }
@@ -94,11 +95,6 @@ public class DayTimeSchedule
         workingDay.changeLockedTime(lockedTimes);
     }
 
-    private static boolean supports(ServiceCategory serviceCategory) {
-        FieldValidator.requiresNonNull("serviceCategory", serviceCategory);
-        return SUPPORTED_CATEGORIES.contains(serviceCategory);
-    }
-
     private void verifyExistingWorkingDay(DayOfWeek dayOfWeek) {
         var existingWorkDay = this.workingDays.stream()
                 .anyMatch(workDayTime -> workDayTime.dayOfWeek().equals(dayOfWeek));
@@ -108,7 +104,7 @@ public class DayTimeSchedule
     }
 
     private WorkDayTime findWorkingDayTime(WorkingDayTimeId workingDayTimeId) {
-        requiresNonNull("workingDayId", workingDayTimeId);
+        FieldValidator.requiresNonNull("workingDayTimeId", workingDayTimeId);
 
         return this.workingDays.stream()
                 .filter(workDayTime -> workDayTime.id().equals(workingDayTimeId))
@@ -117,55 +113,12 @@ public class DayTimeSchedule
     }
 
 
-
-
-    /*Map<Integer, List<Integer>> availableTimes(MinuteInterval minuteInterval) {
-        var availableTimes = new HashMap<Integer, List<Integer>>();
-
-        addAvailableTimes(availableTimes,minuteInterval);
-        removeLockedTimes(availableTimes);
-
-        return availableTimes;
-    }
-
-    private void removeLockedTimes(HashMap<Integer, List<Integer>> availableTimes) {
-        this.lockedTimes.forEach(lockedTime -> {
-            var timeOfLocked = Duration.between(lockedTime.startTime(), lockedTime.endTime()).toMinutes();
-            var currentLockedTime = lockedTime.startTime();
-
-            for (var i = 0; i < timeOfLocked; i++) {
-                var hour = currentLockedTime.getHour();
-                var minute = currentLockedTime.getMinute();
-
-                availableTimes.computeIfPresent(hour, (k, v) -> {
-                    v.remove(Integer.valueOf(minute));
-                    return v.isEmpty() ? null : v;
-                });
-
-                currentLockedTime = currentLockedTime.plusMinutes(1);
-            }
-        });
-    }
-
-    private void addAvailableTimes(HashMap<Integer, List<Integer>> availableTimes, MinuteInterval minuteInterval) {
-        var timeOfWork = Duration.between(this.workingHours.startTime(), this.workingHours.endTime()).toMinutes();
-        var currentTime = this.workingHours.startTime();
-
-        for (var i = 0; i < timeOfWork; i += minuteInterval.value()) {
-            var hour = currentTime.getHour();
-            var minute = currentTime.getMinute();
-
-            availableTimes.computeIfAbsent(hour, k -> new ArrayList<>()).add(minute);
-            currentTime = currentTime.plusMinutes(minuteInterval.value());
-        }
-    }*/
-
-
     public Set<WorkDayTime> workingDays() {
         return workingDays;
     }
 
     private void setWorkingDays(Set<WorkDayTime> workingDays) {
+        FieldValidator.requiresNonNull("workingDays", workingDays);
         this.workingDays = workingDays;
     }
 

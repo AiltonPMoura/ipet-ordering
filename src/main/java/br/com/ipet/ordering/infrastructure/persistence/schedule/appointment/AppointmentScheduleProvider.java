@@ -1,10 +1,10 @@
-package br.com.ipet.ordering.infrastructure.persistence.schedule;
+package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
-import br.com.ipet.ordering.domain.model.schedule.DayTimeSchedule;
-import br.com.ipet.ordering.domain.model.schedule.DayTimeSchedules;
+import br.com.ipet.ordering.domain.model.schedule.AppointmentSchedule;
+import br.com.ipet.ordering.domain.model.schedule.AppointmentSchedules;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.infrastructure.persistence.repository.DayTimeSchedulePersistenceRepository;
+import br.com.ipet.ordering.infrastructure.persistence.repository.AppointmentSchedulePersistenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,12 +12,12 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class DayTimeScheduleProvider implements DayTimeSchedules {
+public class AppointmentScheduleProvider implements AppointmentSchedules {
 
-    private final DayTimeSchedulePersistenceRepository repository;
+    private final AppointmentSchedulePersistenceRepository repository;
 
     @Override
-    public Optional<DayTimeSchedule> ofId(ScheduleId id) {
+    public Optional<AppointmentSchedule> ofId(ScheduleId id) {
         return Optional.empty();
     }
 
@@ -27,7 +27,7 @@ public class DayTimeScheduleProvider implements DayTimeSchedules {
     }
 
     @Override
-    public void add(DayTimeSchedule aggregateRoot) {
+    public void add(AppointmentSchedule aggregateRoot) {
 
     }
 
