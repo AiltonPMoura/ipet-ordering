@@ -13,7 +13,7 @@ public class CheckoutService {
 
     public Order checkout(ShoppingCart shoppingCart, CustomerId customerId, CompanyId companyId,
                           Billing billing, Shipping shipping,
-                          DeliveryCompany deliveryCompany, PaymentMethod paymentMethod) {
+                          DeliveryCompany deliveryCompany, OrderPaymentMethod orderPaymentMethod) {
 
         if (shoppingCart.isEmpty())
             throw new ShoppingCartCantProceedToCheckoutException("");
@@ -22,7 +22,7 @@ public class CheckoutService {
         order.changeBilling(billing);
         order.changeShipping(shipping);
         order.changeDeliveryCompany(deliveryCompany);
-        order.changePaymentMethod(paymentMethod);
+        order.changePaymentMethod(orderPaymentMethod);
 
         shoppingCart.items().forEach(item -> order.addItem(item.product(), item.quantity()));
 

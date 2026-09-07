@@ -6,6 +6,8 @@ import br.com.ipet.ordering.domain.model.booking.AppointmentBookingDoesNotSuppor
 import br.com.ipet.ordering.domain.model.booking.AppointmentBookingIsNotDraftToChangeException;
 import br.com.ipet.ordering.domain.model.booking.Booking;
 import br.com.ipet.ordering.domain.model.booking.BookingId;
+import br.com.ipet.ordering.domain.model.booking.BookingPaymentMethod;
+import br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus;
 import br.com.ipet.ordering.domain.model.booking.Pet;
 import br.com.ipet.ordering.domain.model.booking.PetAppointmentNotFoundException;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
@@ -14,7 +16,6 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.order.PaymentMethod;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -27,13 +28,16 @@ import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentB
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.DRAFT;
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.DROPPING_OFF;
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.IN_PROGRESS;
-import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.PAID;
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.PICKING_UP;
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.READY;
-import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.REFUNDED;
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.REQUESTED;
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.RETURNED;
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.SCHEDULED;
+
+import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.PAID;
+import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.REFUNDED;
+import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.REJECTED;
+import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.PENDING;
 
 public class AppointmentBooking
         extends Booking
@@ -43,6 +47,7 @@ public class AppointmentBooking
     private OffsetDateTime scheduledEnd;
     private PetTransport transport;
     private AppointmentBookingStatus status;
+    private BookingPaymentStatus paymentStatus;
     private Set<PetAppointment> appointments;
     private OffsetDateTime inProgressAt;
     private OffsetDateTime readyAt;
@@ -61,7 +66,7 @@ public class AppointmentBooking
 
     @Builder(builderClassName = "ExistingAppointmentBookingBuilder", builderMethodName = "existing")
     private AppointmentBooking(BookingId id, CustomerId customerId, CompanyId companyId,
-                               Quantity totalItems, Money totalAmount, PaymentMethod paymentMethod, Billing billing,
+                               Quantity totalItems, Money totalAmount, BookingPaymentMethod paymentMethod, Billing billing,
                                OffsetDateTime scheduledStart, OffsetDateTime scheduledEnd,
                                PetTransport transport, AppointmentBookingStatus status, Set<PetAppointment> appointments,
                                OffsetDateTime createdAt, OffsetDateTime requestedAt,
@@ -104,7 +109,7 @@ public class AppointmentBooking
     }
 
     public void markAsPaid() {
-        this.changeStatus(PAID);
+        this.changePaymentStatus(PAID);
         this.setPaidAt(OffsetDateTime.now(ZoneOffset.UTC));
     }
 
@@ -150,7 +155,7 @@ public class AppointmentBooking
     }
 
     public void markAsRefunded() {
-        this.changeStatus(REFUNDED);
+        this.changePaymentStatus(REFUNDED);
         this.setRefundedAt(OffsetDateTime.now(ZoneOffset.UTC));
     }
 
@@ -163,7 +168,7 @@ public class AppointmentBooking
     }
 
     public boolean isPaid() {
-        return PAID.equals(this.status);
+        return PAID.equals(this.paymentStatus);
     }
 
     public boolean isScheduled() {
@@ -187,7 +192,7 @@ public class AppointmentBooking
     }
 
     public boolean isRefunded() {
-        return REFUNDED.equals(this.status);
+        return REFUNDED.equals(this.paymentStatus);
     }
 
     private void verifyIfChangeable() {
@@ -230,6 +235,13 @@ public class AppointmentBooking
             throw new CannotChangeStatusException(this.status.name(), newStatus.name());
 
         this.setStatus(newStatus);
+    }
+
+    private void changePaymentStatus(BookingPaymentStatus newStatus) {
+        if (this.paymentStatus.canNotChangeTo(newStatus))
+            throw new CannotChangeStatusException(this.paymentStatus.name(), newStatus.name());
+
+        this.setPaymentStatus(newStatus);
     }
 
     private void verifyIfCanChangeToRequested(CustomerId customerId, CompanyId companyId) {
@@ -280,6 +292,15 @@ public class AppointmentBooking
     private void setStatus(AppointmentBookingStatus status) {
         FieldValidator.requiresNonNull("status", status);
         this.status = status;
+    }
+
+    public BookingPaymentStatus paymentStatus() {
+        return this.paymentStatus;
+    }
+
+    private void setPaymentStatus(BookingPaymentStatus newStatus) {
+        FieldValidator.requiresNonNull("payment status", newStatus);
+        this.paymentStatus = newStatus;
     }
 
     public Set<PetAppointment> appointments() {

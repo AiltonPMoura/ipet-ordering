@@ -30,7 +30,7 @@ public class Order
     private Set<OrderItem> items;
     private Money totalAmount;
     private Quantity totalItems;
-    private PaymentMethod paymentMethod;
+    private OrderPaymentMethod orderPaymentMethod;
     private OrderStatus status;
     private Shipping shipping;
     private Billing billing;
@@ -54,7 +54,7 @@ public class Order
     @Builder(builderClassName = "ExistingOrderBuilder", builderMethodName = "existing")
     private Order(OrderId id, CustomerId customerId, CompanyId companyId,
                   Set<OrderItem> items, Money totalAmount, Quantity totalItems,
-                  PaymentMethod paymentMethod, OrderStatus status,
+                  OrderPaymentMethod orderPaymentMethod, OrderStatus status,
                   Shipping shipping, Billing billing, DeliveryCompany deliveryCompany,
                   OffsetDateTime placedAt, OffsetDateTime paidAt, OffsetDateTime readyAt,
                   OffsetDateTime outForDeliveryAt, OffsetDateTime deliveredAt, OffsetDateTime canceledAt) {
@@ -64,7 +64,7 @@ public class Order
         this.setItems(items);
         this.setTotalAmount(totalAmount);
         this.setTotalItems(totalItems);
-        this.setPaymentMethod(paymentMethod);
+        this.setOrderPaymentMethod(orderPaymentMethod);
         this.setStatus(status);
         this.setShipping(shipping);
         this.setBilling(billing);
@@ -100,10 +100,10 @@ public class Order
         this.recalculateTotals();
     }
 
-    public void changePaymentMethod(PaymentMethod paymentMethod) {
-        FieldValidator.requiresNonNull("paymentMethod", paymentMethod);
+    public void changePaymentMethod(OrderPaymentMethod orderPaymentMethod) {
+        FieldValidator.requiresNonNull("paymentMethod", orderPaymentMethod);
         this.verifyIfChangeable();
-        this.setPaymentMethod(paymentMethod);
+        this.setOrderPaymentMethod(orderPaymentMethod);
     }
 
     public void changeBilling(Billing billing) {
@@ -215,7 +215,7 @@ public class Order
         if (this.items.isEmpty())
             throw OrderCannotBePlacedException.noItems(this.id.toString());
 
-        if (this.paymentMethod == null)
+        if (this.orderPaymentMethod == null)
             throw OrderCannotBePlacedException.noPaymentMethod(this.id.toString());
 
         if (this.shipping == null)
@@ -334,12 +334,12 @@ public class Order
         this.totalItems = totalItems;
     }
 
-    public PaymentMethod paymentMethod() {
-        return paymentMethod;
+    public OrderPaymentMethod paymentMethod() {
+        return orderPaymentMethod;
     }
 
-    private void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    private void setOrderPaymentMethod(OrderPaymentMethod orderPaymentMethod) {
+        this.orderPaymentMethod = orderPaymentMethod;
     }
 
     public OrderStatus status() {

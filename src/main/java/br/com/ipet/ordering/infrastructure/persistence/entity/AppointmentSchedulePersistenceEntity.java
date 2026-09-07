@@ -17,7 +17,7 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,14 +40,14 @@ public class AppointmentSchedulePersistenceEntity {
     private CompanyPersistenceEntity company;
 
     @OneToMany(mappedBy = "agenda", cascade = CascadeType.ALL)
-    private Set<WorkingDayPersistenceEntity> workingDays;
+    private Set<WorkingDayPersistenceEntity> workingDays = new HashSet<>();
 
     private String name;
     private String status;
     private OffsetDateTime activedAt;
     private OffsetDateTime standedByAt;
     private OffsetDateTime blockedAt;
-    private List<LocalDate> lockedDays;
+    private HashSet<LocalDate> lockedDays = new HashSet<>();
 
     private OffsetDateTime createdAt;
 

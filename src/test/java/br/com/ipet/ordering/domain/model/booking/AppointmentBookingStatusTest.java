@@ -20,16 +20,6 @@ class AppointmentBookingStatusTest {
     }
 
     @Test
-    void givenPlaced_whenToPaid_thenAllowed() {
-        assertThat(REQUESTED.canChangeTo(PAID)).isTrue();
-    }
-
-    @Test
-    void givenPaid_whenToCanceled_thenAllowed() {
-        assertThat(PAID.canChangeTo(CANCELED)).isTrue();
-    }
-
-    @Test
     void givenScheduled_whenToInProgress_thenAllowed() {
         assertThat(SCHEDULED.canChangeTo(IN_PROGRESS)).isTrue();
     }
@@ -50,11 +40,6 @@ class AppointmentBookingStatusTest {
     }
 
     // ============= Transições inválidas (negativas) =============
-
-    @Test
-    void givenDraft_whenToPaid_thenNotAllowed() {
-        assertThat(DRAFT.canChangeTo(PAID)).isFalse();
-    }
 
     @Test
     void givenDraft_whenToScheduled_thenNotAllowed() {
@@ -97,31 +82,6 @@ class AppointmentBookingStatusTest {
     }
 
     @Test
-    void givenPaid_whenToDraft_thenNotAllowed() {
-        assertThat(PAID.canChangeTo(DRAFT)).isFalse();
-    }
-
-    @Test
-    void givenPaid_whenToPlaced_thenNotAllowed() {
-        assertThat(PAID.canChangeTo(REQUESTED)).isFalse();
-    }
-
-    @Test
-    void givenPaid_whenToScheduled_thenNotAllowed() {
-        assertThat(PAID.canChangeTo(SCHEDULED)).isFalse();
-    }
-
-    @Test
-    void givenPaid_whenToInProgress_thenNotAllowed() {
-        assertThat(PAID.canChangeTo(IN_PROGRESS)).isFalse();
-    }
-
-    @Test
-    void givenPaid_whenToCompleted_thenNotAllowed() {
-        assertThat(PAID.canChangeTo(COMPLETED)).isFalse();
-    }
-
-    @Test
     void givenScheduled_whenToDraft_thenNotAllowed() {
         assertThat(SCHEDULED.canChangeTo(DRAFT)).isFalse();
     }
@@ -129,11 +89,6 @@ class AppointmentBookingStatusTest {
     @Test
     void givenScheduled_whenToPlaced_thenNotAllowed() {
         assertThat(SCHEDULED.canChangeTo(REQUESTED)).isFalse();
-    }
-
-    @Test
-    void givenScheduled_whenToPaid_thenNotAllowed() {
-        assertThat(SCHEDULED.canChangeTo(PAID)).isFalse();
     }
 
     @Test
@@ -152,11 +107,6 @@ class AppointmentBookingStatusTest {
     }
 
     @Test
-    void givenInProgress_whenToPaid_thenNotAllowed() {
-        assertThat(IN_PROGRESS.canChangeTo(PAID)).isFalse();
-    }
-
-    @Test
     void givenInProgress_whenToScheduled_thenNotAllowed() {
         assertThat(IN_PROGRESS.canChangeTo(SCHEDULED)).isFalse();
     }
@@ -169,11 +119,6 @@ class AppointmentBookingStatusTest {
     @Test
     void givenCompleted_whenToPlaced_thenNotAllowed() {
         assertThat(COMPLETED.canChangeTo(REQUESTED)).isFalse();
-    }
-
-    @Test
-    void givenCompleted_whenToPaid_thenNotAllowed() {
-        assertThat(COMPLETED.canChangeTo(PAID)).isFalse();
     }
 
     @Test
@@ -199,11 +144,6 @@ class AppointmentBookingStatusTest {
     @Test
     void givenCanceled_whenToPlaced_thenNotAllowed() {
         assertThat(CANCELED.canChangeTo(REQUESTED)).isFalse();
-    }
-
-    @Test
-    void givenCanceled_whenToPaid_thenNotAllowed() {
-        assertThat(CANCELED.canChangeTo(PAID)).isFalse();
     }
 
     @Test
@@ -234,11 +174,6 @@ class AppointmentBookingStatusTest {
     }
 
     @Test
-    void givenPaid_whenToPaid_thenNotAllowed() {
-        assertThat(PAID.canChangeTo(PAID)).isFalse();
-    }
-
-    @Test
     void givenScheduled_whenToScheduled_thenNotAllowed() {
         assertThat(SCHEDULED.canChangeTo(SCHEDULED)).isFalse();
     }
@@ -265,7 +200,6 @@ class AppointmentBookingStatusTest {
     void givenAny_whenToNull_thenNotAllowed() {
         assertThat(DRAFT.canChangeTo(null)).isFalse();
         assertThat(REQUESTED.canChangeTo(null)).isFalse();
-        assertThat(PAID.canChangeTo(null)).isFalse();
         assertThat(SCHEDULED.canChangeTo(null)).isFalse();
         assertThat(IN_PROGRESS.canChangeTo(null)).isFalse();
         assertThat(COMPLETED.canChangeTo(null)).isFalse();

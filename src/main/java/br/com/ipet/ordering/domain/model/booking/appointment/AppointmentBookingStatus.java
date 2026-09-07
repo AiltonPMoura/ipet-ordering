@@ -9,7 +9,7 @@ import java.util.Set;
 public enum AppointmentBookingStatus {
     DRAFT,
     REQUESTED,
-    PAID,
+    PENDING_APPROVAL,
     SCHEDULED,
     PICKING_UP,
     IN_PROGRESS,
@@ -17,25 +17,22 @@ public enum AppointmentBookingStatus {
     DROPPING_OFF,
     RETURNED,
     COMPLETED,
-    CANCELED,
-    REFUNDED;
+    CANCELED;
 
     private static final Map<AppointmentBookingStatus, Set<AppointmentBookingStatus>> ALLOWED_TRANSITIONS;
 
     static {
         var statusAllowed = new EnumMap<AppointmentBookingStatus, Set<AppointmentBookingStatus>>(AppointmentBookingStatus.class);
         statusAllowed.put(DRAFT, EnumSet.of(REQUESTED));
-        statusAllowed.put(REQUESTED, EnumSet.of(PAID, CANCELED));
-        statusAllowed.put(PAID, EnumSet.of(SCHEDULED, CANCELED));
+        statusAllowed.put(REQUESTED, EnumSet.of(PENDING_APPROVAL));
+        statusAllowed.put(PENDING_APPROVAL, EnumSet.of(SCHEDULED, CANCELED));
         statusAllowed.put(SCHEDULED, EnumSet.of(PICKING_UP, IN_PROGRESS, CANCELED));
         statusAllowed.put(PICKING_UP, EnumSet.of(IN_PROGRESS, CANCELED));
         statusAllowed.put(IN_PROGRESS, EnumSet.of(READY, DROPPING_OFF, CANCELED));
         statusAllowed.put(READY, EnumSet.of(DROPPING_OFF, RETURNED));
         statusAllowed.put(DROPPING_OFF, EnumSet.of(RETURNED));
-        statusAllowed.put(RETURNED, EnumSet.of(COMPLETED, REFUNDED));
+        statusAllowed.put(RETURNED, EnumSet.of(COMPLETED));
         statusAllowed.put(COMPLETED, EnumSet.noneOf(AppointmentBookingStatus.class));
-        statusAllowed.put(CANCELED, EnumSet.of(REFUNDED));
-        statusAllowed.put(REFUNDED, EnumSet.noneOf(AppointmentBookingStatus.class));
         ALLOWED_TRANSITIONS = Collections.unmodifiableMap(statusAllowed);
     }
 

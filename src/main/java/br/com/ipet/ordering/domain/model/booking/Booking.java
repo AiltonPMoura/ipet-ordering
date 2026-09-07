@@ -1,7 +1,6 @@
 package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
-import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
@@ -9,7 +8,6 @@ import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.order.OrderDoesNotAssociatedWithCompany;
 import br.com.ipet.ordering.domain.model.order.OrderDoesNotBelongsToTheCustomer;
-import br.com.ipet.ordering.domain.model.order.PaymentMethod;
 
 import java.time.OffsetDateTime;
 
@@ -22,7 +20,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
     private CompanyId companyId;
     private Quantity totalPets;
     private Money totalAmount;
-    private PaymentMethod paymentMethod;
+    private BookingPaymentMethod paymentMethod;
     private Billing billing;
     private OffsetDateTime createdAt;
     private OffsetDateTime requestedAt;
@@ -35,7 +33,7 @@ public abstract class Booking extends AbstractEventSourceEntity {
 
 
     protected Booking(BookingId id, CustomerId customerId, CompanyId companyId,
-                      Quantity totalPets, Money totalAmount, PaymentMethod paymentMethod, Billing billing,
+                      Quantity totalPets, Money totalAmount, BookingPaymentMethod paymentMethod, Billing billing,
                       OffsetDateTime createdAt, OffsetDateTime requestedAt,
                       OffsetDateTime paidAt, OffsetDateTime scheduledAt,
                       OffsetDateTime completedAt, OffsetDateTime canceledAt, OffsetDateTime refundedAt) {
@@ -110,11 +108,11 @@ public abstract class Booking extends AbstractEventSourceEntity {
         this.totalAmount = totalAmount;
     }
 
-    public PaymentMethod paymentMethod() {
+    public BookingPaymentMethod paymentMethod() {
         return paymentMethod;
     }
 
-    protected void setPaymentMethod(PaymentMethod paymentMethod) {
+    protected void setPaymentMethod(BookingPaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
