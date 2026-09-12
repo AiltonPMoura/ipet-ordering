@@ -1,39 +1,41 @@
 package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 
+import br.com.ipet.ordering.infrastructure.persistence.booking.AbstractBooking;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
+import java.time.OffsetDateTime;
 import java.util.Set;
-import java.util.UUID;
 
-@Data
-@Builder
+@Getter
+@Setter
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(of = "id")
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@ToString(callSuper = true)
 @Table(name = "appointment_booking")
 @Entity
-public class AppointmentBookingPersistenceEntity {
+public class AppointmentBookingPersistenceEntity extends AbstractBooking {
 
-    @Id
-    @EqualsAndHashCode.Include
-    private UUID id;
+    private OffsetDateTime scheduledStart;
+    private OffsetDateTime scheduledEnd;
+    private OffsetDateTime inProgressAt;
+    private OffsetDateTime readyAt;
+    private OffsetDateTime returnedAt;
 
-    private UUID scheduleId;
-    private UUID companyId;
-    private UUID customerId;
-
-    @OneToMany(mappedBy = "appointmentBooking", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "appointmentBooking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PetAppointmentPersistenceEntity> pets;
 
 }
