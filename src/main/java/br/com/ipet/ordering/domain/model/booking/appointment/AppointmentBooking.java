@@ -36,8 +36,6 @@ import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentB
 
 import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.PAID;
 import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.REFUNDED;
-import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.REJECTED;
-import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.PENDING;
 
 public class AppointmentBooking
         extends Booking
@@ -46,8 +44,7 @@ public class AppointmentBooking
     private OffsetDateTime scheduledStart;
     private OffsetDateTime scheduledEnd;
     private PetTransport transport;
-    private AppointmentBookingStatus status;
-    private BookingPaymentStatus paymentStatus;
+    private AppointmentBookingStatus appointmentStatus;
     private Set<PetAppointment> appointments;
     private OffsetDateTime inProgressAt;
     private OffsetDateTime readyAt;
@@ -55,10 +52,9 @@ public class AppointmentBooking
 
     static AppointmentBooking create(CustomerId customerId, CompanyId companyId) {
         return new AppointmentBooking(new BookingId(), customerId, companyId,
-                Quantity.ZERO, Money.ZERO, null, null,
+                Quantity.ZERO, Money.ZERO, null, null, null,
                 null, null,
-                null, AppointmentBookingStatus.DRAFT, Set.of(),
-                OffsetDateTime.now(ZoneOffset.UTC), null, null,
+                null, AppointmentBookingStatus.DRAFT, Set.of(), null, null,
                 null, null, null, null,
                 null, null, null
         );
@@ -66,19 +62,20 @@ public class AppointmentBooking
 
     @Builder(builderClassName = "ExistingAppointmentBookingBuilder", builderMethodName = "existing")
     private AppointmentBooking(BookingId id, CustomerId customerId, CompanyId companyId,
-                               Quantity totalItems, Money totalAmount, BookingPaymentMethod paymentMethod, Billing billing,
+                               Quantity totalItems, Money totalAmount,
+                               BookingPaymentMethod paymentMethod, BookingPaymentStatus paymentStatus, Billing billing,
                                OffsetDateTime scheduledStart, OffsetDateTime scheduledEnd,
-                               PetTransport transport, AppointmentBookingStatus status, Set<PetAppointment> appointments,
-                               OffsetDateTime createdAt, OffsetDateTime requestedAt,
+                               PetTransport transport, AppointmentBookingStatus appointmentStatus, Set<PetAppointment> appointments,
+                               OffsetDateTime requestedAt,
                                OffsetDateTime paidAt, OffsetDateTime scheduledAt,
                                OffsetDateTime completedAt, OffsetDateTime cancelAt, OffsetDateTime refundedAt,
                                OffsetDateTime inProgressAt, OffsetDateTime readyAt, OffsetDateTime returnedAt) {
-        super(id, customerId, companyId, totalItems, totalAmount, paymentMethod, billing,
-                createdAt, requestedAt, paidAt, scheduledAt, completedAt, cancelAt, refundedAt);
+        super(id, customerId, companyId, totalItems, totalAmount, paymentMethod, paymentStatus, billing,
+                requestedAt, paidAt, scheduledAt, completedAt, cancelAt, refundedAt);
         this.setScheduledStart(scheduledStart);
         this.setScheduledEnd(scheduledEnd);
         this.setTransport(transport);
-        this.setStatus(status);
+        this.setAppointmentStatus(appointmentStatus);
         this.setAppointments(appointments);
         this.setInProgressAt(inProgressAt);
         this.setReadyAt(readyAt);
@@ -160,39 +157,31 @@ public class AppointmentBooking
     }
 
     public boolean isDraft() {
-        return DRAFT.equals(this.status);
+        return DRAFT.equals(this.appointmentStatus);
     }
 
     public boolean isRequested() {
-        return REQUESTED.equals(this.status);
-    }
-
-    public boolean isPaid() {
-        return PAID.equals(this.paymentStatus);
+        return REQUESTED.equals(this.appointmentStatus);
     }
 
     public boolean isScheduled() {
-        return SCHEDULED.equals(this.status);
+        return SCHEDULED.equals(this.appointmentStatus);
     }
 
     public boolean isInProgress() {
-        return IN_PROGRESS.equals(this.status);
+        return IN_PROGRESS.equals(this.appointmentStatus);
     }
 
     public boolean isCompleted() {
-        return COMPLETED.equals(this.status);
+        return COMPLETED.equals(this.appointmentStatus);
     }
 
     public boolean isCanceled() {
-        return CANCELED.equals(this.status);
+        return CANCELED.equals(this.appointmentStatus);
     }
 
     public boolean isReady() {
-        return READY.equals(this.status);
-    }
-
-    public boolean isRefunded() {
-        return REFUNDED.equals(this.paymentStatus);
+        return READY.equals(this.appointmentStatus);
     }
 
     private void verifyIfChangeable() {
@@ -231,17 +220,10 @@ public class AppointmentBooking
     }
 
     private void changeStatus(AppointmentBookingStatus newStatus) {
-        if (this.status.canNotChangeTo(newStatus))
-            throw new CannotChangeStatusException(this.status.name(), newStatus.name());
+        if (this.appointmentStatus.canNotChangeTo(newStatus))
+            throw new CannotChangeStatusException(this.appointmentStatus.name(), newStatus.name());
 
-        this.setStatus(newStatus);
-    }
-
-    private void changePaymentStatus(BookingPaymentStatus newStatus) {
-        if (this.paymentStatus.canNotChangeTo(newStatus))
-            throw new CannotChangeStatusException(this.paymentStatus.name(), newStatus.name());
-
-        this.setPaymentStatus(newStatus);
+        this.setAppointmentStatus(newStatus);
     }
 
     private void verifyIfCanChangeToRequested(CustomerId customerId, CompanyId companyId) {
@@ -285,22 +267,13 @@ public class AppointmentBooking
         this.transport = transport;
     }
 
-    public AppointmentBookingStatus status() {
-        return status;
+    public AppointmentBookingStatus appointmentStatus() {
+        return appointmentStatus;
     }
 
-    private void setStatus(AppointmentBookingStatus status) {
-        FieldValidator.requiresNonNull("status", status);
-        this.status = status;
-    }
-
-    public BookingPaymentStatus paymentStatus() {
-        return this.paymentStatus;
-    }
-
-    private void setPaymentStatus(BookingPaymentStatus newStatus) {
-        FieldValidator.requiresNonNull("payment status", newStatus);
-        this.paymentStatus = newStatus;
+    private void setAppointmentStatus(AppointmentBookingStatus appointmentStatus) {
+        FieldValidator.requiresNonNull("appointmentStatus", appointmentStatus);
+        this.appointmentStatus = appointmentStatus;
     }
 
     public Set<PetAppointment> appointments() {

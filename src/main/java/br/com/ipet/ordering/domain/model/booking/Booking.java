@@ -1,6 +1,8 @@
 package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
+import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
@@ -12,6 +14,8 @@ import br.com.ipet.ordering.domain.model.order.OrderDoesNotBelongsToTheCustomer;
 import java.time.OffsetDateTime;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
+import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.PAID;
+import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.REFUNDED;
 
 public abstract class Booking extends AbstractEventSourceEntity {
 
@@ -21,8 +25,8 @@ public abstract class Booking extends AbstractEventSourceEntity {
     private Quantity totalPets;
     private Money totalAmount;
     private BookingPaymentMethod paymentMethod;
+    private BookingPaymentStatus paymentStatus;
     private Billing billing;
-    private OffsetDateTime createdAt;
     private OffsetDateTime requestedAt;
     private OffsetDateTime paidAt;
     private OffsetDateTime scheduledAt;
@@ -33,8 +37,8 @@ public abstract class Booking extends AbstractEventSourceEntity {
 
 
     protected Booking(BookingId id, CustomerId customerId, CompanyId companyId,
-                      Quantity totalPets, Money totalAmount, BookingPaymentMethod paymentMethod, Billing billing,
-                      OffsetDateTime createdAt, OffsetDateTime requestedAt,
+                      Quantity totalPets, Money totalAmount, BookingPaymentMethod paymentMethod, BookingPaymentStatus paymentStatus, Billing billing,
+                      OffsetDateTime requestedAt,
                       OffsetDateTime paidAt, OffsetDateTime scheduledAt,
                       OffsetDateTime completedAt, OffsetDateTime canceledAt, OffsetDateTime refundedAt) {
         this.setId(id);
@@ -43,14 +47,29 @@ public abstract class Booking extends AbstractEventSourceEntity {
         this.setTotalPets(totalPets);
         this.setTotalAmount(totalAmount);
         this.setPaymentMethod(paymentMethod);
+        this.setPaymentStatus(paymentStatus);
         this.setBilling(billing);
-        this.setCreatedAt(createdAt);
         this.setRequestedAt(requestedAt);
         this.setPaidAt(paidAt);
         this.setScheduledAt(scheduledAt);
         this.setCompletedAt(completedAt);
         this.setCanceledAt(canceledAt);
         this.setRefundedAt(refundedAt);
+    }
+
+    protected void changePaymentStatus(BookingPaymentStatus newStatus) {
+        if (this.paymentStatus.canNotChangeTo(newStatus))
+            throw new CannotChangeStatusException(this.paymentStatus.name(), newStatus.name());
+
+        this.setPaymentStatus(newStatus);
+    }
+
+    protected boolean isPaid() {
+        return PAID.equals(this.paymentStatus);
+    }
+
+    protected boolean isRefunded() {
+        return REFUNDED.equals(this.paymentStatus);
     }
 
     private void verifyIfSchedulingBelongsToTheCustomer(CustomerId customerId) {
@@ -116,21 +135,20 @@ public abstract class Booking extends AbstractEventSourceEntity {
         this.paymentMethod = paymentMethod;
     }
 
+    public BookingPaymentStatus paymentStatus() {
+        return this.paymentStatus;
+    }
+
+    private void setPaymentStatus(BookingPaymentStatus newStatus) {
+        this.paymentStatus = newStatus;
+    }
+
     public Billing billing() {
         return billing;
     }
 
     private void setBilling(Billing billing) {
         this.billing = billing;
-    }
-
-    public OffsetDateTime createdAt() {
-        return createdAt;
-    }
-
-    private void setCreatedAt(OffsetDateTime createdAt) {
-        requiresNonNull("createdAt", createdAt);
-        this.createdAt = createdAt;
     }
 
     public OffsetDateTime requestedAt() {
