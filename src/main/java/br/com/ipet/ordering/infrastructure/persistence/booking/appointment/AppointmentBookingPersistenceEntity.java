@@ -2,12 +2,11 @@ package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 
 import br.com.ipet.ordering.infrastructure.persistence.booking.AbstractBooking;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +30,11 @@ public class AppointmentBookingPersistenceEntity extends AbstractBooking {
 
     private OffsetDateTime scheduledStart;
     private OffsetDateTime scheduledEnd;
+    private String status;
+
+    @Embedded
+    private PetTransportEmbeddable petTransport;
+
     private OffsetDateTime inProgressAt;
     private OffsetDateTime readyAt;
     private OffsetDateTime returnedAt;
