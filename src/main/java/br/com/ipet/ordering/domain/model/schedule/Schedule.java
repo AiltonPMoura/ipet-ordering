@@ -3,11 +3,8 @@ package br.com.ipet.ordering.domain.model.schedule;
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Objects;
 import java.util.Set;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
@@ -19,30 +16,25 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     private ServiceCategory serviceCategory;
     private ScheduleStatus status;
     private Set<LockedDate> lockedDates;
-    private LocalDate startedAt;
     private OffsetDateTime createdAt;
 
     protected Schedule(ScheduleId id, CompanyId companyId,
                        ScheduleName name, ServiceCategory serviceCategory,
                        ScheduleStatus status, Set<LockedDate> lockedDates,
-                       LocalDate startedAt, OffsetDateTime createdAt) {
+                       OffsetDateTime createdAt) {
         this.setId(id);
         this.setCompanyId(companyId);
         this.setName(name);
         this.setServiceCategory(serviceCategory);
         this.setStatus(status);
         this.setLockedDates(lockedDates);
-        this.setStartedAt(startedAt);
         this.setCreatedAt(createdAt);
     }
 
     protected void addlockedDays(Set<LockedDate> lockedDates) {
         requiresNonNull("lockedDay", lockedDates);
 
-        if (isDraft())
-            throw new CannotAddLockedDateInStatusDraft("");
-
-        if (isInactived())
+        if (isInactive())
             throw new CannotAddLockedDateInStatusInactived("");
 
         this.lockedDates.addAll(lockedDates);
@@ -58,11 +50,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     protected void active(CompanyId companyId) {
-        this.changeStatus(ScheduleStatus.ACTIVED);
-
-        if (Objects.isNull(startedAt)) {
-            this.setStartedAt(LocalDate.now());
-        }
+        this.changeStatus(ScheduleStatus.ACTIVE);
     }
 
     protected void lock() {
@@ -70,7 +58,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     protected void inactive() {
-        this.changeStatus(ScheduleStatus.INACTIVED);
+        this.changeStatus(ScheduleStatus.INACTIVE);
     }
 
     protected void verifyBelongToCompany(CompanyId companyId) {
@@ -78,57 +66,24 @@ public abstract class Schedule extends AbstractEventSourceEntity {
             throw new ScheduleDoesNotBelongToCompany("");
     }
 
-    public boolean isDraft() {
-        return ScheduleStatus.DRAFT.equals(this.status);
-    }
-
-    public boolean isActived() {
-        return ScheduleStatus.ACTIVED.equals(this.status);
+    public boolean isActive() {
+        return ScheduleStatus.ACTIVE.equals(this.status);
     }
 
     public boolean isLocked() {
         return ScheduleStatus.LOCKED.equals(this.status);
     }
 
-    public boolean isInactived() {
-        return ScheduleStatus.INACTIVED.equals(this.status);
+    public boolean isInactive() {
+        return ScheduleStatus.INACTIVE.equals(this.status);
     }
 
     private void changeStatus(ScheduleStatus status) {
-        if (this.status.canNotChange(status))
+        if (this.status.canNotChangeTo(status))
             throw new CannotChangeStatusException("", "");
 
         this.setStatus(status);
     }
-
-    /*public List<AvailableDateTimes> avaliableDatesTimes() {
-        var date = LocalDate.now().plusDays(1);
-
-        return IntStream.range(0, this.bookingWindow.value())
-                .mapToObj(date::plusDays)
-                .filter(this::isNotStandBy)
-                .map(this::filterWorkingDay)
-                .filter(Optional::isPresent)
-                .map(workingDay ->
-                        new AvailableDateTimes(date, workingDay.get().availableTimes(this.minuteInterval)))
-                .toList();
-    }
-
-    public boolean isNotStandBy(LocalDate date) {
-        return this.standByDates.stream().allMatch(dates -> dates.isNotBetween(date));
-    }
-
-    private Optional<DayTimeScheduled> filterWorkingDay(LocalDate date) {
-        return this.scheduledTimes.stream()
-                .filter(scheduledTime -> scheduledTime.isWorkingDay(date))
-                .findFirst();
-    }
-
-    private Optional<StandByDates> currentStandBy() {
-        return this.standByDates.stream()
-                .filter(StandByDates::isCurrent)
-                .findFirst();
-    }*/
 
     public ScheduleId id() {
         return id;
@@ -181,14 +136,6 @@ public abstract class Schedule extends AbstractEventSourceEntity {
 
     private void setLockedDates(Set<LockedDate> lockedDates) {
         this.lockedDates = lockedDates;
-    }
-
-    public LocalDate startedAt() {
-        return startedAt;
-    }
-
-    private void setStartedAt(LocalDate startedAt) {
-        this.startedAt = startedAt;
     }
 
     public OffsetDateTime createdAt() {
