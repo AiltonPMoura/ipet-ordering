@@ -5,14 +5,14 @@ import br.com.ipet.ordering.domain.model.IdGenerator;
 
 import java.util.UUID;
 
-public record WorkingDayTimeId(UUID value) {
+public record AppointmentWorkDayId(UUID value) {
 
-    public WorkingDayTimeId() {
+    public AppointmentWorkDayId() {
         this(IdGenerator.generateTimeBasedEpochRandomGenerator());
     }
 
-    public WorkingDayTimeId {
-        FieldValidator.requiresNonNull("WorkingDayTimeId", value);
+    public AppointmentWorkDayId {
+        FieldValidator.requiresNonNull("AppointmentWorkDayId", value);
     }
 
 }

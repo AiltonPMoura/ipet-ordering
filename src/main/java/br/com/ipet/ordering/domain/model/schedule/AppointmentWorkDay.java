@@ -8,8 +8,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-public class WorkDayTime {
-    private WorkingDayTimeId id;
+public class AppointmentWorkDay {
+    private AppointmentWorkDayId id;
     private ScheduleId scheduleId;
     private DayOfWeek dayOfWeek;
     private WorkingHours workingHours;
@@ -17,12 +17,12 @@ public class WorkDayTime {
 
     private static final int MINIMUM_AVAILABLE_WORKING_MINUTES = 60;
 
-    static WorkDayTime createNew(ScheduleId scheduleId, DayOfWeek dayOfWeek, WorkingHours workingHours) {
-        return new WorkDayTime(new WorkingDayTimeId(), scheduleId, dayOfWeek, workingHours, new HashSet<>());
+    static AppointmentWorkDay createNew(ScheduleId scheduleId, DayOfWeek dayOfWeek, WorkingHours workingHours) {
+        return new AppointmentWorkDay(new AppointmentWorkDayId(), scheduleId, dayOfWeek, workingHours, new HashSet<>());
     }
 
     @Builder(builderMethodName = "ExistingWorkDayBuilder", buildMethodName = "existing")
-    public WorkDayTime(WorkingDayTimeId id, ScheduleId scheduleId, DayOfWeek dayOfWeek, WorkingHours workingHours, Set<LockedTime> lockedTimes) {
+    public AppointmentWorkDay(AppointmentWorkDayId id, ScheduleId scheduleId, DayOfWeek dayOfWeek, WorkingHours workingHours, Set<LockedTime> lockedTimes) {
         this.setId(id);
         this.setScheduleId(scheduleId);
         this.setDayOfWeek(dayOfWeek);
@@ -92,11 +92,11 @@ public class WorkDayTime {
         return lockedTimes.stream().mapToLong(LockedTime::lockedMinutes).sum();
     }
 
-    public WorkingDayTimeId id() {
+    public AppointmentWorkDayId id() {
         return id;
     }
 
-    private void setId(WorkingDayTimeId id) {
+    private void setId(AppointmentWorkDayId id) {
         FieldValidator.requiresNonNull("id", id);
         this.id = id;
     }

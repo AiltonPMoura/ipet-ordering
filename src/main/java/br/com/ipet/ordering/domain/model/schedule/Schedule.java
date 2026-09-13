@@ -33,10 +33,6 @@ public abstract class Schedule extends AbstractEventSourceEntity {
 
     protected void addlockedDays(Set<LockedDate> lockedDates) {
         requiresNonNull("lockedDay", lockedDates);
-
-        if (isInactive())
-            throw new CannotAddLockedDateInStatusInactived("");
-
         this.lockedDates.addAll(lockedDates);
     }
 

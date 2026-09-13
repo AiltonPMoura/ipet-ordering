@@ -6,7 +6,7 @@ import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.schedule.AppointmentScheduleRegistrationService;
 import br.com.ipet.ordering.domain.model.schedule.AppointmentSchedules;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleName;
-import br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory;
+import br.com.ipet.ordering.domain.model.schedule.ServiceCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
