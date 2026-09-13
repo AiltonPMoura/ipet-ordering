@@ -1,0 +1,32 @@
+package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+
+import java.util.HashSet;
+import java.util.Set;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+@ToString(callSuper = true)
+@Entity
+@Table(name = "appointment_schedule")
+public class AppointmentSchedulePersistenceEntity extends AbstractSchedule {
+
+    @OneToMany(mappedBy = "agenda", cascade = CascadeType.ALL)
+    private Set<AppointmentWorkDayPersistenceEntity> workDays = new HashSet<>();
+
+}

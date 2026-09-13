@@ -1,19 +1,18 @@
-package br.com.ipet.ordering.infrastructure.persistence.entity;
+package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -23,34 +22,30 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@ToString(of = "id")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Entity
-@Table(name = "appointment_schedule")
-public class AppointmentSchedulePersistenceEntity {
+@ToString(of = "id")
+@MappedSuperclass
+public class AbstractSchedule {
 
     @Id
     @EqualsAndHashCode.Include
     private UUID id;
 
+    @JoinColumn
     @ManyToOne(optional = false)
     private CompanyPersistenceEntity company;
 
-    @OneToMany(mappedBy = "agenda", cascade = CascadeType.ALL)
-    private Set<WorkingDayPersistenceEntity> workingDays = new HashSet<>();
+    @ElementCollection
+    private Set<LocalDate> lockedDate = new HashSet<>();
 
     private String name;
     private String status;
-    private OffsetDateTime activedAt;
-    private OffsetDateTime standedByAt;
-    private OffsetDateTime blockedAt;
-    private HashSet<LocalDate> lockedDays = new HashSet<>();
+    private String serviceCategory;
 
     private OffsetDateTime createdAt;
-
     private OffsetDateTime modifiedAt;
 
 }
