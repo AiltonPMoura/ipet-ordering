@@ -12,14 +12,12 @@ import br.com.ipet.ordering.domain.model.customer.CustomerAddress;
 import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 public class CustomerMapper {
 
     public Customer toDomain(CustomerPersistenceEntity persistenceEntity) {
@@ -47,7 +45,7 @@ public class CustomerMapper {
                 .map(customerAddress -> CustomerAddress.existing()
                         .id(new CustomerAddressId(customerAddress.getId()))
                         .customerId(new CustomerId(customerAddress.getCustomerId()))
-                        .address(toAddress(customerAddress.getAddress()))
+                        .address(this.toAddress(customerAddress.getAddress()))
                         .isPrincipal(customerAddress.isPrincipal())
                         .build()
                 ).collect(Collectors.toSet());

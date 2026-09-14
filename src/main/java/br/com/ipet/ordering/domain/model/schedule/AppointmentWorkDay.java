@@ -21,8 +21,9 @@ public class AppointmentWorkDay {
         return new AppointmentWorkDay(new AppointmentWorkDayId(), scheduleId, dayOfWeek, workingHours, new HashSet<>());
     }
 
-    @Builder(builderMethodName = "ExistingWorkDayBuilder", buildMethodName = "existing")
-    public AppointmentWorkDay(AppointmentWorkDayId id, ScheduleId scheduleId, DayOfWeek dayOfWeek, WorkingHours workingHours, Set<LockedTime> lockedTimes) {
+    @Builder(builderClassName = "ExistingWorkDayBuilder", builderMethodName = "existing")
+    public AppointmentWorkDay(AppointmentWorkDayId id, ScheduleId scheduleId,
+                              DayOfWeek dayOfWeek, WorkingHours workingHours, Set<LockedTime> lockedTimes) {
         this.setId(id);
         this.setScheduleId(scheduleId);
         this.setDayOfWeek(dayOfWeek);

@@ -32,12 +32,12 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     protected void addlockedDays(Set<LockedDate> lockedDates) {
-        requiresNonNull("lockedDay", lockedDates);
+        requiresNonNull("lockedDates", lockedDates);
         this.lockedDates.addAll(lockedDates);
     }
 
     protected void removelockedDays(Set<LockedDate> lockedDates) {
-        requiresNonNull("lockedDays", lockedDates);
+        requiresNonNull("lockedDates", lockedDates);
         this.lockedDates.removeAll(lockedDates);
     }
 
@@ -126,11 +126,12 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.status = status;
     }
 
-    public Set<LockedDate> lockedDays() {
+    public Set<LockedDate> lockedDates() {
         return lockedDates;
     }
 
     private void setLockedDates(Set<LockedDate> lockedDates) {
+        requiresNonNull("lockedDates", lockedDates);
         this.lockedDates = lockedDates;
     }
 

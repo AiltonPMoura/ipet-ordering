@@ -4,13 +4,11 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.customer.Customer;
 import br.com.ipet.ordering.domain.model.customer.CustomerAddress;
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Component
 public class CustomerPersistenceMapper {
 

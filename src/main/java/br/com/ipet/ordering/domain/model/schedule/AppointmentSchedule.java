@@ -116,7 +116,7 @@ public class AppointmentSchedule
     }
 
     private void setWorkDays(Set<AppointmentWorkDay> workDays) {
-        requiresNonNull("workiDays", workDays);
+        requiresNonNull("workDays", workDays);
         this.workDays = workDays;
     }
 

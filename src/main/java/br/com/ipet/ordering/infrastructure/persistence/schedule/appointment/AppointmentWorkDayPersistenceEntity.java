@@ -47,4 +47,8 @@ public class AppointmentWorkDayPersistenceEntity {
     @ElementCollection
     private Set<LockedTimeEmbeddable> lockedTimes = new HashSet<>();
 
+    public UUID getAppointmentScheduleId() {
+        return this.appointmentSchedule.getId();
+    }
+
 }

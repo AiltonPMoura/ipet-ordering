@@ -26,7 +26,12 @@ import java.util.Set;
 @Table(name = "appointment_schedule")
 public class AppointmentSchedulePersistenceEntity extends AbstractSchedule {
 
-    @OneToMany(mappedBy = "agenda", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "appointmentSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AppointmentWorkDayPersistenceEntity> workDays = new HashSet<>();
+
+    public void setWorkDays(Set<AppointmentWorkDayPersistenceEntity> workDays) {
+        workDays.forEach(workDay -> workDay.setAppointmentSchedule(this));
+        this.workDays = workDays;
+    }
 
 }

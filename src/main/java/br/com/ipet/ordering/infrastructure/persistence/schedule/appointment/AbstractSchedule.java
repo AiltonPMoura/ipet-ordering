@@ -38,14 +38,18 @@ public class AbstractSchedule {
     @ManyToOne(optional = false)
     private CompanyPersistenceEntity company;
 
-    @ElementCollection
-    private Set<LocalDate> lockedDate = new HashSet<>();
-
     private String name;
     private String status;
     private String serviceCategory;
 
+    @ElementCollection
+    private Set<LocalDate> lockedDates = new HashSet<>();
+
     private OffsetDateTime createdAt;
     private OffsetDateTime modifiedAt;
+
+    public UUID getCompanyId() {
+        return company.getId();
+    }
 
 }
