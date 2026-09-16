@@ -1,9 +1,9 @@
 package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
-import br.com.ipet.ordering.domain.model.schedule.AppointmentSchedule;
-import br.com.ipet.ordering.domain.model.schedule.AppointmentWorkDay;
+import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
+import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDay;
 import br.com.ipet.ordering.domain.model.schedule.LockedDate;
-import br.com.ipet.ordering.domain.model.schedule.LockedTime;
+import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTime;
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

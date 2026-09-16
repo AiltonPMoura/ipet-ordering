@@ -31,43 +31,28 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.setCreatedAt(createdAt);
     }
 
-    protected void addlockedDays(Set<LockedDate> lockedDates) {
-        requiresNonNull("lockedDates", lockedDates);
-        this.lockedDates.addAll(lockedDates);
-    }
-
-    protected void removelockedDays(Set<LockedDate> lockedDates) {
-        requiresNonNull("lockedDates", lockedDates);
-        this.lockedDates.removeAll(lockedDates);
-    }
-
-    protected void changeName(ScheduleName name) {
+    protected void changeName(ScheduleName name, CompanyId companyId) {
+        this.verifyBelongToCompany(companyId);
         this.setName(name);
     }
 
+    protected void changeLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
+        this.verifyBelongToCompany(companyId);
+        this.setLockedDates(lockedDates);
+    }
+
     protected void active(CompanyId companyId) {
+        this.verifyBelongToCompany(companyId);
         this.changeStatus(ScheduleStatus.ACTIVE);
     }
 
-    protected void lock() {
-        this.changeStatus(ScheduleStatus.LOCKED);
-    }
-
-    protected void inactive() {
+    protected void inactive(CompanyId companyId) {
+        this.verifyBelongToCompany(companyId);
         this.changeStatus(ScheduleStatus.INACTIVE);
-    }
-
-    protected void verifyBelongToCompany(CompanyId companyId) {
-        if (!this.companyId().equals(companyId))
-            throw new ScheduleDoesNotBelongToCompany("");
     }
 
     public boolean isActive() {
         return ScheduleStatus.ACTIVE.equals(this.status);
-    }
-
-    public boolean isLocked() {
-        return ScheduleStatus.LOCKED.equals(this.status);
     }
 
     public boolean isInactive() {
@@ -79,6 +64,11 @@ public abstract class Schedule extends AbstractEventSourceEntity {
             throw new CannotChangeStatusException("", "");
 
         this.setStatus(status);
+    }
+
+    protected void verifyBelongToCompany(CompanyId companyId) {
+        if (!this.companyId.equals(companyId))
+            throw new ScheduleDoesNotBelongToCompany("");
     }
 
     public ScheduleId id() {

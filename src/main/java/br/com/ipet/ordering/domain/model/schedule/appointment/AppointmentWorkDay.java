@@ -1,10 +1,11 @@
-package br.com.ipet.ordering.domain.model.schedule;
+package br.com.ipet.ordering.domain.model.schedule.appointment;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.schedule.ConflictLockedTimeException;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import lombok.Builder;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ public class AppointmentWorkDay {
     private WorkingHours workingHours;
     private Set<LockedTime> lockedTimes;
 
-    private static final int MINIMUM_AVAILABLE_WORKING_MINUTES = 60;
+    private static final int MINIMUM_AVAILABLE_WORK_MINUTES = 60;
 
     static AppointmentWorkDay createNew(ScheduleId scheduleId, DayOfWeek dayOfWeek, WorkingHours workingHours) {
         return new AppointmentWorkDay(new AppointmentWorkDayId(), scheduleId, dayOfWeek, workingHours, new HashSet<>());
@@ -32,7 +33,7 @@ public class AppointmentWorkDay {
     }
 
     void addLockedTime(LockedTime lockedTime) {
-        FieldValidator.requiresNonNull("lockedTimes", lockedTimes);
+        FieldValidator.requiresNonNull("lockedTime", lockedTime);
 
         if (workingHours.notContains(lockedTime.startTime(), lockedTime.endTime()))
             throw new LockedTimeOutsideWorkingHoursException("");
@@ -55,13 +56,9 @@ public class AppointmentWorkDay {
         this.setWorkingHours(workingHours);
     }
 
-    void changeLockedTime(Set<LockedTime> lockedTimes) {
-        FieldValidator.requiresNonNull("lockedTimes", lockedTimes);
-        this.setLockedTimes(lockedTimes);
-    }
-
-    boolean isWorkingDay(LocalDate date) {
-        return this.dayOfWeek.equals(date.getDayOfWeek());
+    void changeLockedTime(LockedTime lockedTime, LockedTime newLockedTime) {
+        this.removeLockedTime(lockedTime);
+        this.addLockedTime(newLockedTime);
     }
 
     private LockedTime findLockedTime(LockedTime lockedTime) {
@@ -76,16 +73,14 @@ public class AppointmentWorkDay {
         var isConflictLockedTime = this.lockedTimes.stream()
                 .anyMatch(lockedTime -> lockedTime.verifyConflict(newLockedTime));
 
-        if (isConflictLockedTime)
-            throw new ConflictLockedTimeException("");
-
+        if (isConflictLockedTime) throw new ConflictLockedTimeException("");
     }
 
     private void verifyMinimumAvailableWorkingTime(LockedTime lockedTime) {
-        var newMinutesLockedTime = totalLockedTime() + lockedTime.lockedMinutes();
+        var newMinutesLockedTime = this.totalLockedTime() + lockedTime.lockedMinutes();
         var workingMinutes = workingHours.workingMinutes();
 
-        if (workingMinutes - newMinutesLockedTime < MINIMUM_AVAILABLE_WORKING_MINUTES)
+        if (workingMinutes - newMinutesLockedTime < MINIMUM_AVAILABLE_WORK_MINUTES)
             throw new WorkingHoursCanNotBeLessThanOneHourException();
     }
 

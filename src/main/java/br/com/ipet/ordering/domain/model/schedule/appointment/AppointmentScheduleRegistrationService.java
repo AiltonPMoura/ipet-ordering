@@ -1,9 +1,11 @@
-package br.com.ipet.ordering.domain.model.schedule;
+package br.com.ipet.ordering.domain.model.schedule.appointment;
 
 import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
-import br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleAlreadyExistsException;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleName;
+import br.com.ipet.ordering.domain.model.schedule.ServiceCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +24,6 @@ public class AppointmentScheduleRegistrationService {
             throw new ScheduleAlreadyExistsException();
 
         return AppointmentSchedule.create(companyId, name, serviceCategory);
-    }
-
-    public void removeWorkingDay(AppointmentSchedule appointmentSchedule,
-                                 WorkingDayTimeId workingDayTimeId,
-                                 CompanyId companyId) {
-
-        appointmentSchedule.removeWorkingDayTime(workingDayTimeId, companyId);
     }
 
 }

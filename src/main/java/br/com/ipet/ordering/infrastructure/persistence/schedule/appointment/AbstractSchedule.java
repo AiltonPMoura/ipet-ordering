@@ -39,8 +39,8 @@ public class AbstractSchedule {
     private CompanyPersistenceEntity company;
 
     private String name;
-    private String status;
     private String serviceCategory;
+    private String status;
 
     @ElementCollection
     private Set<LocalDate> lockedDates = new HashSet<>();

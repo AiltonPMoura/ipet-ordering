@@ -1,4 +1,8 @@
-package br.com.ipet.ordering.domain.model.schedule;
+package br.com.ipet.ordering.domain.model.schedule.appointment;
+
+import br.com.ipet.ordering.domain.model.schedule.InvalidIntervalException;
+import br.com.ipet.ordering.domain.model.schedule.MaximumEndWorkingException;
+import br.com.ipet.ordering.domain.model.schedule.MinimumStartWorkingException;
 
 import java.time.Duration;
 import java.time.OffsetTime;
