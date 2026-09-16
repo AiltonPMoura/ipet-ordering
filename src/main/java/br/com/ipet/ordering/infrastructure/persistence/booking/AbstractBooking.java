@@ -3,7 +3,6 @@ package br.com.ipet.ordering.infrastructure.persistence.booking;
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.order.BillingEmbeddable;
-import br.com.ipet.ordering.infrastructure.persistence.schedule.appointment.AbstractSchedule;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -34,10 +33,6 @@ public class AbstractBooking {
     @Id
     @EqualsAndHashCode.Include
     private UUID id;
-
-    @JoinColumn
-    @ManyToOne(optional = false)
-    private AbstractSchedule schedule;
 
     @JoinColumn
     @ManyToOne(optional = false)
