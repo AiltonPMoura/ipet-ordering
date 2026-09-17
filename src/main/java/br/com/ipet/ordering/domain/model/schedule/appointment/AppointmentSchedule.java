@@ -2,7 +2,6 @@ package br.com.ipet.ordering.domain.model.schedule.appointment;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.schedule.DayTimeScheduleCannotBeActivedException;
 import br.com.ipet.ordering.domain.model.schedule.LockedDate;
 import br.com.ipet.ordering.domain.model.schedule.Schedule;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleDontSupportSubcategoryException;
@@ -118,7 +117,7 @@ public class AppointmentSchedule
     @Override
     public void active(CompanyId companyId) {
         if (workDays.isEmpty())
-            throw new DayTimeScheduleCannotBeActivedException("");
+            throw new AppointmentScheduleCannotBeActivedException("");
 
         super.active(companyId);
     }

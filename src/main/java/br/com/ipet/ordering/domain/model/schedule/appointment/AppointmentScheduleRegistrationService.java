@@ -20,7 +20,7 @@ public class AppointmentScheduleRegistrationService {
         if (!companies.exists(companyId))
             throw new CompanyNotFoundException("");
 
-        if (appointmentSchedules.existsByCompanyId(companyId))
+        if (appointmentSchedules.exists(companyId))
             throw new ScheduleAlreadyExistsException();
 
         return AppointmentSchedule.create(companyId, name, serviceCategory);

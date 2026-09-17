@@ -1,6 +1,5 @@
 package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,11 +14,6 @@ import java.time.OffsetTime;
 @NoArgsConstructor
 @Embeddable
 public class LockedTimeEmbeddable {
-
-    @Column(name = "start_time")
     private OffsetTime startTime;
-
-    @Column(name = "end_time")
     private OffsetTime endTime;
-
 }

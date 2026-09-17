@@ -1,6 +1,6 @@
-package br.com.ipet.ordering.application.schedule.management.appointment;
+package br.com.ipet.ordering.application.schedule.appointment.management;
 
-import br.com.ipet.ordering.application.schedule.management.ScheduleInput;
+import br.com.ipet.ordering.application.schedule.ScheduleInput;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.schedule.LockedDate;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -56,7 +56,7 @@ public class AppointmentScheduleApplicationService {
         appointmentSchedules.add(appointmentSchedule);
     }
 
-    public void changeLockedDates(UUID scheduleId, UUID companyId, Set<LocalDate> dates) {
+    public void changeLockedDates(UUID scheduleId, UUID companyId, List<LocalDate> dates) {
         requiresNonNull("dates", dates);
 
         var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
@@ -66,10 +66,10 @@ public class AppointmentScheduleApplicationService {
         appointmentSchedules.add(appointmentSchedule);
     }
 
-    public void addWorkDay(UUID companyId, WorkDayInput input) {
+    public void addWorkDay(UUID scheduleId, UUID companyId, WorkDayInput input) {
         requiresNonNull("input", input);
 
-        var appointmentSchedule = this.findAppointmentSchedule(input.scheduleId());
+        var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
         appointmentSchedule.addWorkDay(input.dayOfWeek(), new WorkingHours(input.startTime(), input.endTime()), new CompanyId(companyId));
 
         appointmentSchedules.add(appointmentSchedule);

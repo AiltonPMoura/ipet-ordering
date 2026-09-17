@@ -1,7 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceEntity;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -14,10 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -41,9 +37,6 @@ public class AbstractSchedule {
     private String name;
     private String serviceCategory;
     private String status;
-
-    @ElementCollection
-    private Set<LocalDate> lockedDates = new HashSet<>();
 
     private OffsetDateTime createdAt;
     private OffsetDateTime modifiedAt;

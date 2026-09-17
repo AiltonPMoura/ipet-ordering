@@ -1,9 +1,9 @@
-package br.com.ipet.ordering.domain.model.scheduling;
+/*
+package br.com.ipet.ordering.domain.model.booking;
 
-import br.com.ipet.ordering.domain.model.commons.valueobject.Service;
 import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
-import br.com.ipet.ordering.domain.model.customer.CompanyId;
+import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerDoesNotContainAnyPet;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
@@ -13,7 +13,7 @@ import br.com.ipet.ordering.domain.model.pet.PetDoesNotBelongToTheCustomer;
 import br.com.ipet.ordering.domain.model.pet.PetId;
 import br.com.ipet.ordering.domain.model.pet.Pets;
 import br.com.ipet.ordering.domain.model.pet.Size;
-import br.com.ipet.ordering.domain.model.service.ServiceDomain;
+import br.com.ipet.ordering.domain.model.schedule.category.SubcategoryService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
@@ -21,27 +21,25 @@ import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 @RequiredArgsConstructor
-public class SchedulingService {
+public class SchedulingStartService {
 
     private Customers customers;
     private Companies companies;
     private Pets pets;
-    private ServiceDomain serviceDomain;
+    private SubcategoryService subcategoryService;
 
-    public Scheduling generate(CustomerId customerId,
-                               CompanyId companyId,
-                               Set<PetId> petIds,
-                               String ServiceType) {
-        verifyCustomerExists(customerId);
-        verifyCompanyExists(companyId);
+    public Booking start(CustomerId customerId, CompanyId companyId) {
 
-        var scheduling = Scheduling.createNew()
-                .customerId(customerId)
-                .companyId(companyId)
-                .build();
+        if(!customers.exists(customerId))
+            throw new  CustomerNotFoundException("");
+
+        if (!companies.exists(companyId))
+            throw new CompanyNotFoundException("");
+
+        var scheduling = Booking.create(customerId, companyId);
 
         var petsOfCustomer = petsOfCustomer(customerId, petIds);
-        var services = serviceDomain.findByServiceType(ServiceType);
+        var services = subcategoryService.findByServiceType(ServiceType);
 
         petsOfCustomer.forEach(pet -> {
             var service = serviceBySize(pet.size(), services);
@@ -50,6 +48,8 @@ public class SchedulingService {
 
         return scheduling;
     }
+
+    public
 
     private Service serviceBySize(Size size, Set<Service> services) {
         return services.stream()
@@ -76,14 +76,5 @@ public class SchedulingService {
             throw new PetDoesNotBelongToTheCustomer();
     }
 
-    private void verifyCompanyExists(CompanyId companyId) {
-        if (!companies.exists(companyId))
-            throw new CompanyNotFoundException();
-    }
-
-    private void verifyCustomerExists(CustomerId customerId) {
-        if(!customers.exists(customerId))
-            throw new  CustomerNotFoundException();
-    }
-
 }
+*/
