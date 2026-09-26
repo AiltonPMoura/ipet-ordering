@@ -1,10 +1,10 @@
 package br.com.ipet.ordering.application.schedule.appointment.management;
 
 import java.time.DayOfWeek;
-import java.time.OffsetTime;
+import java.time.LocalTime;
 
 
 public record WorkDayInput(DayOfWeek dayOfWeek,
-                           OffsetTime startTime,
-                           OffsetTime endTime) {
+                           LocalTime startTime,
+                           LocalTime endTime) {
 }

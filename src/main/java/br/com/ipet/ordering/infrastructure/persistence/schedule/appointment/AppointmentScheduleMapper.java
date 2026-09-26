@@ -1,15 +1,15 @@
 package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
 import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
-import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDay;
-import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDayId;
 import br.com.ipet.ordering.domain.model.schedule.LockedDate;
-import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTime;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleName;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleStatus;
 import br.com.ipet.ordering.domain.model.schedule.ServiceCategory;
+import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
+import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDay;
+import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDayId;
+import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTime;
 import br.com.ipet.ordering.domain.model.schedule.appointment.WorkingHours;
 import org.springframework.stereotype.Component;
 

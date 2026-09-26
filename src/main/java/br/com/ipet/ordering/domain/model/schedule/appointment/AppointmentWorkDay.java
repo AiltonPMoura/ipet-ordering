@@ -6,6 +6,7 @@ import lombok.Builder;
 
 import java.time.DayOfWeek;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class AppointmentWorkDay {
@@ -129,5 +130,16 @@ public class AppointmentWorkDay {
 
     private void setLockedTimes(Set<LockedTime> lockedTimes) {
         this.lockedTimes = lockedTimes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AppointmentWorkDay that)) return false;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

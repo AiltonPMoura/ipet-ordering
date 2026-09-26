@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.OffsetTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -14,6 +14,6 @@ import java.time.OffsetTime;
 @NoArgsConstructor
 @Embeddable
 public class LockedTimeEmbeddable {
-    private OffsetTime startTime;
-    private OffsetTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
 }

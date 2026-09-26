@@ -9,8 +9,8 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.OffsetTime;
 import java.util.Collection;
 
 public class FieldValidator {
@@ -49,7 +49,7 @@ public class FieldValidator {
             throw new DateMustBeLaterThanNowException(field);
     }
 
-    public static void requireStartTimeIsBeforeEndTime(OffsetTime startTime, OffsetTime endTime) {
+    public static void requireStartTimeIsBeforeEndTime(LocalTime startTime, LocalTime endTime) {
         if (!startTime.isBefore(endTime))
             throw new StartTimeMustBeBeforeEndTimeException(startTime.toString(), endTime.toString());
     }

@@ -54,23 +54,41 @@ public class AppointmentSchedule
         requiresNonNull("workingHours", workingHours);
         requiresNonNull("companyId", companyId);
 
-        this.verifyBelongToCompany(companyId);
-        this.verifyExistingWorkDay(dayOfWeek);
+        //this.verifyBelongToCompany(companyId);
+        var existingWorkDay = this.workDays.stream()
+                .anyMatch(appointmentWorkDay -> appointmentWorkDay.dayOfWeek().equals(dayOfWeek));
+
+        if (existingWorkDay) throw new WorkDayAlreadyExistsException();
 
         var workingDay = AppointmentWorkDay.createNew(this.id(), dayOfWeek, workingHours);
         this.workDays.add(workingDay);
+    }
+
+    public void changeWorkDayWeek(AppointmentWorkDayId appointmentWorkDayId, DayOfWeek dayOfWeek, CompanyId companyId) {
+        requiresNonNull("dayOfWeek", dayOfWeek);
+
+        //this.verifyBelongToCompany(companyId);
+        var workingDay = this.findWorkDay(appointmentWorkDayId);
+
+        var existingWorkDay = this.workDays.stream()
+                .anyMatch(appointmentWorkDay -> appointmentWorkDay.dayOfWeek().equals(dayOfWeek)
+                        && !appointmentWorkDay.equals(workingDay));
+
+        if (existingWorkDay) throw new WorkDayAlreadyExistsException();
+
+        workingDay.changeDayOfWeek(dayOfWeek);
     }
 
     public void removeWorkDay(AppointmentWorkDayId appointmentWorkDayId, CompanyId companyId) {
         requiresNonNull("appointmentWorkDayId", appointmentWorkDayId);
         requiresNonNull("companyId", companyId);
 
-        this.verifyBelongToCompany(companyId);
+        //this.verifyBelongToCompany(companyId);
 
         var workingDay = this.findWorkDay(appointmentWorkDayId);
         this.workDays.remove(workingDay);
 
-        if (this.workDays.isEmpty()) this.inactive(companyId);
+        if (this.workDays.isEmpty()) this.deactivate(companyId);
     }
 
     @Override
@@ -83,55 +101,41 @@ public class AppointmentSchedule
         super.changeLockedDates(lockedDates, companyId);
     }
 
-    public void changeWorkDayWeek(AppointmentWorkDayId appointmentWorkDayId, DayOfWeek dayOfWeek, CompanyId companyId) {
-        this.verifyBelongToCompany(companyId);
-        this.verifyExistingWorkDay(dayOfWeek);
-        var workingDay = this.findWorkDay(appointmentWorkDayId);
-        workingDay.changeDayOfWeek(dayOfWeek);
-    }
-
     public void changeWorkDayHours(AppointmentWorkDayId appointmentWorkDayId, WorkingHours workingHours, CompanyId companyId) {
-        this.verifyBelongToCompany(companyId);
+        //this.verifyBelongToCompany(companyId);
         var workingDay = this.findWorkDay(appointmentWorkDayId);
         workingDay.changeWorkingHours(workingHours);
     }
 
     public void addWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, LockedTime lockedTime, CompanyId companyId) {
-        this.verifyBelongToCompany(companyId);
+        //this.verifyBelongToCompany(companyId);
         var workingDay = this.findWorkDay(appointmentWorkDayId);
         workingDay.addLockedTime(lockedTime);
     }
 
     public void removeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, LockedTime lockedTime, CompanyId companyId) {
-        this.verifyBelongToCompany(companyId);
+        //this.verifyBelongToCompany(companyId);
         var workingDay = this.findWorkDay(appointmentWorkDayId);
         workingDay.removeLockedTime(lockedTime);
     }
 
     public void changeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, LockedTime lockedTime, LockedTime newLockedTime, CompanyId companyId) {
-        this.verifyBelongToCompany(companyId);
+        //this.verifyBelongToCompany(companyId);
         var workingDay = this.findWorkDay(appointmentWorkDayId);
         workingDay.changeLockedTime(lockedTime, newLockedTime);
     }
 
     @Override
-    public void active(CompanyId companyId) {
+    public void activate(CompanyId companyId) {
         if (workDays.isEmpty())
             throw new AppointmentScheduleCannotBeActivedException("");
 
-        super.active(companyId);
+        super.activate(companyId);
     }
 
     @Override
-    public void inactive(CompanyId companyId) {
-        super.inactive(companyId);
-    }
-
-    private void verifyExistingWorkDay(DayOfWeek dayOfWeek) {
-        var existingWorkDay = this.workDays.stream()
-                .anyMatch(appointmentWorkDay -> appointmentWorkDay.dayOfWeek().equals(dayOfWeek));
-
-        if (existingWorkDay) throw new WorkDayAlreadyExistsException();
+    public void deactivate(CompanyId companyId) {
+        super.deactivate(companyId);
     }
 
     private AppointmentWorkDay findWorkDay(AppointmentWorkDayId appointmentWorkDayId) {

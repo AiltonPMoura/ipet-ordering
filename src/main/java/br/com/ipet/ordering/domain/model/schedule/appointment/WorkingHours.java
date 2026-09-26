@@ -1,16 +1,15 @@
 package br.com.ipet.ordering.domain.model.schedule.appointment;
 
 import java.time.Duration;
-import java.time.OffsetTime;
-import java.time.ZoneOffset;
+import java.time.LocalTime;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requireStartTimeIsBeforeEndTime;
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
-public record WorkingHours(OffsetTime startTime, OffsetTime endTime) {
+public record WorkingHours(LocalTime startTime, LocalTime endTime) {
 
-    private static final OffsetTime MINIMUM_START_WORKING = OffsetTime.of(8, 0, 0, 0, ZoneOffset.UTC);
-    private static final OffsetTime MAXIMUM_END_WORKING = OffsetTime.of(18, 0, 0, 0, ZoneOffset.UTC);
+    private static final LocalTime MINIMUM_START_WORKING = LocalTime.of(8, 0);
+    private static final LocalTime MAXIMUM_END_WORKING = LocalTime.of(18, 0);
     private static final int WORKING_HOURS_INTERVAL_IN_MINUTES = 60;
     private static final int MINIMUM_WORKING_HOURS_IN_MINUTES = 60;
 
@@ -24,14 +23,14 @@ public record WorkingHours(OffsetTime startTime, OffsetTime endTime) {
         this.verifyValidInterval(startTime, endTime);
     }
 
-    public boolean contains(OffsetTime startTime, OffsetTime endTime) {
+    public boolean contains(LocalTime startTime, LocalTime endTime) {
         requiresNonNull("startTime", startTime);
         requiresNonNull("endTime", endTime);
 
         return !startTime.isBefore(this.startTime) && !endTime.isAfter(this.endTime);
     }
 
-    public boolean notContains(OffsetTime startTime, OffsetTime endTime) {
+    public boolean notContains(LocalTime startTime, LocalTime endTime) {
         return !contains(startTime, endTime);
     }
 
@@ -39,18 +38,18 @@ public record WorkingHours(OffsetTime startTime, OffsetTime endTime) {
         return Duration.between(startTime, endTime).toMinutes();
     }
 
-    private void verifyMinimumStartTime(OffsetTime startTime) {
+    private void verifyMinimumStartTime(LocalTime startTime) {
         if (startTime.isBefore(MINIMUM_START_WORKING)) {
             throw new MinimumStartWorkingException();
         }
     }
 
-    private void verifyMaximumEndTime(OffsetTime endTime) {
+    private void verifyMaximumEndTime(LocalTime endTime) {
         if (endTime.isAfter(MAXIMUM_END_WORKING))
             throw new MaximumEndWorkingException();
     }
 
-    private void verifyValidInterval(OffsetTime startTime, OffsetTime endTime) {
+    private void verifyValidInterval(LocalTime startTime, LocalTime endTime) {
         var isInvalidIntervalStart = startTime.getMinute() % WORKING_HOURS_INTERVAL_IN_MINUTES != 0;
         var isInvalidIntervalEnd = endTime.getMinute() % WORKING_HOURS_INTERVAL_IN_MINUTES != 0;
 
@@ -58,7 +57,7 @@ public record WorkingHours(OffsetTime startTime, OffsetTime endTime) {
             throw new InvalidIntervalException();
     }
 
-    private void verifyMinimumWorkingMinutes(OffsetTime startTime, OffsetTime endTime) {
+    private void verifyMinimumWorkingMinutes(LocalTime startTime, LocalTime endTime) {
         var workingMinutes = Duration.between(startTime, endTime).toMinutes();
 
         if (workingMinutes < MINIMUM_WORKING_HOURS_IN_MINUTES)

@@ -10,7 +10,7 @@ public record LockedDate(LocalDate date) {
     public LockedDate {
         FieldValidator.requiresNonNull("date", date);
 
-        if (!date().isAfter(LocalDate.now(ZoneOffset.UTC)))
+        if (!date.isAfter(LocalDate.now(ZoneOffset.UTC)))
             throw new LockedDateMustBeAfterNow("");
     }
 

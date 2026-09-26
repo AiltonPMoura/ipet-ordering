@@ -3,9 +3,9 @@ package br.com.ipet.ordering.domain.model.schedule.appointment;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 
 import java.time.Duration;
-import java.time.OffsetTime;
+import java.time.LocalTime;
 
-public record LockedTime(OffsetTime startTime, OffsetTime endTime) {
+public record LockedTime(LocalTime startTime, LocalTime endTime) {
 
     private static final int LOCKED_TIME_INTERVAL_MINUTES = 60;
 
@@ -25,7 +25,7 @@ public record LockedTime(OffsetTime startTime, OffsetTime endTime) {
         return Duration.between(startTime, endTime).toMinutes();
     }
 
-    private void verifyValidInterval(OffsetTime startTime, OffsetTime endTime) {
+    private void verifyValidInterval(LocalTime startTime, LocalTime endTime) {
         var isInvalidIntervalStart = startTime.getMinute() % LOCKED_TIME_INTERVAL_MINUTES != 0;
         var isInvalidIntervalEnd = endTime.getMinute() % LOCKED_TIME_INTERVAL_MINUTES != 0;
 

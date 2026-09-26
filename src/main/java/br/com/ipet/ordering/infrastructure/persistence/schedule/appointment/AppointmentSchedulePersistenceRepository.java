@@ -9,5 +9,5 @@ public interface AppointmentSchedulePersistenceRepository
         extends JpaRepository<AppointmentSchedulePersistenceEntity, UUID>,
         JpaSpecificationExecutor<AppointmentSchedulePersistenceEntity> {
 
-    boolean existsByCompanyId(UUID companyId);
+    boolean existsByCompany_Id(UUID companyId);
 }

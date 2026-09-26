@@ -37,16 +37,16 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     protected void changeLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
-        this.verifyBelongToCompany(companyId);
+        //this.verifyBelongToCompany(companyId);
         this.setLockedDates(lockedDates);
     }
 
-    protected void active(CompanyId companyId) {
+    protected void activate(CompanyId companyId) {
         this.verifyBelongToCompany(companyId);
         this.changeStatus(ScheduleStatus.ACTIVE);
     }
 
-    protected void inactive(CompanyId companyId) {
+    protected void deactivate(CompanyId companyId) {
         this.verifyBelongToCompany(companyId);
         this.changeStatus(ScheduleStatus.INACTIVE);
     }
@@ -130,7 +130,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     private void setCreatedAt(OffsetDateTime createdAt) {
-        requiresNonNull("createdAt", createdAt);
+        //requiresNonNull("createdAt", createdAt);
         this.createdAt = createdAt;
     }
 

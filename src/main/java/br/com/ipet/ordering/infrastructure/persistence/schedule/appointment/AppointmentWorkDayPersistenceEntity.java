@@ -16,7 +16,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.DayOfWeek;
-import java.time.OffsetTime;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -41,8 +41,8 @@ public class AppointmentWorkDayPersistenceEntity {
     private AppointmentSchedulePersistenceEntity appointmentSchedule;
 
     private DayOfWeek dayOfWeek;
-    private OffsetTime startTime;
-    private OffsetTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
     @ElementCollection
     @CollectionTable(

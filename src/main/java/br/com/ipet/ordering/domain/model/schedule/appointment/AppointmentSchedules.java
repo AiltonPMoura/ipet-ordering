@@ -6,6 +6,6 @@ import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 
 public interface AppointmentSchedules extends Repository<AppointmentSchedule, ScheduleId> {
 
-    boolean existsByCompanyId(CompanyId companyId);
+    boolean existsByCompany(CompanyId companyId);
 
 }

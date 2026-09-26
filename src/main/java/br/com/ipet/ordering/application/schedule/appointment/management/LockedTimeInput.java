@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.application.schedule.appointment.management;
 
-import java.time.OffsetTime;
+import java.time.LocalTime;
 
-public record LockedTimeInput(OffsetTime startTime, OffsetTime endTime) {
+public record LockedTimeInput(LocalTime startTime, LocalTime endTime) {
 }

@@ -3,18 +3,15 @@ package br.com.ipet.ordering.presentation.schedule.appointment;
 import br.com.ipet.ordering.application.schedule.ScheduleInput;
 import br.com.ipet.ordering.application.schedule.appointment.management.AppointmentScheduleApplicationService;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleDetailOutput;
-import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleFilter;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleQueryService;
-import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleSummaryOutput;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -38,38 +35,38 @@ public class AppointmentScheduleController {
         var appointmentScheduleId = appointmentScheduleApplicationService.create(input);
 
         var url = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
+                .path("/{appointmentScheduleId}")
                 .buildAndExpand(appointmentScheduleId)
                 .toUri();
 
         return ResponseEntity.created(url).build();
     }
 
-    @PatchMapping("/{id}/name")
-    public void changeName(@PathVariable UUID id, String name) {
-        appointmentScheduleApplicationService.changeName(id, new CompanyId().value(), name);
+    @PutMapping("/{appointmentScheduleId}/name")
+    public void changeName(@PathVariable UUID appointmentScheduleId, @RequestBody String name) {
+        appointmentScheduleApplicationService.changeName(appointmentScheduleId, new CompanyId().value(), name);
     }
 
-    @PatchMapping("/{id}/locked-dates")
-    public void changeLockedDates(@PathVariable UUID id, @RequestBody List<LocalDate> lockedDates) {
-        appointmentScheduleApplicationService.changeLockedDates(id, new CompanyId().value(), lockedDates);
+    @PutMapping("/{appointmentScheduleId}/locked-dates")
+    public void changeLockedDates(@PathVariable UUID appointmentScheduleId, @RequestBody List<LocalDate> lockedDates) {
+        appointmentScheduleApplicationService.changeLockedDates(appointmentScheduleId, new CompanyId().value(), lockedDates);
     }
 
-    @GetMapping("/{id}")
-    public AppointmentScheduleDetailOutput findById(@PathVariable UUID id) {
-        return appointmentScheduleQueryService.findById(id);
+    @GetMapping("/{appointmentScheduleId}")
+    public AppointmentScheduleDetailOutput findById(@PathVariable UUID appointmentScheduleId) {
+        return appointmentScheduleQueryService.findById(appointmentScheduleId);
     }
 
-    @PatchMapping("/{id}/active")
+    @PostMapping("/{appointmentScheduleId}/activate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void active(@PathVariable UUID id) {
-        appointmentScheduleApplicationService.active(id, new CompanyId().value());
+    public void active(@PathVariable UUID appointmentScheduleId) {
+        appointmentScheduleApplicationService.activate(appointmentScheduleId, new CompanyId().value());
     }
 
-    @PatchMapping("/{id}/inactive")
+    @PostMapping("/{appointmentScheduleId}/deactivate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inactive(@PathVariable UUID id) {
-        appointmentScheduleApplicationService.inactive(id, new CompanyId().value());
+    public void inactive(@PathVariable UUID appointmentScheduleId) {
+        appointmentScheduleApplicationService.deactivate(appointmentScheduleId, new CompanyId().value());
     }
 
 }

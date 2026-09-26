@@ -139,15 +139,15 @@ public class AppointmentScheduleApplicationService {
         appointmentSchedules.add(appointmentSchedule);
     }
 
-    public void active(UUID scheduleId, UUID companyId) {
+    public void activate(UUID scheduleId, UUID companyId) {
         var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
-        appointmentSchedule.active(new CompanyId(companyId));
+        appointmentSchedule.activate(new CompanyId(companyId));
         appointmentSchedules.add(appointmentSchedule);
     }
 
-    public void inactive(UUID scheduleId, UUID companyId) {
+    public void deactivate(UUID scheduleId, UUID companyId) {
         var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
-        appointmentSchedule.inactive(new CompanyId(companyId));
+        appointmentSchedule.deactivate(new CompanyId(companyId));
         appointmentSchedules.add(appointmentSchedule);
     }
 

@@ -39,7 +39,7 @@ public class AppointmentSchedulePersistenceEntity extends AbstractSchedule {
     @Column(name = "date")
     private Set<LocalDate> lockedDates = new HashSet<>();
 
-    @OneToMany(mappedBy = "appointmentSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "appointmentSchedule", cascade = CascadeType.ALL)
     private Set<AppointmentWorkDayPersistenceEntity> workDays = new HashSet<>();
 
     public void setWorkDays(Set<AppointmentWorkDayPersistenceEntity> workDays) {

@@ -49,8 +49,8 @@ public class AppointmentScheduleProvider implements AppointmentSchedules {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean exists(CompanyId companyId) {
-        return repository.existsByCompanyId(companyId.value());
+    public boolean existsByCompany(CompanyId companyId) {
+        return repository.existsByCompany_Id(companyId.value());
     }
 
     private void insert(AppointmentSchedule appointmentSchedule) {

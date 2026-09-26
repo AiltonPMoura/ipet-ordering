@@ -29,16 +29,16 @@ public class WorkDayController {
         appointmentScheduleApplicationService.addWorkDay(appointmentScheduleId, new CompanyId().value(), input);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{workDayId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID appointmentScheduleId, @PathVariable UUID id) {
-        appointmentScheduleApplicationService.removeWorkDay(appointmentScheduleId, new CompanyId().value(), id);
+    public void delete(@PathVariable UUID appointmentScheduleId, @PathVariable UUID workDayId) {
+        appointmentScheduleApplicationService.removeWorkDay(appointmentScheduleId, new CompanyId().value(), workDayId);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{workDayId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable UUID appointmentScheduleId, @PathVariable UUID id, @RequestBody WorkDayInput input) {
-        appointmentScheduleApplicationService.updateWorkDay(appointmentScheduleId, new CompanyId().value(), id, input);
+    public void update(@PathVariable UUID appointmentScheduleId, @PathVariable UUID workDayId, @RequestBody WorkDayInput input) {
+        appointmentScheduleApplicationService.updateWorkDay(appointmentScheduleId, new CompanyId().value(), workDayId, input);
     }
 
 }
