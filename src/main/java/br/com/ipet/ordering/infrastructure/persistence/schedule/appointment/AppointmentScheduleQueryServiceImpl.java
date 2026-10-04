@@ -1,15 +1,12 @@
 package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
-import br.com.ipet.ordering.application.schedule.query.AppointmentScheduleDetailOutput;
-import br.com.ipet.ordering.application.schedule.query.AppointmentScheduleFilter;
-import br.com.ipet.ordering.application.schedule.query.AppointmentScheduleQueryService;
-import br.com.ipet.ordering.application.schedule.query.AppointmentScheduleSummaryOutput;
+import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleDetailOutput;
+import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleFilter;
+import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleQueryService;
+import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleSummaryOutput;
 import br.com.ipet.ordering.application.util.Mapper;
 import br.com.ipet.ordering.domain.model.schedule.AvailableDateTimes;
 import br.com.ipet.ordering.domain.model.schedule.ScheduNotFoundException;
-import br.com.ipet.ordering.infrastructure.persistence.entity.AppointmentSchedulePersistenceEntity;
-import br.com.ipet.ordering.infrastructure.persistence.entity.WorkingDayPersistenceEntity;
-import br.com.ipet.ordering.infrastructure.persistence.repository.AppointmentSchedulePersistenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +15,15 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,9 +35,9 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
     private final Mapper mapper;
 
     @Override
-    public AppointmentScheduleDetailOutput findById(UUID scheduleId) {
-        var dayTimeSchedule = repository.findById(scheduleId).orElseThrow(() -> new ScheduNotFoundException(""));
-        return mapper.convert(dayTimeSchedule, AppointmentScheduleDetailOutput.class);
+    public AppointmentScheduleDetailOutput findByCompany(UUID companyId) {
+        var appointmentSchedulePersistence = repository.findByCompany_Id(companyId).orElseThrow(() -> new ScheduNotFoundException(""));
+        return mapper.convert(appointmentSchedulePersistence, AppointmentScheduleDetailOutput.class);
     }
 
     @Override
@@ -45,23 +47,58 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
                         mapper.convert(appointmentSchedulePersistenceEntity, AppointmentScheduleSummaryOutput.class));
     }
 
-    @Override
-    public List<AvailableDateTimes> findAvailableDateTimes(UUID scheduleId) {
 
-        var dayTimeSchedule = repository.findById(scheduleId).orElseThrow(() -> new ScheduNotFoundException(""));
-        Set<DayOfWeek> workingDays = dayTimeSchedule.getWorkingDays().stream()
-                .map(WorkingDayPersistenceEntity::getDayOfWeek) // Chama o getter da sua propriedade
+    @Override
+    public AvailableDateTimes findAvailableDateTimes(UUID companyId) {
+        var appointmentSchedulePersistence = repository.findByCompany_Id(companyId)
+                .orElseThrow(() -> new ScheduNotFoundException(""));
+
+        var workDayPersistences = appointmentSchedulePersistence.getWorkDays();
+
+        Set<DayOfWeek> workingDays = workDayPersistences.stream()
+                .map(AppointmentWorkDayPersistenceEntity::getDayOfWeek)
                 .collect(Collectors.toSet());
 
-        LocalDate today = LocalDate.now(ZoneOffset.UTC);
+        // TODO: Usar appointmentSchedulePersistence.getCompany().getTimezone()
+        var zoneId = ZoneId.of("America/Sao_Paulo");
 
-        var avaliableDates = Stream.iterate(today, date -> date.plusDays(1))
-                .limit(15)
-                .filter(date -> workingDays.contains(date.getDayOfWeek()))
+        var today = LocalDate.now(zoneId);
+        var currentTime = LocalTime.now(zoneId);
+
+        var workDayHoje = workDayPersistences.stream()
+                .filter(workDay -> workDay.getDayOfWeek().equals(today.getDayOfWeek()))
+                .findFirst();
+
+        // Mock: Dias de Carnaval e dias Lotados
+        var quartaDeCinzas = today.plusDays(5);
+        // var quintaFeira = today.plusDays(6); // <-- Quinta agora está LIVRE!
+        var sextaFeira = today.plusDays(7);
+
+        // MOCK: Verifica se a data está 100% lotada (Apenas Quarta e Sexta)
+        Predicate<LocalDate> isFullyBooked = date -> date.equals(quartaDeCinzas) || date.equals(sextaFeira);
+
+        // 1. Capacidade de triagem HOJE (Sexta-feira 20h)
+        boolean canApproveToday = workDayHoje.isPresent()
+                && !appointmentSchedulePersistence.getLockedDates().contains(today)
+                && !isFullyBooked.test(today)
+                && currentTime.isBefore(workDayHoje.get().getEndTime());
+
+        // Como já é 20h, canApproveToday = false. Precisamos pular 1 dia útil REAL.
+        long workingDaysToSkip = canApproveToday ? 0 : 1;
+
+        // 2. A Janela Fixa processando a Tempestade Perfeita
+        var avaliableDates = Stream.iterate(today.plusDays(1), date -> date.plusDays(1))
+                .limit(15) // Olha 15 dias para frente
+                .filter(date -> workingDays.contains(date.getDayOfWeek())) // Elimina Finais de Semana
+                .filter(date -> !appointmentSchedulePersistence.getLockedDates().contains(date)) // Elimina Feriados (Carnaval)
+                .filter(date -> !isFullyBooked.test(date)) // NOVO: Elimina os dias lotados!
+                .skip(workingDaysToSkip) // Pula 1 dia útil real para a equipe respirar
                 .toList();
 
 
-        return List.of();
+        return avaliableDates.stream()
+                .map(date -> new AvailableDateTimes(date, null))
+                .toList();
     }
 
     private Specification<AppointmentSchedulePersistenceEntity> toSpecification(AppointmentScheduleFilter filter) {
