@@ -54,7 +54,7 @@ public class AppointmentScheduleController {
 
     @GetMapping("/{appointmentScheduleId}")
     public AppointmentScheduleDetailOutput findById(@PathVariable UUID appointmentScheduleId) {
-        return appointmentScheduleQueryService.findById(appointmentScheduleId);
+        return appointmentScheduleQueryService.findByCompany(appointmentScheduleId);
     }
 
     @PostMapping("/{appointmentScheduleId}/activate")

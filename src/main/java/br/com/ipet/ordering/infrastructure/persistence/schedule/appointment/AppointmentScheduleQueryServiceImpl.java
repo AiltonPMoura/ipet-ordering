@@ -6,6 +6,7 @@ import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentSc
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleSummaryOutput;
 import br.com.ipet.ordering.application.util.Mapper;
 import br.com.ipet.ordering.domain.model.schedule.AvailableDateTimes;
+import br.com.ipet.ordering.domain.model.schedule.AvailableDay;
 import br.com.ipet.ordering.domain.model.schedule.ScheduNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -50,55 +51,84 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
 
     @Override
     public AvailableDateTimes findAvailableDateTimes(UUID companyId) {
-        var appointmentSchedulePersistence = repository.findByCompany_Id(companyId)
+        var schedulePersistence = repository.findByCompany_Id(companyId)
                 .orElseThrow(() -> new ScheduNotFoundException(""));
 
-        var workDayPersistences = appointmentSchedulePersistence.getWorkDays();
+        var workDayPersistences = schedulePersistence.getWorkDays();
+
+        // TODO: Usar schedulePersistence.getCompany().getTimezone()
+        var zoneId = ZoneId.of("America/Sao_Paulo");
+        var today = LocalDate.now(zoneId);
+        var currentTime = LocalTime.now(zoneId);
 
         Set<DayOfWeek> workingDays = workDayPersistences.stream()
                 .map(AppointmentWorkDayPersistenceEntity::getDayOfWeek)
                 .collect(Collectors.toSet());
-
-        // TODO: Usar appointmentSchedulePersistence.getCompany().getTimezone()
-        var zoneId = ZoneId.of("America/Sao_Paulo");
-
-        var today = LocalDate.now(zoneId);
-        var currentTime = LocalTime.now(zoneId);
 
         var workDayHoje = workDayPersistences.stream()
                 .filter(workDay -> workDay.getDayOfWeek().equals(today.getDayOfWeek()))
                 .findFirst();
 
         // Mock: Dias de Carnaval e dias Lotados
-        var quartaDeCinzas = today.plusDays(5);
+        //var quartaDeCinzas = today.plusDays(5);
         // var quintaFeira = today.plusDays(6); // <-- Quinta agora está LIVRE!
-        var sextaFeira = today.plusDays(7);
-
+        //var sextaFeira = today.plusDays(7);
         // MOCK: Verifica se a data está 100% lotada (Apenas Quarta e Sexta)
-        Predicate<LocalDate> isFullyBooked = date -> date.equals(quartaDeCinzas) || date.equals(sextaFeira);
+        //Predicate<LocalDate> isFullyBooked = date -> date.equals(quartaDeCinzas) || date.equals(sextaFeira);
 
-        // 1. Capacidade de triagem HOJE (Sexta-feira 20h)
         boolean canApproveToday = workDayHoje.isPresent()
-                && !appointmentSchedulePersistence.getLockedDates().contains(today)
-                && !isFullyBooked.test(today)
-                && currentTime.isBefore(workDayHoje.get().getEndTime());
+                && currentTime.isBefore(workDayHoje.get().getEndTime())
+                && !schedulePersistence.getLockedDates().contains(today);
+                //&& !isFullyBooked.test(today);
 
-        // Como já é 20h, canApproveToday = false. Precisamos pular 1 dia útil REAL.
         long workingDaysToSkip = canApproveToday ? 0 : 1;
 
-        // 2. A Janela Fixa processando a Tempestade Perfeita
-        var avaliableDates = Stream.iterate(today.plusDays(1), date -> date.plusDays(1))
-                .limit(15) // Olha 15 dias para frente
-                .filter(date -> workingDays.contains(date.getDayOfWeek())) // Elimina Finais de Semana
-                .filter(date -> !appointmentSchedulePersistence.getLockedDates().contains(date)) // Elimina Feriados (Carnaval)
-                .filter(date -> !isFullyBooked.test(date)) // NOVO: Elimina os dias lotados!
-                .skip(workingDaysToSkip) // Pula 1 dia útil real para a equipe respirar
+        var availableDates = Stream.iterate(today.plusDays(1), date -> date.plusDays(1))
+                .limit(15)
+                .filter(date -> workingDays.contains(date.getDayOfWeek()))
+                .filter(date -> !schedulePersistence.getLockedDates().contains(date))
+                //.filter(date -> !isFullyBooked.test(date))// <-- Mock: Verifica se a data está 100% lotada (Apenas Quarta e Sexta)
+                .skip(workingDaysToSkip)
                 .toList();
 
+        // 1. Dicionário para buscar o horário de trabalho de forma rápida (O(1))
+        var workDayMap = workDayPersistences.stream()
+                .collect(Collectors.toMap(
+                        AppointmentWorkDayPersistenceEntity::getDayOfWeek,
+                        workDay -> workDay
+                ));
 
-        return avaliableDates.stream()
-                .map(date -> new AvailableDateTimes(date, null))
-                .toList();
+        // 2. Transforma cada LocalDate em um AvailableDay com a lista de horários
+        var availableDays = availableDates.stream().map(date -> {
+
+            var workDay = workDayMap.get(date.getDayOfWeek());
+
+            var times = Stream.iterate(workDay.getStartTime(), time -> time.plusMinutes(30))
+                    .takeWhile(time -> time.plusMinutes(30).isBefore(workDay.getEndTime())
+                            || time.plusMinutes(30).equals(workDay.getEndTime()))
+
+                    // NOVO: Filtra os horários que caem dentro de alguma pausa (almoço)
+                    .filter(time -> {
+                        LocalTime slotStart = time;
+                        LocalTime slotEnd = time.plusMinutes(30);
+
+                        // Supondo que workDay.getBreaks() retorne os intervalos de pausa do dia
+                        boolean isDuringBreak = workDay.getLockedTimes().stream().anyMatch(pause ->
+                                // O bloco conflita se começar ANTES da pausa terminar
+                                // E terminar DEPOIS da pausa começar
+                                slotStart.isBefore(pause.getEndTime()) && slotEnd.isAfter(pause.getStartTime())
+                        );
+
+                        // Mantém na lista apenas se NÃO estiver no horário de pausa
+                        return !isDuringBreak;
+                    })
+                    .toList();
+
+            return new AvailableDay(date, times);
+
+        }).toList();
+
+        return new AvailableDateTimes(availableDates.getFirst(), availableDates.getLast(), availableDays);
     }
 
     private Specification<AppointmentSchedulePersistenceEntity> toSpecification(AppointmentScheduleFilter filter) {
