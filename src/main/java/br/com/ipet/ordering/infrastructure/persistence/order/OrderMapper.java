@@ -3,7 +3,6 @@ package br.com.ipet.ordering.infrastructure.persistence.order;
 import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Company;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Customer;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
@@ -90,14 +89,13 @@ public class OrderMapper {
     }
 
     private Billing toBilling(BillingEmbeddable billingEmbeddable) {
-        return new Billing(Customer.builder()
+        return Billing.builder()
                 .fullName(new FullName(billingEmbeddable.getFirstName(), billingEmbeddable.getLastName()))
                 .document(DocumentFactory.from(billingEmbeddable.getDocument()))
                 .phone(new Phone(billingEmbeddable.getPhone()))
                 .email(new Email(billingEmbeddable.getEmail()))
                 .address(this.toAddress(billingEmbeddable.getAddress()))
-                .build()
-        );
+                .build();
     }
 
     private DeliveryCompany toDeliveryCompany(DeliveryCompanyEmbeddable deliveryCompany) {

@@ -16,6 +16,7 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -41,6 +42,7 @@ public class AppointmentBooking
         extends Booking
         implements AggregateRoot<BookingId> {
 
+    private ScheduleId scheduleId;
     private OffsetDateTime scheduledStart;
     private OffsetDateTime scheduledEnd;
     private PetTransport transport;
@@ -243,6 +245,15 @@ public class AppointmentBooking
             throw AppointmentBookingCannotBeRequestedException.noPetTransport(this.id().toString());
     }
 
+    public ScheduleId scheduleId() {
+        return scheduleId;
+    }
+
+    private void setScheduleId(ScheduleId scheduleId) {
+        FieldValidator.requiresNonNull("scheduleId", scheduleId);
+        this.scheduleId = scheduleId;
+    }
+
     public OffsetDateTime scheduledStart() {
         return scheduledStart;
     }
@@ -307,4 +318,5 @@ public class AppointmentBooking
     private void setReturnedAt(OffsetDateTime returnedAt) {
         this.returnedAt = returnedAt;
     }
+
 }

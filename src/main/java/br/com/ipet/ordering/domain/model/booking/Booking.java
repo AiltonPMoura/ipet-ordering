@@ -1,7 +1,6 @@
 package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
-import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;

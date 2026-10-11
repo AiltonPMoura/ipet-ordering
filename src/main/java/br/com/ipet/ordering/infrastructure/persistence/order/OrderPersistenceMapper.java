@@ -90,12 +90,12 @@ public class OrderPersistenceMapper {
 
     private BillingEmbeddable toBillingEmbeddable(Billing billing) {
         return BillingEmbeddable.builder()
-                .firstName(billing.customer().fullName().firstName())
-                .lastName(billing.customer().fullName().lastName())
-                .document(billing.customer().document().value())
-                .phone(billing.customer().phone().value())
-                .email(billing.customer().email().value())
-                .address(this.toAddressEmbeddable(billing.customer().address()))
+                .firstName(billing.fullName().firstName())
+                .lastName(billing.fullName().lastName())
+                .document(billing.document().value())
+                .phone(billing.phone().value())
+                .email(billing.email().value())
+                .address(this.toAddressEmbeddable(billing.address()))
                 .build();
     }
 

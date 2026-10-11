@@ -27,7 +27,7 @@ public interface AppointmentBookingPersistenceRepository
                 'PENDING_APPROVAL', 'SCHEDULED', 'PICKING_UP',
                 'IN_PROGRESS', 'READY', 'DROPPING_OFF', 'RETURNED', 'COMPLETED'
             )
-            OR (appointment.status = 'REQUESTED' AND appointment.scheduledStart >= :gracePeriod)
+            OR (booking.status = 'REQUESTED' AND booking.scheduledStart >= :gracePeriod)
         )
         """)
     List<AppointmentBookingBlockOutput> findBlockedBookings(
