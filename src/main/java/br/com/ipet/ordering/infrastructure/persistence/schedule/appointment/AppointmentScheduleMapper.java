@@ -28,7 +28,7 @@ public class AppointmentScheduleMapper {
                 .serviceCategory(ServiceCategory.valueOf(appointmentSchedulePersistence.getServiceCategory()))
                 .status(ScheduleStatus.valueOf(appointmentSchedulePersistence.getStatus()))
                 .workDays(this.toWorkDays(appointmentSchedulePersistence.getWorkDays()))
-                .lockedDates(this.toLockedDates(appointmentSchedulePersistence.getLockedDates()))
+                .lockedDates(this.toLockedDates(appointmentSchedulePersistence.getBlockedDates()))
                 .createdAt(appointmentSchedulePersistence.getCreatedAt())
                 .build();
     }
@@ -40,7 +40,7 @@ public class AppointmentScheduleMapper {
                         .scheduleId(new ScheduleId(workDayPersistence.getAppointmentScheduleId()))
                         .dayOfWeek(workDayPersistence.getDayOfWeek())
                         .workingHours(new WorkingHours(workDayPersistence.getStartTime(), workDayPersistence.getEndTime()))
-                        .lockedTimes(this.toLockedTimes(workDayPersistence.getLockedTimes()))
+                        .lockedTimes(this.toLockedTimes(workDayPersistence.getBlockedTimeSlots()))
                         .build())
                 .collect(Collectors.toSet());
     }
@@ -49,7 +49,7 @@ public class AppointmentScheduleMapper {
         return lockedDates.stream().map(LockedDate::new).collect(Collectors.toSet());
     }
 
-    private Set<LockedTime> toLockedTimes(Set<LockedTimeEmbeddable> lockedTimesEmbeddable) {
+    private Set<LockedTime> toLockedTimes(Set<BlockedTimeSlotsEmbeddable> lockedTimesEmbeddable) {
         return lockedTimesEmbeddable.stream()
                 .map(lockedTimeEmbeddable ->
                         new LockedTime(lockedTimeEmbeddable.getStartTime(), lockedTimeEmbeddable.getEndTime()))

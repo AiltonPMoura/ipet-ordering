@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -21,7 +21,7 @@ import static br.com.ipet.ordering.infrastructure.persistence.customer.CustomerP
 import static br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceSpecification.firstNameLike;
 import static br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceSpecification.lastNameLike;
 
-@Component
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CustomerQueryServiceImpl implements CustomerQueryService {

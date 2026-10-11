@@ -31,7 +31,7 @@ public class AppointmentSchedulePersistenceMapper {
         appointmentSchedulePersistence.setStatus(appointmentSchedule.status().name());
         appointmentSchedulePersistence.setServiceCategory(appointmentSchedule.serviceCategory().name());
         appointmentSchedulePersistence.setWorkDays(this.mergeWorkDays(appointmentSchedulePersistence, appointmentSchedule));
-        appointmentSchedulePersistence.setLockedDates(this.mergeLockedDates(appointmentSchedulePersistence, appointmentSchedule));
+        appointmentSchedulePersistence.setBlockedDates(this.mergeLockedDates(appointmentSchedulePersistence, appointmentSchedule));
         return appointmentSchedulePersistence;
     }
 
@@ -62,13 +62,13 @@ public class AppointmentSchedulePersistenceMapper {
         workDayPersistence.setDayOfWeek(appointmentWorkDay.dayOfWeek());
         workDayPersistence.setStartTime(appointmentWorkDay.workingHours().startTime());
         workDayPersistence.setEndTime(appointmentWorkDay.workingHours().endTime());
-        workDayPersistence.setLockedTimes(this.mergeLockedTimes(workDayPersistence, appointmentWorkDay));
+        workDayPersistence.setBlockedTimeSlots(this.mergeLockedTimes(workDayPersistence, appointmentWorkDay));
         return workDayPersistence;
     }
 
     private Set<LocalDate> mergeLockedDates(AppointmentSchedulePersistenceEntity appointmentSchedulePersistence,
                                             AppointmentSchedule appointmentSchedule) {
-        var persistenceDates = appointmentSchedulePersistence.getLockedDates();
+        var persistenceDates = appointmentSchedulePersistence.getBlockedDates();
 
         persistenceDates.clear();
 
@@ -79,10 +79,10 @@ public class AppointmentSchedulePersistenceMapper {
         return persistenceDates;
     }
 
-    private Set<LockedTimeEmbeddable> mergeLockedTimes(AppointmentWorkDayPersistenceEntity workDayPersistence,
-                                                       AppointmentWorkDay appointmentWorkDay) {
+    private Set<BlockedTimeSlotsEmbeddable> mergeLockedTimes(AppointmentWorkDayPersistenceEntity workDayPersistence,
+                                                             AppointmentWorkDay appointmentWorkDay) {
 
-        var persistenceLockedTimes = workDayPersistence.getLockedTimes();
+        var persistenceLockedTimes = workDayPersistence.getBlockedTimeSlots();
 
         persistenceLockedTimes.clear();
 
@@ -93,8 +93,8 @@ public class AppointmentSchedulePersistenceMapper {
         return persistenceLockedTimes;
     }
 
-    private LockedTimeEmbeddable toLockedTimeEmbeddable(LockedTime lockedTime) {
-        return new LockedTimeEmbeddable(lockedTime.startTime(), lockedTime.endTime());
+    private BlockedTimeSlotsEmbeddable toLockedTimeEmbeddable(LockedTime lockedTime) {
+        return new BlockedTimeSlotsEmbeddable(lockedTime.startTime(), lockedTime.endTime());
     }
 
 }
