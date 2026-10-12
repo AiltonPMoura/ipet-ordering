@@ -15,9 +15,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.UUID;
 
 @Getter
@@ -25,10 +27,10 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @ToString(of = "id")
 @MappedSuperclass
-public class AbstractBooking {
+public class AbstractBooking extends AbstractAggregateRoot<AbstractBooking> {
 
     @Id
     @EqualsAndHashCode.Include
@@ -36,19 +38,19 @@ public class AbstractBooking {
 
     @JoinColumn
     @ManyToOne(optional = false)
-    private CompanyPersistenceEntity company;
+    private CustomerPersistenceEntity customer;
 
     @JoinColumn
     @ManyToOne(optional = false)
-    private CustomerPersistenceEntity customer;
+    private CompanyPersistenceEntity company;
+
+    private Integer totalPets;
+    private BigDecimal totalAmount;
+    private String paymentMethod;
+    private String paymentStatus;
 
     @Embedded
     private BillingEmbeddable billing;
-
-    private String paymentMethod;
-    private String paymentStatus;
-    private Integer totalPets;
-    private BigDecimal totalAmount;
 
     private OffsetDateTime requestedAt;
     private OffsetDateTime paidAt;
@@ -58,5 +60,22 @@ public class AbstractBooking {
     private OffsetDateTime refundedAt;
     private String cancelationReason;
 
+    public UUID getCustomerId() {
+        return this.customer.getId();
+    }
+
+    public UUID getCompanyId() {
+        return this.company.getId();
+    }
+
+    public Collection<Object> getEvents() {
+        return super.domainEvents();
+    }
+
+    public void addEvents(Collection<Object> events) {
+        if (events != null)
+            for (Object event : events)
+                this.registerEvent(event);
+    }
 
 }

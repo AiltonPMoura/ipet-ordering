@@ -29,52 +29,61 @@ public class AppointmentBookingPersistenceMapper {
         return this.merge(new AppointmentBookingPersistenceEntity(), appointmentBooking);
     }
 
-    public AppointmentBookingPersistenceEntity merge(AppointmentBookingPersistenceEntity appointmentBookingPersistence, AppointmentBooking appointmentBooking) {
+    public AppointmentBookingPersistenceEntity merge(AppointmentBookingPersistenceEntity appointmentBookingPersistence,
+                                                     AppointmentBooking appointmentBooking) {
         appointmentBookingPersistence.setId(appointmentBooking.id().value());
-        appointmentBookingPersistence.setCustomer(customerPersistenceRepository.getReferenceById(appointmentBooking.customerId().value()));
-        appointmentBookingPersistence.setCompany(companyPersistenceRepository.getReferenceById(appointmentBooking.companyId().value()));
         appointmentBookingPersistence.setSchedule(schedulePersistenceRepository.getReferenceById(appointmentBooking.scheduleId().value()));
+        appointmentBookingPersistence.setCompany(companyPersistenceRepository.getReferenceById(appointmentBooking.companyId().value()));
+        appointmentBookingPersistence.setCustomer(customerPersistenceRepository.getReferenceById(appointmentBooking.customerId().value()));
+        appointmentBookingPersistence.setScheduledStart(appointmentBooking.scheduledStart());
+        appointmentBookingPersistence.setScheduledEnd(appointmentBooking.scheduledEnd());
         appointmentBookingPersistence.setTotalPets(appointmentBooking.totalPets().value());
         appointmentBookingPersistence.setTotalAmount(appointmentBooking.totalAmount().value());
+        appointmentBookingPersistence.setStatus(appointmentBooking.appointmentStatus().name());
         appointmentBookingPersistence.setPaymentMethod(appointmentBooking.paymentMethod().name());
         appointmentBookingPersistence.setPaymentStatus(appointmentBooking.paymentStatus().name());
         appointmentBookingPersistence.setBilling(this.toBillingEmbeddable(appointmentBooking.billing()));
-        appointmentBookingPersistence.setRequestedAt(appointmentBooking.requestedAt());
-        appointmentBookingPersistence.setPaidAt(appointmentBooking.paidAt());
-        appointmentBookingPersistence.setScheduledAt(appointmentBooking.scheduledAt());
-        appointmentBookingPersistence.setCompletedAt(appointmentBooking.completedAt());
-        appointmentBookingPersistence.setCanceledAt(appointmentBooking.canceledAt());
-        appointmentBookingPersistence.setRefundedAt(appointmentBooking.refundedAt());
-        appointmentBookingPersistence.setCancelationReason(appointmentBooking.cancelationReason());
-        appointmentBookingPersistence.setScheduledStart(appointmentBooking.scheduledStart());
-        appointmentBookingPersistence.setScheduledEnd(appointmentBooking.scheduledEnd());
-        appointmentBookingPersistence.setStatus(appointmentBooking.appointmentStatus().name());
         appointmentBookingPersistence.setPetTransport(this.toPetTransportEmbeddable(appointmentBooking));
-        appointmentBookingPersistence.setInProgressAt(appointmentBooking.inProgressAt());
+        appointmentBookingPersistence.setPetAppointments(this.mergePetAppointments(appointmentBookingPersistence, appointmentBooking));
+        appointmentBookingPersistence.setRequestedAt(appointmentBooking.requestedAt());
+        appointmentBookingPersistence.setScheduledAt(appointmentBooking.scheduledAt());
+        appointmentBookingPersistence.setPaidAt(appointmentBooking.paidAt());
         appointmentBookingPersistence.setReadyAt(appointmentBooking.readyAt());
+        appointmentBookingPersistence.setInProgressAt(appointmentBooking.inProgressAt());
         appointmentBookingPersistence.setReturnedAt(appointmentBooking.returnedAt());
-        appointmentBookingPersistence.setPets(this.mergePets(appointmentBookingPersistence, appointmentBooking));
+        appointmentBookingPersistence.setCompletedAt(appointmentBooking.completedAt());
+        appointmentBookingPersistence.setRefundedAt(appointmentBooking.refundedAt());
+        appointmentBookingPersistence.setCanceledAt(appointmentBooking.canceledAt());
+        appointmentBookingPersistence.setCancelationReason(appointmentBooking.cancelationReason());
         return appointmentBookingPersistence;
     }
 
-    private Set<PetAppointmentPersistenceEntity> mergePets(AppointmentBookingPersistenceEntity appointmentBookingPersistence, AppointmentBooking appointmentBooking) {
-        var persistencePets = appointmentBookingPersistence.getPets();
-        var persistencePetsById = persistencePets.stream()
+    private Set<PetAppointmentPersistenceEntity> mergePetAppointments(AppointmentBookingPersistenceEntity appointmentBookingPersistence,
+                                                                      AppointmentBooking appointmentBooking) {
+        var petAppointmentsPersistence = appointmentBookingPersistence.getPetAppointments();
+        var petAppointments = appointmentBooking.petAppointments();
+
+        if (petAppointmentsPersistence.isEmpty())
+            return petAppointments.stream().map(this::fromDomainPetAppointment).collect(Collectors.toSet());
+
+        var petAppointmentsPersistenceMap = petAppointmentsPersistence.stream()
                 .collect(Collectors.toMap(PetAppointmentPersistenceEntity::getId, item -> item));
 
-        return appointmentBooking.appointments().stream()
-                .map(petAppointment -> {
-                    var petPersistence = persistencePetsById.getOrDefault(petAppointment.id().value(), new PetAppointmentPersistenceEntity());
-                    return this.mergePet(petPersistence, petAppointment, appointmentBookingPersistence);
-                }).collect(Collectors.toSet());
+        return petAppointments.stream().map(petAppointment -> {
+            var petAppointmentPersistence = petAppointmentsPersistenceMap.getOrDefault(petAppointment.id().value(), new PetAppointmentPersistenceEntity());
+            return this.mergePet(petAppointmentPersistence, petAppointment);
+        }).collect(Collectors.toSet());
     }
 
-    private PetAppointmentPersistenceEntity mergePet(PetAppointmentPersistenceEntity petPersistence, PetAppointment petAppointment, AppointmentBookingPersistenceEntity appointmentBookingPersistence) {
-        petPersistence.setId(petAppointment.id().value());
-        petPersistence.setAppointmentBooking(appointmentBookingPersistence);
-        petPersistence.setPet(this.toPetEmbeddable(petAppointment.pet()));
-        petPersistence.setService(this.toServiceEmbeddable(petAppointment.service()));
-        return petPersistence;
+    private PetAppointmentPersistenceEntity fromDomainPetAppointment(PetAppointment petAppointment) {
+        return this.mergePet(new PetAppointmentPersistenceEntity(), petAppointment);
+    }
+
+    private PetAppointmentPersistenceEntity mergePet(PetAppointmentPersistenceEntity petAppointmentPersistence, PetAppointment petAppointment) {
+        petAppointmentPersistence.setId(petAppointment.id().value());
+        petAppointmentPersistence.setPet(this.toPetEmbeddable(petAppointment.pet()));
+        petAppointmentPersistence.setService(this.toServiceEmbeddable(petAppointment.service()));
+        return petAppointmentPersistence;
     }
 
     private PetEmbeddable toPetEmbeddable(Pet pet) {

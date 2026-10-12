@@ -47,7 +47,7 @@ public class AppointmentBooking
     private OffsetDateTime scheduledEnd;
     private PetTransport transport;
     private AppointmentBookingStatus appointmentStatus;
-    private Set<PetAppointment> appointments;
+    private Set<PetAppointment> petAppointments;
     private OffsetDateTime inProgressAt;
     private OffsetDateTime readyAt;
     private OffsetDateTime returnedAt;
@@ -67,7 +67,7 @@ public class AppointmentBooking
                                Quantity totalItems, Money totalAmount,
                                BookingPaymentMethod paymentMethod, BookingPaymentStatus paymentStatus, Billing billing,
                                OffsetDateTime scheduledStart, OffsetDateTime scheduledEnd,
-                               PetTransport transport, AppointmentBookingStatus appointmentStatus, Set<PetAppointment> appointments,
+                               PetTransport transport, AppointmentBookingStatus appointmentStatus, Set<PetAppointment> petAppointments,
                                OffsetDateTime requestedAt,
                                OffsetDateTime paidAt, OffsetDateTime scheduledAt,
                                OffsetDateTime completedAt, OffsetDateTime cancelAt, OffsetDateTime refundedAt,
@@ -78,7 +78,7 @@ public class AppointmentBooking
         this.setScheduledEnd(scheduledEnd);
         this.setTransport(transport);
         this.setAppointmentStatus(appointmentStatus);
-        this.setAppointments(appointments);
+        this.setPetAppointments(petAppointments);
         this.setInProgressAt(inProgressAt);
         this.setReadyAt(readyAt);
         this.setReturnedAt(returnedAt);
@@ -88,7 +88,7 @@ public class AppointmentBooking
         this.verifyIfChangeable();
         this.verifyIfServiceSupportsPetSize(pet, appointmentService);
         var item = PetAppointment.create(this.id(), pet, appointmentService);
-        this.appointments.add(item);
+        this.petAppointments.add(item);
         this.recalculateTotals();
         this.recalculateSchedule();
     }
@@ -96,7 +96,7 @@ public class AppointmentBooking
     public void removePetAppointment(PetAppointmentId petAppointmentId) {
         this.verifyIfChangeable();
         var petAppointment = this.findPetAppointmentById(petAppointmentId);
-        this.appointments.remove(petAppointment);
+        this.petAppointments.remove(petAppointment);
         this.recalculateTotals();
         this.recalculateSchedule();
     }
@@ -197,28 +197,28 @@ public class AppointmentBooking
     }
 
     private void recalculateTotals() {
-        var totalPetAppointmentTransportAmount = this.appointments.stream()
-                .map(item -> item.service().price())
+        var totalPetAppointmentTransportAmount = this.petAppointments.stream()
+                .map(petAppointment -> petAppointment.service().price())
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .add(this.transport.cost().value());
 
         this.setTotalAmount(new Money(totalPetAppointmentTransportAmount));
-        this.setTotalPets(new Quantity(this.appointments.size()));
+        this.setTotalPets(new Quantity(this.petAppointments.size()));
     }
 
     private void recalculateSchedule() {
-        var totalDuration = this.appointments.stream()
+        var totalDuration = this.petAppointments.stream()
                 .mapToLong(item -> item.service().duration())
                 .sum();
 
         this.setScheduledEnd(this.scheduledStart().plusMinutes(totalDuration));
     }
 
-    private PetAppointment findPetAppointmentById(PetAppointmentId appointmentItemId) {
-        return this.appointments.stream()
-                .filter(appointmentBookingItem -> appointmentBookingItem.id().equals(appointmentItemId))
+    private PetAppointment findPetAppointmentById(PetAppointmentId petAppointmentId) {
+        return this.petAppointments.stream()
+                .filter(petAppointment -> petAppointment.id().equals(petAppointmentId))
                 .findFirst()
-                .orElseThrow(() -> new PetAppointmentNotFoundException(this.id().value().toString(), appointmentItemId.toString()));
+                .orElseThrow(() -> new PetAppointmentNotFoundException(this.id().value().toString(), petAppointmentId.toString()));
     }
 
     private void changeStatus(AppointmentBookingStatus newStatus) {
@@ -232,7 +232,7 @@ public class AppointmentBooking
         //this.verifyIfSchedulingBelongsToTheCustomer(customerId);
         //this.verifySchedulingAssociatedWithCompany(companyId);
 
-        if (this.appointments.isEmpty())
+        if (this.petAppointments.isEmpty())
             throw AppointmentBookingCannotBeRequestedException.noAppointments(this.id().toString());
 
         if (this.paymentMethod() == null)
@@ -287,12 +287,12 @@ public class AppointmentBooking
         this.appointmentStatus = appointmentStatus;
     }
 
-    public Set<PetAppointment> appointments() {
-        return appointments;
+    public Set<PetAppointment> petAppointments() {
+        return petAppointments;
     }
 
-    private void setAppointments(Set<PetAppointment> appointments) {
-        this.appointments = appointments;
+    private void setPetAppointments(Set<PetAppointment> petAppointments) {
+        this.petAppointments = petAppointments;
     }
 
     public OffsetDateTime inProgressAt() {

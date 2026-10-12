@@ -15,9 +15,9 @@ import java.util.UUID;
 @Embeddable
 public class PetEmbeddable {
 
-    private UUID id;
+    private UUID petId;
     private String name;
-    private String type;
+    private String petType;
     private String breed;
     private String gender;
     private String size;
