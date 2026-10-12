@@ -12,7 +12,8 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.order.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -30,7 +31,7 @@ import static br.com.ipet.ordering.domain.model.booking.stay.StayBookingStatus.R
 import static br.com.ipet.ordering.domain.model.booking.stay.StayBookingStatus.REQUESTED;
 import static br.com.ipet.ordering.domain.model.booking.stay.StayBookingStatus.SCHEDULED;
 
-public class StayBooking extends Booking
+public final class StayBooking extends Booking
         implements AggregateRoot<BookingId> {
 
     private OffsetDateTime scheduledCheckIn;
@@ -40,28 +41,28 @@ public class StayBooking extends Booking
     private OffsetDateTime checkInAt;
     private OffsetDateTime checkOutAt;
 
-    static StayBooking create(CustomerId customerId, CompanyId companyId) {
-        return new StayBooking(new BookingId(), customerId, companyId,
+    static StayBooking create(CustomerId customerId, CompanyId companyId, ScheduleId scheduleId) {
+        return new StayBooking(new BookingId(), customerId, companyId, scheduleId,
                 Quantity.ZERO, Money.ZERO, null, null,
                 null, null,
                 DRAFT, Set.of(),
                 OffsetDateTime.now(ZoneOffset.UTC), null, null,
                 null, null, null, null,
-                null, null
+                null, null, null
         );
     }
 
     @Builder(builderClassName = "ExistingAppointmentBookingBuilder", builderMethodName = "existing")
-    private StayBooking(BookingId id, CustomerId customerId, CompanyId companyId,
-                         Quantity totalItems, Money totalAmount, PaymentMethod paymentMethod, Billing billing,
-                         OffsetDateTime scheduledCheckIn, OffsetDateTime scheduledCheckOut,
-                         StayBookingStatus status, Set<PetStay> stays,
-                         OffsetDateTime createdAt, OffsetDateTime requestedAt,
-                         OffsetDateTime paidAt, OffsetDateTime scheduledAt,
-                         OffsetDateTime completedAt, OffsetDateTime cancelAt, OffsetDateTime refundedAt,
-                         OffsetDateTime checkInAt, OffsetDateTime checkOutAt) {
-        super(id, customerId, companyId, totalItems, totalAmount, paymentMethod, billing,
-                createdAt, requestedAt, paidAt, scheduledAt, completedAt, cancelAt, refundedAt);
+    private StayBooking(BookingId id, CustomerId customerId, CompanyId companyId, ScheduleId scheduleId,
+                        Quantity totalItems, Money totalAmount, PaymentMethod paymentMethod, Billing billing,
+                        OffsetDateTime scheduledCheckIn, OffsetDateTime scheduledCheckOut,
+                        StayBookingStatus status, Set<PetStay> stays,
+                        OffsetDateTime createdAt, OffsetDateTime requestedAt,
+                        OffsetDateTime paidAt, OffsetDateTime scheduledAt,
+                        OffsetDateTime completedAt, OffsetDateTime cancelAt, OffsetDateTime refundedAt,
+                        OffsetDateTime checkInAt, OffsetDateTime checkOutAt, String cancelationReason) {
+        super(id, customerId, companyId, scheduleId, totalItems, totalAmount, null, null, billing,
+                requestedAt, paidAt, scheduledAt, completedAt, cancelAt, refundedAt, cancelationReason);
         this.setScheduledCheckIn(scheduledCheckIn);
         this.setScheduledCheckOut(scheduledCheckOut);
         this.setStatus(status);

@@ -10,18 +10,18 @@ import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
 public class PetAppointment {
     private PetAppointmentId id;
-    private BookingId bookingId;
+    private BookingId appointmentBookingId;
     private Pet pet;
     private AppointmentService service;
 
-    static PetAppointment create(BookingId bookingId, Pet pet, AppointmentService service) {
-        return new PetAppointment(new PetAppointmentId(), bookingId, pet, service);
+    static PetAppointment create(BookingId appointmentBookingId, Pet pet, AppointmentService service) {
+        return new PetAppointment(new PetAppointmentId(), appointmentBookingId, pet, service);
     }
 
     @Builder(builderClassName = "ExistingPetAppointmentBuilder", builderMethodName = "existing")
-    private PetAppointment(PetAppointmentId id, BookingId bookingId, Pet pet, AppointmentService service) {
+    private PetAppointment(PetAppointmentId id, BookingId appointmentBookingId, Pet pet, AppointmentService service) {
         this.setId(id);
-        this.setBookingId(bookingId);
+        this.setAppointmentBookingId(appointmentBookingId);
         this.setPet(pet);
         this.setService(service);
     }
@@ -43,12 +43,12 @@ public class PetAppointment {
     }
 
     public BookingId bookingId() {
-        return bookingId;
+        return appointmentBookingId;
     }
 
-    private void setBookingId(BookingId bookingId) {
-        requiresNonNull("booking id", bookingId);
-        this.bookingId = bookingId;
+    private void setAppointmentBookingId(BookingId appointmentBookingId) {
+        requiresNonNull("booking id", appointmentBookingId);
+        this.appointmentBookingId = appointmentBookingId;
     }
 
     public AppointmentService service() {

@@ -6,8 +6,8 @@ import br.com.ipet.ordering.domain.model.booking.AppointmentBookingDoesNotSuppor
 import br.com.ipet.ordering.domain.model.booking.AppointmentBookingIsNotDraftToChangeException;
 import br.com.ipet.ordering.domain.model.booking.Booking;
 import br.com.ipet.ordering.domain.model.booking.BookingId;
-import br.com.ipet.ordering.domain.model.booking.BookingPaymentMethod;
-import br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus;
+import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.PaymentStatus;
 import br.com.ipet.ordering.domain.model.booking.Pet;
 import br.com.ipet.ordering.domain.model.booking.PetAppointmentNotFoundException;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
@@ -35,14 +35,13 @@ import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentB
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.RETURNED;
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.SCHEDULED;
 
-import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.PAID;
-import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.REFUNDED;
+import static br.com.ipet.ordering.domain.model.commons.PaymentStatus.PAID;
+import static br.com.ipet.ordering.domain.model.commons.PaymentStatus.REFUNDED;
 
-public class AppointmentBooking
+public final class AppointmentBooking
         extends Booking
         implements AggregateRoot<BookingId> {
 
-    private ScheduleId scheduleId;
     private OffsetDateTime scheduledStart;
     private OffsetDateTime scheduledEnd;
     private PetTransport transport;
@@ -52,28 +51,28 @@ public class AppointmentBooking
     private OffsetDateTime readyAt;
     private OffsetDateTime returnedAt;
 
-    static AppointmentBooking create(CustomerId customerId, CompanyId companyId) {
-        return new AppointmentBooking(new BookingId(), customerId, companyId,
+    static AppointmentBooking create(CustomerId customerId, CompanyId companyId, ScheduleId scheduleId) {
+        return new AppointmentBooking(new BookingId(), customerId, companyId, scheduleId,
                 Quantity.ZERO, Money.ZERO, null, null, null,
                 null, null,
                 null, AppointmentBookingStatus.DRAFT, Set.of(), null, null,
                 null, null, null, null,
-                null, null, null
+                null, null, null, null
         );
     }
 
     @Builder(builderClassName = "ExistingAppointmentBookingBuilder", builderMethodName = "existing")
-    private AppointmentBooking(BookingId id, CustomerId customerId, CompanyId companyId,
-                               Quantity totalItems, Money totalAmount,
-                               BookingPaymentMethod paymentMethod, BookingPaymentStatus paymentStatus, Billing billing,
+    private AppointmentBooking(BookingId id, CustomerId customerId, CompanyId companyId, ScheduleId scheduleId,
+                               Quantity totalPets, Money totalAmount,
+                               PaymentMethod paymentMethod, PaymentStatus paymentStatus, Billing billing,
                                OffsetDateTime scheduledStart, OffsetDateTime scheduledEnd,
                                PetTransport transport, AppointmentBookingStatus appointmentStatus, Set<PetAppointment> petAppointments,
                                OffsetDateTime requestedAt,
                                OffsetDateTime paidAt, OffsetDateTime scheduledAt,
                                OffsetDateTime completedAt, OffsetDateTime cancelAt, OffsetDateTime refundedAt,
-                               OffsetDateTime inProgressAt, OffsetDateTime readyAt, OffsetDateTime returnedAt) {
-        super(id, customerId, companyId, totalItems, totalAmount, paymentMethod, paymentStatus, billing,
-                requestedAt, paidAt, scheduledAt, completedAt, cancelAt, refundedAt);
+                               OffsetDateTime inProgressAt, OffsetDateTime readyAt, OffsetDateTime returnedAt, String cancelationReason) {
+        super(id, customerId, companyId, scheduleId, totalPets, totalAmount, paymentMethod, paymentStatus, billing,
+                requestedAt, paidAt, scheduledAt, completedAt, cancelAt, refundedAt, cancelationReason);
         this.setScheduledStart(scheduledStart);
         this.setScheduledEnd(scheduledEnd);
         this.setTransport(transport);
@@ -243,15 +242,6 @@ public class AppointmentBooking
 
         if (this.transport == null)
             throw AppointmentBookingCannotBeRequestedException.noPetTransport(this.id().toString());
-    }
-
-    public ScheduleId scheduleId() {
-        return scheduleId;
-    }
-
-    private void setScheduleId(ScheduleId scheduleId) {
-        FieldValidator.requiresNonNull("scheduleId", scheduleId);
-        this.scheduleId = scheduleId;
     }
 
     public OffsetDateTime scheduledStart() {

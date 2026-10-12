@@ -39,4 +39,8 @@ public class PetAppointmentPersistenceEntity {
     @Embedded
     private ServiceEmbeddable service;
 
+    public UUID getAppointmentBookingId() {
+        return this.appointmentBooking.getId();
+    }
+
 }

@@ -12,8 +12,8 @@ public record PetTransport(Money cost, Address address, Company company) {
 
      public PetTransport {
          requiresNonNull("cost", cost);
-         requiresNonNull("address", address);
-         requiresNonNull("company", company);
+//         requiresNonNull("address", address);
+//         requiresNonNull("company", company);
      }
 
 }

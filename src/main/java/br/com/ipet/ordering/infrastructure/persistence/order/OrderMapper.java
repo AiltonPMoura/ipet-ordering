@@ -19,7 +19,7 @@ import br.com.ipet.ordering.domain.model.order.OrderId;
 import br.com.ipet.ordering.domain.model.order.OrderItem;
 import br.com.ipet.ordering.domain.model.order.OrderItemId;
 import br.com.ipet.ordering.domain.model.order.OrderStatus;
-import br.com.ipet.ordering.domain.model.order.OrderPaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
 import br.com.ipet.ordering.domain.model.order.Shipping;
 import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.product.ProductDescription;
@@ -45,7 +45,7 @@ public class OrderMapper {
                 .items(this.toItems(orderPersistence.getItems()))
                 .totalAmount(new Money(orderPersistence.getTotalAmount()))
                 .totalItems(new Quantity(orderPersistence.getTotalItems()))
-                .orderPaymentMethod(OrderPaymentMethod.valueOf(orderPersistence.getPaymentMethod()))
+                .paymentMethod(PaymentMethod.valueOf(orderPersistence.getPaymentMethod()))
                 .status(OrderStatus.valueOf(orderPersistence.getStatus()))
                 .billing(this.toBilling(orderPersistence.getBilling()))
                 .shipping(this.toShipping(orderPersistence.getShipping()))

@@ -1,6 +1,9 @@
 package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
+import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.PaymentStatus;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
@@ -9,22 +12,24 @@ import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.order.OrderDoesNotAssociatedWithCompany;
 import br.com.ipet.ordering.domain.model.order.OrderDoesNotBelongsToTheCustomer;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 
 import java.time.OffsetDateTime;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
-import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.PAID;
-import static br.com.ipet.ordering.domain.model.booking.BookingPaymentStatus.REFUNDED;
+import static br.com.ipet.ordering.domain.model.commons.PaymentStatus.PAID;
+import static br.com.ipet.ordering.domain.model.commons.PaymentStatus.REFUNDED;
 
 public abstract class Booking extends AbstractEventSourceEntity {
 
     private BookingId id;
     private CustomerId customerId;
     private CompanyId companyId;
+    private ScheduleId scheduleId;
     private Quantity totalPets;
     private Money totalAmount;
-    private BookingPaymentMethod paymentMethod;
-    private BookingPaymentStatus paymentStatus;
+    private PaymentMethod paymentMethod;
+    private PaymentStatus paymentStatus;
     private Billing billing;
     private OffsetDateTime requestedAt;
     private OffsetDateTime paidAt;
@@ -35,14 +40,15 @@ public abstract class Booking extends AbstractEventSourceEntity {
     private String cancelationReason;
 
 
-    protected Booking(BookingId id, CustomerId customerId, CompanyId companyId,
-                      Quantity totalPets, Money totalAmount, BookingPaymentMethod paymentMethod, BookingPaymentStatus paymentStatus, Billing billing,
+    protected Booking(BookingId id, CustomerId customerId, CompanyId companyId, ScheduleId scheduleId,
+                      Quantity totalPets, Money totalAmount, PaymentMethod paymentMethod, PaymentStatus paymentStatus, Billing billing,
                       OffsetDateTime requestedAt,
                       OffsetDateTime paidAt, OffsetDateTime scheduledAt,
-                      OffsetDateTime completedAt, OffsetDateTime canceledAt, OffsetDateTime refundedAt) {
+                      OffsetDateTime completedAt, OffsetDateTime canceledAt, OffsetDateTime refundedAt, String cancelationReason) {
         this.setId(id);
         this.setCustomerId(customerId);
         this.setCompanyId(companyId);
+        this.setScheduleId(scheduleId);
         this.setTotalPets(totalPets);
         this.setTotalAmount(totalAmount);
         this.setPaymentMethod(paymentMethod);
@@ -54,9 +60,10 @@ public abstract class Booking extends AbstractEventSourceEntity {
         this.setCompletedAt(completedAt);
         this.setCanceledAt(canceledAt);
         this.setRefundedAt(refundedAt);
+        this.setCancelationReason(cancelationReason);
     }
 
-    protected void changePaymentStatus(BookingPaymentStatus newStatus) {
+    protected void changePaymentStatus(PaymentStatus newStatus) {
         if (this.paymentStatus.canNotChangeTo(newStatus))
             throw new CannotChangeStatusException(this.paymentStatus.name(), newStatus.name());
 
@@ -108,6 +115,15 @@ public abstract class Booking extends AbstractEventSourceEntity {
         this.companyId = companyId;
     }
 
+    public ScheduleId scheduleId() {
+        return scheduleId;
+    }
+
+    private void setScheduleId(ScheduleId scheduleId) {
+        FieldValidator.requiresNonNull("scheduleId", scheduleId);
+        this.scheduleId = scheduleId;
+    }
+
     public Quantity totalPets() {
         return totalPets;
     }
@@ -126,19 +142,19 @@ public abstract class Booking extends AbstractEventSourceEntity {
         this.totalAmount = totalAmount;
     }
 
-    public BookingPaymentMethod paymentMethod() {
+    public PaymentMethod paymentMethod() {
         return paymentMethod;
     }
 
-    protected void setPaymentMethod(BookingPaymentMethod paymentMethod) {
+    protected void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
-    public BookingPaymentStatus paymentStatus() {
+    public PaymentStatus paymentStatus() {
         return this.paymentStatus;
     }
 
-    private void setPaymentStatus(BookingPaymentStatus newStatus) {
+    private void setPaymentStatus(PaymentStatus newStatus) {
         this.paymentStatus = newStatus;
     }
 

@@ -21,6 +21,7 @@ import lombok.experimental.SuperBuilder;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -54,5 +55,9 @@ public class AppointmentBookingPersistenceEntity extends AbstractBooking {
     public void setPetAppointments(Set<PetAppointmentPersistenceEntity> petAppointments) {
         petAppointments.forEach(petAppointment -> petAppointment.setAppointmentBooking(this));
         this.petAppointments = petAppointments;
+    }
+
+    public UUID getScheduleId() {
+        return this.schedule.getId();
     }
 }
