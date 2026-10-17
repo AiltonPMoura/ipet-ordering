@@ -18,6 +18,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,8 +39,8 @@ public class AppointmentBookingPersistenceEntity extends AbstractBooking {
     @ManyToOne(optional = false)
     private AppointmentSchedulePersistenceEntity schedule;
 
-    private OffsetDateTime scheduledStart;
-    private OffsetDateTime scheduledEnd;
+    private LocalDateTime scheduledStart;
+    private LocalDateTime scheduledEnd;
     private String status;
 
     @Embedded

@@ -1,15 +1,15 @@
 package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
-import br.com.ipet.ordering.application.booking.appointment.AppointmentBookingBlockOutput;
-import br.com.ipet.ordering.application.booking.appointment.AppointmentBookingQueryService;
+import br.com.ipet.ordering.application.booking.appointment.query.AppointmentBookingBlockOutput;
+import br.com.ipet.ordering.application.booking.appointment.query.AppointmentBookingQueryService;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleDetailOutput;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleFilter;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleQueryService;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleSummaryOutput;
 import br.com.ipet.ordering.application.util.Mapper;
-import br.com.ipet.ordering.domain.model.schedule.ScheduleAvailabilityOutput;
 import br.com.ipet.ordering.domain.model.schedule.DailyAvailabilityOutput;
 import br.com.ipet.ordering.domain.model.schedule.ScheduNotFoundException;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleAvailabilityOutput;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +58,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
         var zoneId = ZoneId.of("America/Sao_Paulo"); // TODO: Usar schedule.getCompany().getTimezone()
         var today = LocalDate.now(zoneId);
         var currentTime = LocalTime.now(zoneId);
-        var nowOffset = OffsetDateTime.now(zoneId);
+        var nowOffset = LocalDateTime.now(zoneId);
 
         long daysToSkip = this.calculateWorkDaysToSkip(schedule, today, currentTime, zoneId, nowOffset);
         var candidateDates = this.generateCandidateDates(schedule, today, daysToSkip);
@@ -78,7 +78,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
             LocalDate today,
             LocalTime currentTime,
             ZoneId zoneId,
-            OffsetDateTime nowOffset) {
+            LocalDateTime nowOffset) {
 
         var workDayOptional = schedule.getWorkDays().stream()
                 .filter(workDay -> workDay.getDayOfWeek().equals(today.getDayOfWeek()))
@@ -101,11 +101,11 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
             AppointmentWorkDayPersistenceEntity workDay,
             LocalDate today,
             ZoneId zoneId,
-            OffsetDateTime nowOffset) {
+            LocalDateTime nowOffset) {
 
-        OffsetDateTime windowStart = today.atStartOfDay(zoneId).toOffsetDateTime();
-        OffsetDateTime windowEnd = today.atTime(LocalTime.MAX).atZone(zoneId).toOffsetDateTime();
-        OffsetDateTime gracePeriod = nowOffset.minusMinutes(20);
+        LocalDateTime windowStart = today.atStartOfDay(zoneId).toLocalDateTime();
+        LocalDateTime windowEnd = today.atTime(LocalTime.MAX).atZone(zoneId).toLocalDateTime();
+        LocalDateTime gracePeriod = nowOffset.minusMinutes(20);
 
         var todayBookings = bookingQueryService.findBlockedBookings(
                 scheduleId, windowStart, windowEnd, gracePeriod
@@ -131,11 +131,11 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
     }
 
     private Map<LocalDate, List<AppointmentBookingBlockOutput>> findBlockedBookingsByDate(
-            UUID scheduleId, List<LocalDate> candidateDates, OffsetDateTime nowOffset, ZoneId zoneId) {
+            UUID scheduleId, List<LocalDate> candidateDates, LocalDateTime nowOffset, ZoneId zoneId) {
 
-        OffsetDateTime windowStart = candidateDates.getFirst().atStartOfDay(zoneId).toOffsetDateTime();
-        OffsetDateTime windowEnd = candidateDates.getLast().atTime(LocalTime.MAX).atZone(zoneId).toOffsetDateTime();
-        OffsetDateTime gracePeriod = nowOffset.minusMinutes(20);
+        LocalDateTime windowStart = candidateDates.getFirst().atStartOfDay(zoneId).toLocalDateTime();
+        LocalDateTime windowEnd = candidateDates.getLast().atTime(LocalTime.MAX).atZone(zoneId).toLocalDateTime();
+        LocalDateTime gracePeriod = nowOffset.minusMinutes(20);
 
         List<AppointmentBookingBlockOutput> blockedBookings = bookingQueryService.findBlockedBookings(
                 scheduleId, windowStart, windowEnd, gracePeriod
@@ -175,7 +175,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
                 .toList();
     }
 
-    private boolean isDuringBreak(LocalTime slotStart, Set<BlockedTimeSlotsEmbeddable> breaks) {
+    private boolean isDuringBreak(LocalTime slotStart, Set<BlockedTimeSlotEmbeddable> breaks) {
         LocalTime slotEnd = slotStart.plusMinutes(30);
 
         return breaks.stream().anyMatch(pause ->

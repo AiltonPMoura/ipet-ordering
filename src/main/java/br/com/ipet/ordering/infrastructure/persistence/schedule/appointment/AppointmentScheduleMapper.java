@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
 import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.schedule.LockedDate;
+import br.com.ipet.ordering.domain.model.schedule.BlockedDate;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleName;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleStatus;
@@ -9,7 +9,7 @@ import br.com.ipet.ordering.domain.model.schedule.ServiceCategory;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDay;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDayId;
-import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTime;
+import br.com.ipet.ordering.domain.model.schedule.appointment.BlockedTimeSlot;
 import br.com.ipet.ordering.domain.model.schedule.appointment.WorkingHours;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +28,7 @@ public class AppointmentScheduleMapper {
                 .serviceCategory(ServiceCategory.valueOf(appointmentSchedulePersistence.getServiceCategory()))
                 .status(ScheduleStatus.valueOf(appointmentSchedulePersistence.getStatus()))
                 .workDays(this.toWorkDays(appointmentSchedulePersistence.getWorkDays()))
-                .lockedDates(this.toLockedDates(appointmentSchedulePersistence.getBlockedDates()))
+                .blockedDates(this.toLockedDates(appointmentSchedulePersistence.getBlockedDates()))
                 .createdAt(appointmentSchedulePersistence.getCreatedAt())
                 .build();
     }
@@ -40,19 +40,19 @@ public class AppointmentScheduleMapper {
                         .scheduleId(new ScheduleId(workDayPersistence.getAppointmentScheduleId()))
                         .dayOfWeek(workDayPersistence.getDayOfWeek())
                         .workingHours(new WorkingHours(workDayPersistence.getStartTime(), workDayPersistence.getEndTime()))
-                        .lockedTimes(this.toLockedTimes(workDayPersistence.getBlockedTimeSlots()))
+                        .blockedTimeSlotSlots(this.toLockedTimes(workDayPersistence.getBlockedTimeSlots()))
                         .build())
                 .collect(Collectors.toSet());
     }
 
-    private Set<LockedDate> toLockedDates(Set<LocalDate> lockedDates) {
-        return lockedDates.stream().map(LockedDate::new).collect(Collectors.toSet());
+    private Set<BlockedDate> toLockedDates(Set<LocalDate> lockedDates) {
+        return lockedDates.stream().map(BlockedDate::new).collect(Collectors.toSet());
     }
 
-    private Set<LockedTime> toLockedTimes(Set<BlockedTimeSlotsEmbeddable> lockedTimesEmbeddable) {
+    private Set<BlockedTimeSlot> toLockedTimes(Set<BlockedTimeSlotEmbeddable> lockedTimesEmbeddable) {
         return lockedTimesEmbeddable.stream()
                 .map(lockedTimeEmbeddable ->
-                        new LockedTime(lockedTimeEmbeddable.getStartTime(), lockedTimeEmbeddable.getEndTime()))
+                        new BlockedTimeSlot(lockedTimeEmbeddable.getStartTime(), lockedTimeEmbeddable.getEndTime()))
                 .collect(Collectors.toSet());
     }
 

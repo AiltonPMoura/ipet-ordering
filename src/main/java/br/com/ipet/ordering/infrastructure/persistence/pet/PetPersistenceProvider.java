@@ -67,6 +67,16 @@ public class PetPersistenceProvider implements Pets {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Set<Pet> ofCustomerAndIds(CustomerId customerId, Set<PetId> petIds) {
+        var ids = petIds.stream().map(PetId::value).collect(Collectors.toSet());
+        return petRepository.findByIdInAndCustomer_Id(ids, customerId.value())
+                .stream()
+                .map(petMapper::toDomain)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
     public void remove(Pet pet) {
         petRepository.deleteById(pet.id().value());
     }

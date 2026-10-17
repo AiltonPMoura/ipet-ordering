@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.application.booking.appointment;
+package br.com.ipet.ordering.application.booking.appointment.query;
 
 import java.time.OffsetDateTime;
 

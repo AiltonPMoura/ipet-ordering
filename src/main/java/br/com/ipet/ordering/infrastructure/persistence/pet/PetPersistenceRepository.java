@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface PetPersistenceRepository extends JpaRepository<PetPersistenceEntity, UUID>, JpaSpecificationExecutor<PetPersistenceEntity> {
     Optional<PetPersistenceEntity> findByIdAndCustomer_Id(UUID petId, UUID customerId);
     Set<PetPersistenceEntity> findByCustomer_Id(UUID customerId);
+    Set<PetPersistenceEntity> findByIdInAndCustomer_Id(Set<UUID> petIds, UUID customerId);
 }

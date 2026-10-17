@@ -2,6 +2,7 @@ package br.com.ipet.ordering.domain.model.booking.appointment;
 
 import br.com.ipet.ordering.domain.model.booking.BookingId;
 import br.com.ipet.ordering.domain.model.booking.Pet;
+import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import lombok.Builder;
 
 import java.util.Objects;

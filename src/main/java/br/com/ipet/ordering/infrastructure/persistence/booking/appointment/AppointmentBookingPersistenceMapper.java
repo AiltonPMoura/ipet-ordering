@@ -2,7 +2,7 @@ package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 
 import br.com.ipet.ordering.domain.model.booking.Pet;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBooking;
-import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentService;
+import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import br.com.ipet.ordering.domain.model.booking.appointment.PetAppointment;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
@@ -101,12 +101,12 @@ public class AppointmentBookingPersistenceMapper {
 
     private ServiceEmbeddable toServiceEmbeddable(AppointmentService service) {
         return ServiceEmbeddable.builder()
-                .serviceId(service.serviceId())
+                .serviceId(service.id().value())
                 .type(service.type())
                 .category(service.category())
                 .description(service.description())
                 .duration(service.duration())
-                .price(service.price())
+                .price(service.price().value())
                 .petSize(service.petSize())
                 .build();
     }

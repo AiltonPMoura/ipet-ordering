@@ -1,9 +1,11 @@
 package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
+import lombok.Builder;
 
 import java.util.UUID;
 
+@Builder
 public record Pet(
         UUID id,
         String name,

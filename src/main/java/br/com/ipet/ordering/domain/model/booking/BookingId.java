@@ -15,4 +15,9 @@ public record BookingId(UUID value) {
         FieldValidator.requiresNonNull("schedulingId", value);
     }
 
+    @Override
+    public String toString() {
+        return value.toString();
+    }
+
 }

@@ -15,19 +15,19 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     private ScheduleName name;
     private ServiceCategory serviceCategory;
     private ScheduleStatus status;
-    private Set<LockedDate> lockedDates;
+    private Set<BlockedDate> blockedDates;
     private OffsetDateTime createdAt;
 
     protected Schedule(ScheduleId id, CompanyId companyId,
                        ScheduleName name, ServiceCategory serviceCategory,
-                       ScheduleStatus status, Set<LockedDate> lockedDates,
+                       ScheduleStatus status, Set<BlockedDate> blockedDates,
                        OffsetDateTime createdAt) {
         this.setId(id);
         this.setCompanyId(companyId);
         this.setName(name);
         this.setServiceCategory(serviceCategory);
         this.setStatus(status);
-        this.setLockedDates(lockedDates);
+        this.setBlockedDates(blockedDates);
         this.setCreatedAt(createdAt);
     }
 
@@ -36,9 +36,9 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.setName(name);
     }
 
-    protected void changeLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
+    protected void changeBlockedDates(Set<BlockedDate> blockedDates, CompanyId companyId) {
         //this.verifyBelongToCompany(companyId);
-        this.setLockedDates(lockedDates);
+        this.setBlockedDates(blockedDates);
     }
 
     protected void activate(CompanyId companyId) {
@@ -116,13 +116,13 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.status = status;
     }
 
-    public Set<LockedDate> lockedDates() {
-        return lockedDates;
+    public Set<BlockedDate> blockedDates() {
+        return blockedDates;
     }
 
-    private void setLockedDates(Set<LockedDate> lockedDates) {
-        requiresNonNull("lockedDates", lockedDates);
-        this.lockedDates = lockedDates;
+    private void setBlockedDates(Set<BlockedDate> blockedDates) {
+        requiresNonNull("blockedDates", blockedDates);
+        this.blockedDates = blockedDates;
     }
 
     public OffsetDateTime createdAt() {

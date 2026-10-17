@@ -2,8 +2,8 @@ package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDay;
-import br.com.ipet.ordering.domain.model.schedule.LockedDate;
-import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTime;
+import br.com.ipet.ordering.domain.model.schedule.BlockedDate;
+import br.com.ipet.ordering.domain.model.schedule.appointment.BlockedTimeSlot;
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ public class AppointmentSchedulePersistenceMapper {
         appointmentSchedulePersistence.setStatus(appointmentSchedule.status().name());
         appointmentSchedulePersistence.setServiceCategory(appointmentSchedule.serviceCategory().name());
         appointmentSchedulePersistence.setWorkDays(this.mergeWorkDays(appointmentSchedulePersistence, appointmentSchedule));
-        appointmentSchedulePersistence.setBlockedDates(this.mergeLockedDates(appointmentSchedulePersistence, appointmentSchedule));
+        appointmentSchedulePersistence.setBlockedDates(this.mergeBlockedDates(appointmentSchedulePersistence, appointmentSchedule));
         return appointmentSchedulePersistence;
     }
 
@@ -66,21 +66,21 @@ public class AppointmentSchedulePersistenceMapper {
         return workDayPersistence;
     }
 
-    private Set<LocalDate> mergeLockedDates(AppointmentSchedulePersistenceEntity appointmentSchedulePersistence,
-                                            AppointmentSchedule appointmentSchedule) {
-        var persistenceDates = appointmentSchedulePersistence.getBlockedDates();
+    private Set<LocalDate> mergeBlockedDates(AppointmentSchedulePersistenceEntity appointmentSchedulePersistence,
+                                             AppointmentSchedule appointmentSchedule) {
+        var blockedDatesPersistence = appointmentSchedulePersistence.getBlockedDates();
 
-        persistenceDates.clear();
+        blockedDatesPersistence.clear();
 
-        persistenceDates.addAll(appointmentSchedule.lockedDates().stream()
-                .map(LockedDate::date)
+        blockedDatesPersistence.addAll(appointmentSchedule.blockedDates().stream()
+                .map(BlockedDate::date)
                 .collect(Collectors.toSet()));
 
-        return persistenceDates;
+        return blockedDatesPersistence;
     }
 
-    private Set<BlockedTimeSlotsEmbeddable> mergeLockedTimes(AppointmentWorkDayPersistenceEntity workDayPersistence,
-                                                             AppointmentWorkDay appointmentWorkDay) {
+    private Set<BlockedTimeSlotEmbeddable> mergeLockedTimes(AppointmentWorkDayPersistenceEntity workDayPersistence,
+                                                            AppointmentWorkDay appointmentWorkDay) {
 
         var persistenceLockedTimes = workDayPersistence.getBlockedTimeSlots();
 
@@ -93,8 +93,8 @@ public class AppointmentSchedulePersistenceMapper {
         return persistenceLockedTimes;
     }
 
-    private BlockedTimeSlotsEmbeddable toLockedTimeEmbeddable(LockedTime lockedTime) {
-        return new BlockedTimeSlotsEmbeddable(lockedTime.startTime(), lockedTime.endTime());
+    private BlockedTimeSlotEmbeddable toLockedTimeEmbeddable(BlockedTimeSlot blockedTimeSlot) {
+        return new BlockedTimeSlotEmbeddable(blockedTimeSlot.startTime(), blockedTimeSlot.endTime());
     }
 
 }

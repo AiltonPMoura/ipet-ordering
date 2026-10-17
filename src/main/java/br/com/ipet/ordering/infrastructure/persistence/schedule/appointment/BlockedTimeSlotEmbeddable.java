@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class BlockedTimeSlotsEmbeddable {
+public class BlockedTimeSlotEmbeddable {
     private LocalTime startTime;
     private LocalTime endTime;
 }

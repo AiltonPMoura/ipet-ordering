@@ -49,7 +49,7 @@ public class AppointmentWorkDayPersistenceEntity {
             name = "appointment_workday_blocked_time_slot",
             joinColumns = @JoinColumn(name = "appointment_workday_id")
     )
-    private Set<BlockedTimeSlotsEmbeddable> blockedTimeSlots = new HashSet<>();
+    private Set<BlockedTimeSlotEmbeddable> blockedTimeSlots = new HashSet<>();
 
     public UUID getAppointmentScheduleId() {
         return this.appointmentSchedule.getId();

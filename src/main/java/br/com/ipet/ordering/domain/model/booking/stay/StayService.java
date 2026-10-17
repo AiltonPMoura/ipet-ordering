@@ -16,7 +16,7 @@ public record StayService(
         String petSize) {
 
     public StayService {
-        FieldValidator.requiresNonNull("serviceId", serviceId);
+        FieldValidator.requiresNonNull("id", serviceId);
         FieldValidator.requiresNonNull("type", type);
         FieldValidator.requiresNonNull("category", category);
         FieldValidator.requiresNonNull("description", description);

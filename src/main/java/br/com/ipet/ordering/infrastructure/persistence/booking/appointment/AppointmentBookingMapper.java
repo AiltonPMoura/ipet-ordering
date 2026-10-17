@@ -7,7 +7,7 @@ import br.com.ipet.ordering.domain.model.commons.PaymentStatus;
 import br.com.ipet.ordering.domain.model.booking.Pet;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBooking;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus;
-import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentService;
+import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import br.com.ipet.ordering.domain.model.booking.appointment.PetAppointment;
 import br.com.ipet.ordering.domain.model.booking.appointment.PetAppointmentId;
 import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
@@ -22,6 +22,7 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
+import br.com.ipet.ordering.domain.model.serviceoffering.ServiceOfferingId;
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
 import br.com.ipet.ordering.infrastructure.persistence.order.BillingEmbeddable;
 import org.springframework.stereotype.Component;
@@ -87,12 +88,12 @@ public class AppointmentBookingMapper {
 
     private AppointmentService toService(ServiceEmbeddable serviceEmbeddable) {
         return AppointmentService.builder()
-                .serviceId(serviceEmbeddable.getServiceId())
+                .id(new ServiceOfferingId(serviceEmbeddable.getServiceId()))
                 .type(serviceEmbeddable.getType())
                 .category(serviceEmbeddable.getCategory())
                 .description(serviceEmbeddable.getDescription())
                 .duration(serviceEmbeddable.getDuration())
-                .price(serviceEmbeddable.getPrice())
+                .price(new Money(serviceEmbeddable.getPrice()))
                 .petSize(serviceEmbeddable.getPetSize())
                 .build();
     }

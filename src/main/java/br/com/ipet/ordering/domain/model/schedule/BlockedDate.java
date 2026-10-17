@@ -5,9 +5,9 @@ import br.com.ipet.ordering.domain.model.FieldValidator;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 
-public record LockedDate(LocalDate date) {
+public record BlockedDate(LocalDate date) {
 
-    public LockedDate {
+    public BlockedDate {
         FieldValidator.requiresNonNull("date", date);
 
         if (!date.isAfter(LocalDate.now(ZoneOffset.UTC)))

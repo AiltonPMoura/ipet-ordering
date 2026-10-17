@@ -1,9 +1,9 @@
-package br.com.ipet.ordering.infrastructure.client.catalog;
+package br.com.ipet.ordering.domain.model.serviceoffering;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum ServiceCategory {
+public enum ServiceOfferingCategory {
     HIGIENE,
     HEALTH,
     DAYCARE,

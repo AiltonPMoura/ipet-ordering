@@ -17,9 +17,12 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
+import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
+import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import lombok.Builder;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Set;
@@ -42,8 +45,8 @@ public final class AppointmentBooking
         extends Booking
         implements AggregateRoot<BookingId> {
 
-    private OffsetDateTime scheduledStart;
-    private OffsetDateTime scheduledEnd;
+    private LocalDateTime scheduledStart;
+    private LocalDateTime scheduledEnd;
     private PetTransport transport;
     private AppointmentBookingStatus appointmentStatus;
     private Set<PetAppointment> petAppointments;
@@ -51,10 +54,16 @@ public final class AppointmentBooking
     private OffsetDateTime readyAt;
     private OffsetDateTime returnedAt;
 
-    static AppointmentBooking create(CustomerId customerId, CompanyId companyId, ScheduleId scheduleId) {
-        return new AppointmentBooking(new BookingId(), customerId, companyId, scheduleId,
+    static AppointmentBooking create(CustomerId customerId, CompanyId companyId,
+                                     AppointmentSchedule appointmentSchedule,
+                                     LocalDateTime scheduleStartDateTime,
+                                     LocalDateTime scheduleEndDateTime) {
+
+        appointmentSchedule.verifyOperatingHours(scheduleStartDateTime, scheduleEndDateTime);
+
+        return new AppointmentBooking(new BookingId(), customerId, companyId, appointmentSchedule.id(),
                 Quantity.ZERO, Money.ZERO, null, null, null,
-                null, null,
+                scheduleStartDateTime, scheduleEndDateTime,
                 null, AppointmentBookingStatus.DRAFT, Set.of(), null, null,
                 null, null, null, null,
                 null, null, null, null
@@ -65,7 +74,7 @@ public final class AppointmentBooking
     private AppointmentBooking(BookingId id, CustomerId customerId, CompanyId companyId, ScheduleId scheduleId,
                                Quantity totalPets, Money totalAmount,
                                PaymentMethod paymentMethod, PaymentStatus paymentStatus, Billing billing,
-                               OffsetDateTime scheduledStart, OffsetDateTime scheduledEnd,
+                               LocalDateTime scheduledStart, LocalDateTime scheduledEnd,
                                PetTransport transport, AppointmentBookingStatus appointmentStatus, Set<PetAppointment> petAppointments,
                                OffsetDateTime requestedAt,
                                OffsetDateTime paidAt, OffsetDateTime scheduledAt,
@@ -244,19 +253,19 @@ public final class AppointmentBooking
             throw AppointmentBookingCannotBeRequestedException.noPetTransport(this.id().toString());
     }
 
-    public OffsetDateTime scheduledStart() {
+    public LocalDateTime scheduledStart() {
         return scheduledStart;
     }
 
-    private void setScheduledStart(OffsetDateTime scheduledStart) {
+    private void setScheduledStart(LocalDateTime scheduledStart) {
         this.scheduledStart = scheduledStart;
     }
 
-    public OffsetDateTime scheduledEnd() {
+    public LocalDateTime scheduledEnd() {
         return scheduledEnd;
     }
 
-    private void setScheduledEnd(OffsetDateTime scheduledEnd) {
+    private void setScheduledEnd(LocalDateTime scheduledEnd) {
         this.scheduledEnd = scheduledEnd;
     }
 

@@ -1,6 +1,8 @@
 package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
+import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedules;
@@ -14,25 +16,25 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AppointmentScheduleProvider implements AppointmentSchedules {
 
-    private final AppointmentSchedulePersistenceRepository repository;
+    private final AppointmentSchedulePersistenceRepository appointmentScheduleRepository;
     private final AppointmentScheduleMapper mapper;
     private final AppointmentSchedulePersistenceMapper persistenceMapper;
 
     @Override
     public Optional<AppointmentSchedule> ofId(ScheduleId id) {
-        return repository.findById(id.value()).map(mapper::toDomain);
+        return appointmentScheduleRepository.findById(id.value()).map(mapper::toDomain);
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean exists(ScheduleId id) {
-        return repository.existsById(id.value());
+        return appointmentScheduleRepository.existsById(id.value());
     }
 
     @Override
     @Transactional
     public void add(AppointmentSchedule appointmentSchedule) {
-        repository.findById(appointmentSchedule.id().value())
+        appointmentScheduleRepository.findById(appointmentSchedule.id().value())
                 .ifPresentOrElse(
                         appointmentSchedulePersistence -> this.update(appointmentSchedulePersistence, appointmentSchedule),
                         () -> this.insert(appointmentSchedule)
@@ -44,22 +46,22 @@ public class AppointmentScheduleProvider implements AppointmentSchedules {
     @Override
     @Transactional(readOnly = true)
     public long count() {
-        return repository.count();
+        return appointmentScheduleRepository.count();
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean existsByCompany(CompanyId companyId) {
-        return repository.existsByCompany_Id(companyId.value());
+        return appointmentScheduleRepository.existsByCompany_Id(companyId.value());
     }
 
     private void insert(AppointmentSchedule appointmentSchedule) {
         var appointmentSchedulePersistence = persistenceMapper.fromDomain(appointmentSchedule);
-        repository.saveAndFlush(appointmentSchedulePersistence);
+        appointmentScheduleRepository.saveAndFlush(appointmentSchedulePersistence);
     }
 
     private void update(AppointmentSchedulePersistenceEntity appointmentSchedulePersistence, AppointmentSchedule appointmentSchedule) {
         appointmentSchedulePersistence = persistenceMapper.merge(appointmentSchedulePersistence, appointmentSchedule);
-        repository.saveAndFlush(appointmentSchedulePersistence);
+        appointmentScheduleRepository.saveAndFlush(appointmentSchedulePersistence);
     }
 }

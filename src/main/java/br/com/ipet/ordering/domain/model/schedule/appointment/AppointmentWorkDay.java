@@ -14,7 +14,7 @@ public class AppointmentWorkDay {
     private ScheduleId scheduleId;
     private DayOfWeek dayOfWeek;
     private WorkingHours workingHours;
-    private Set<LockedTime> lockedTimes;
+    private Set<BlockedTimeSlot> blockedTimeSlotSlots;
 
     private static final int MINIMUM_AVAILABLE_WORK_MINUTES = 60;
 
@@ -24,28 +24,28 @@ public class AppointmentWorkDay {
 
     @Builder(builderClassName = "ExistingWorkDayBuilder", builderMethodName = "existing")
     public AppointmentWorkDay(AppointmentWorkDayId id, ScheduleId scheduleId,
-                              DayOfWeek dayOfWeek, WorkingHours workingHours, Set<LockedTime> lockedTimes) {
+                              DayOfWeek dayOfWeek, WorkingHours workingHours, Set<BlockedTimeSlot> blockedTimeSlotSlots) {
         this.setId(id);
         this.setScheduleId(scheduleId);
         this.setDayOfWeek(dayOfWeek);
         this.setWorkingHours(workingHours);
-        this.setLockedTimes(lockedTimes);
+        this.setBlockedTimeSlotSlots(blockedTimeSlotSlots);
     }
 
-    void addLockedTime(LockedTime lockedTime) {
-        FieldValidator.requiresNonNull("lockedTime", lockedTime);
+    void addBlockedTimeSlot(BlockedTimeSlot blockedTimeSlot) {
+        FieldValidator.requiresNonNull("lockedTime", blockedTimeSlot);
 
-        if (workingHours.notContains(lockedTime.startTime(), lockedTime.endTime()))
+        if (workingHours.notContains(blockedTimeSlot.startTime(), blockedTimeSlot.endTime()))
             throw new LockedTimeOutsideWorkingHoursException("");
 
-        this.verifyConflictLockedTime(lockedTime);
-        this.verifyMinimumAvailableWorkingTime(lockedTime);
+        this.verifyConflictBlockedTime(blockedTimeSlot);
+        this.verifyMinimumAvailableWorkingTime(blockedTimeSlot);
 
-        this.lockedTimes.add(lockedTime);
+        this.blockedTimeSlotSlots.add(blockedTimeSlot);
     }
 
-    void removeLockedTime(LockedTime lockedTime) {
-        this.lockedTimes.remove(this.findLockedTime(lockedTime));
+    void removeBlockedTimeSlot(BlockedTimeSlot blockedTimeSlot) {
+        this.blockedTimeSlotSlots.remove(this.findBlockedTimeSlot(blockedTimeSlot));
     }
 
     void changeDayOfWeek(DayOfWeek dayOfWeek) {
@@ -56,28 +56,28 @@ public class AppointmentWorkDay {
         this.setWorkingHours(workingHours);
     }
 
-    void changeLockedTime(LockedTime lockedTime, LockedTime newLockedTime) {
-        this.removeLockedTime(lockedTime);
-        this.addLockedTime(newLockedTime);
+    void changeBlockedTimeSlot(BlockedTimeSlot blockedTimeSlot, BlockedTimeSlot newBlockedTimeSlot) {
+        this.removeBlockedTimeSlot(blockedTimeSlot);
+        this.addBlockedTimeSlot(newBlockedTimeSlot);
     }
 
-    private LockedTime findLockedTime(LockedTime lockedTime) {
-        FieldValidator.requiresNonNull("lockedTimes", lockedTimes);
+    private BlockedTimeSlot findBlockedTimeSlot(BlockedTimeSlot blockedTimeSlot) {
+        FieldValidator.requiresNonNull("lockedTimes", blockedTimeSlotSlots);
 
-        return lockedTimes.stream().filter(lockedTime::equals)
+        return blockedTimeSlotSlots.stream().filter(blockedTimeSlot::equals)
                 .findFirst()
                 .orElseThrow(() -> new LockedTimeNotFoundException(""));
     }
 
-    private void verifyConflictLockedTime(LockedTime newLockedTime) {
-        var isConflictLockedTime = this.lockedTimes.stream()
-                .anyMatch(lockedTime -> lockedTime.verifyConflict(newLockedTime));
+    private void verifyConflictBlockedTime(BlockedTimeSlot newBlockedTimeSlot) {
+        var isConflictBlockedTime = this.blockedTimeSlotSlots.stream()
+                .anyMatch(lockedTime -> lockedTime.verifyConflict(newBlockedTimeSlot));
 
-        if (isConflictLockedTime) throw new ConflictLockedTimeException("");
+        if (isConflictBlockedTime) throw new ConflictLockedTimeException("");
     }
 
-    private void verifyMinimumAvailableWorkingTime(LockedTime lockedTime) {
-        var newMinutesLockedTime = this.totalLockedTime() + lockedTime.lockedMinutes();
+    private void verifyMinimumAvailableWorkingTime(BlockedTimeSlot blockedTimeSlot) {
+        var newMinutesLockedTime = this.totalLockedTime() + blockedTimeSlot.lockedMinutes();
         var workingMinutes = workingHours.workingMinutes();
 
         if (workingMinutes - newMinutesLockedTime < MINIMUM_AVAILABLE_WORK_MINUTES)
@@ -85,7 +85,7 @@ public class AppointmentWorkDay {
     }
 
     private long totalLockedTime() {
-        return lockedTimes.stream().mapToLong(LockedTime::lockedMinutes).sum();
+        return blockedTimeSlotSlots.stream().mapToLong(BlockedTimeSlot::lockedMinutes).sum();
     }
 
     public AppointmentWorkDayId id() {
@@ -124,12 +124,12 @@ public class AppointmentWorkDay {
         this.workingHours = workingHours;
     }
 
-    public Set<LockedTime> lockedTimes() {
-        return lockedTimes;
+    public Set<BlockedTimeSlot> lockedTimes() {
+        return blockedTimeSlotSlots;
     }
 
-    private void setLockedTimes(Set<LockedTime> lockedTimes) {
-        this.lockedTimes = lockedTimes;
+    private void setBlockedTimeSlotSlots(Set<BlockedTimeSlot> blockedTimeSlotSlots) {
+        this.blockedTimeSlotSlots = blockedTimeSlotSlots;
     }
 
     @Override

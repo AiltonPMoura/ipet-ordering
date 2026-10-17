@@ -7,4 +7,5 @@ import java.util.Set;
 
 public interface Pets extends RemoveCapableRepository<Pet, PetId> {
     Set<Pet> ofCustomer(CustomerId customerId);
+    Set<Pet> ofCustomerAndIds(CustomerId customerId, Set<PetId> petIds);
 }

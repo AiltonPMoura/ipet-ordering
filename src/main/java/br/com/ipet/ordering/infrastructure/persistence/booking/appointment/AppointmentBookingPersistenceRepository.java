@@ -1,17 +1,27 @@
 package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 
-import br.com.ipet.ordering.application.booking.appointment.AppointmentBookingBlockOutput;
+import br.com.ipet.ordering.application.booking.appointment.query.AppointmentBookingBlockOutput;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 public interface AppointmentBookingPersistenceRepository
         extends JpaRepository<AppointmentBookingPersistenceEntity, UUID>,
         JpaSpecificationExecutor<AppointmentBookingPersistenceEntity> {
+
+    @Query("""
+        SELECT CASE WHEN EXISTS (
+            SELECT booking.id FROM AppointmentBookingPersistenceEntity booking
+            WHERE booking.scheduleId = :scheduleId
+              AND booking.scheduledStart < :requestedEnd
+              AND booking.scheduledEnd > :requestedStart
+        ) THEN true ELSE false END
+    """)
+    boolean existsConflictingBooking(UUID scheduleId, LocalDateTime requestedStart, LocalDateTime requestedEnd);
 
     @Query("""
         SELECT new br.com.ipet.ordering.application.booking.appointment.AppointmentBookingBlockOutput(
@@ -32,8 +42,8 @@ public interface AppointmentBookingPersistenceRepository
         """)
     List<AppointmentBookingBlockOutput> findBlockedBookings(
             UUID scheduleId,
-            OffsetDateTime windowStart,
-            OffsetDateTime windowEnd,
-            OffsetDateTime gracePeriod
+            LocalDateTime windowStart,
+            LocalDateTime windowEnd,
+            LocalDateTime gracePeriod
     );
 }
