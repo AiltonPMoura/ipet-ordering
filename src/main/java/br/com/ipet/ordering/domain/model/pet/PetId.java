@@ -15,4 +15,9 @@ public record PetId(UUID value) {
         FieldValidator.requiresNonNull("pet id", value);
     }
 
+    @Override
+    public String toString() {
+        return value.toString();
+    }
+
 }

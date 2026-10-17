@@ -3,7 +3,7 @@ package br.com.ipet.ordering.domain.model.serviceoffering;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum ServiceOfferingCategory {
+public enum ServiceCategory {
     HIGIENE,
     HEALTH,
     DAYCARE,

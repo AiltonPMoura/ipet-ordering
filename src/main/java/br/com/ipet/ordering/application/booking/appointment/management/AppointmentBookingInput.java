@@ -7,6 +7,6 @@ import java.util.UUID;
 public record AppointmentBookingInput(UUID customerId,
                                       UUID appointmentScheduleId,
                                       UUID companyId,
-                                      LocalDateTime scheduleStartTime,
-                                      List<PetAppointmentInput> petAppointments) {
+                                      LocalDateTime requestedStart,
+                                      List<AppointmentPetServiceInput> appointments) {
 }

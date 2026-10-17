@@ -4,10 +4,10 @@ import br.com.ipet.ordering.domain.model.FieldValidator;
 
 import java.util.UUID;
 
-public record ServiceOfferingId(UUID value) {
+public record ServiceId(UUID value) {
 
-    public ServiceOfferingId {
-        FieldValidator.requiresNonNull("serviceOfferingId value", value);
+    public ServiceId {
+        FieldValidator.requiresNonNull("serviceId value", value);
     }
 
     @Override

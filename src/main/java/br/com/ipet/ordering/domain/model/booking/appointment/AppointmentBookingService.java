@@ -1,7 +1,5 @@
 package br.com.ipet.ordering.domain.model.booking.appointment;
 
-import br.com.ipet.ordering.domain.model.booking.Pet;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
@@ -18,13 +16,13 @@ public class AppointmentBookingService {
     private final AppointmentBookings appointmentBookings;
 
     public AppointmentBooking book(CustomerId customerId,
-                                   CompanyId companyId,
                                    AppointmentSchedule appointmentSchedule,
-                                   AppointmentService appointmentService,
                                    LocalDateTime requestedStart,
-                                   Set<Pet> pets) {
+                                   Set<PetServicePair> petServicePairs) {
 
-        var requestedEnd = requestedStart.plusMinutes(appointmentService.duration());
+        var requestedEnd = this.calculateRequestedEnd(requestedStart, petServicePairs);
+
+        appointmentSchedule.verifyOperatingHours(requestedStart, requestedEnd);
 
         this.verifyTimeSlotAvailability(appointmentSchedule, requestedStart, requestedEnd);
 
@@ -36,10 +34,18 @@ public class AppointmentBookingService {
                 requestedEnd
         );
 
-        //Agrupar pets por service
-        pets.forEach(pet -> appointmentBooking.addPetAppointment(pet, appointmentService));
+        petServicePairs.forEach(petServicePair -> appointmentBooking.addAppointmentPetService(petServicePair.pet(), petServicePair.service()));
+
+        appointmentBooking.request(customerId, appointmentSchedule.companyId());
 
         return appointmentBooking;
+    }
+
+    private LocalDateTime calculateRequestedEnd(LocalDateTime requestedStart, Set<PetServicePair> petServicePairs) {
+        return requestedStart.plusMinutes(petServicePairs.stream()
+                .map(PetServicePair::service)
+                .mapToInt(AppointmentService::duration)
+                .sum());
     }
 
     private void verifyTimeSlotAvailability(AppointmentSchedule appointmentSchedule, LocalDateTime requestedStart, LocalDateTime requestedEnd) {

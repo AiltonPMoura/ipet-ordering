@@ -7,9 +7,12 @@ import br.com.ipet.ordering.domain.model.commons.PaymentStatus;
 import br.com.ipet.ordering.domain.model.booking.Pet;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBooking;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus;
+import br.com.ipet.ordering.domain.model.pet.PetId;
+import br.com.ipet.ordering.domain.model.pet.PetSize;
+import br.com.ipet.ordering.domain.model.pet.PetType;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
-import br.com.ipet.ordering.domain.model.booking.appointment.PetAppointment;
-import br.com.ipet.ordering.domain.model.booking.appointment.PetAppointmentId;
+import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentPetService;
+import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentPetServiceId;
 import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
@@ -22,7 +25,8 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
-import br.com.ipet.ordering.domain.model.serviceoffering.ServiceOfferingId;
+import br.com.ipet.ordering.domain.model.serviceoffering.ServiceCategory;
+import br.com.ipet.ordering.domain.model.serviceoffering.ServiceId;
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
 import br.com.ipet.ordering.infrastructure.persistence.order.BillingEmbeddable;
 import org.springframework.stereotype.Component;
@@ -39,7 +43,7 @@ public class AppointmentBookingMapper {
                 .customerId(new CustomerId(appointmentBookingPersistence.getCustomerId()))
                 .companyId(new CompanyId(appointmentBookingPersistence.getCompanyId()))
                 .scheduleId(new ScheduleId(appointmentBookingPersistence.getScheduleId()))
-                .petAppointments(this.toPetAppointments(appointmentBookingPersistence.getPetAppointments()))
+                .appointmentPetServices(this.toPetAppointments(appointmentBookingPersistence.getPetAppointments()))
                 .totalPets(new Quantity(appointmentBookingPersistence.getTotalPets()))
                 .totalAmount(new Money(appointmentBookingPersistence.getTotalAmount()))
                 .paymentMethod(PaymentMethod.valueOf(appointmentBookingPersistence.getPaymentMethod()))
@@ -62,10 +66,10 @@ public class AppointmentBookingMapper {
                 .build();
     }
 
-    private Set<PetAppointment> toPetAppointments(Set<PetAppointmentPersistenceEntity> petAppointmentsPersistence) {
+    private Set<AppointmentPetService> toPetAppointments(Set<PetAppointmentPersistenceEntity> petAppointmentsPersistence) {
         return petAppointmentsPersistence.stream()
-                .map(petAppointmentPersistence -> PetAppointment.existing()
-                        .id(new PetAppointmentId(petAppointmentPersistence.getId()))
+                .map(petAppointmentPersistence -> AppointmentPetService.existing()
+                        .id(new AppointmentPetServiceId(petAppointmentPersistence.getId()))
                         .appointmentBookingId(new BookingId(petAppointmentPersistence.getAppointmentBookingId()))
                         .pet(this.toPet(petAppointmentPersistence.getPet()))
                         .service(this.toService(petAppointmentPersistence.getService()))
@@ -75,12 +79,13 @@ public class AppointmentBookingMapper {
 
     private Pet toPet(PetEmbeddable petEmbeddable) {
         return new Pet(
-                petEmbeddable.getPetId(),
+                new PetId(petEmbeddable.getPetId()),
+                PetType.valueOf(petEmbeddable.getPetType()),
+                PetSize.valueOf(petEmbeddable.getSize()),
                 petEmbeddable.getName(),
-                petEmbeddable.getPetType(),
                 petEmbeddable.getBreed(),
                 petEmbeddable.getGender(),
-                petEmbeddable.getSize(),
+
                 petEmbeddable.getWeight(),
                 petEmbeddable.getAge()
         );
@@ -88,13 +93,13 @@ public class AppointmentBookingMapper {
 
     private AppointmentService toService(ServiceEmbeddable serviceEmbeddable) {
         return AppointmentService.builder()
-                .id(new ServiceOfferingId(serviceEmbeddable.getServiceId()))
+                .id(new ServiceId(serviceEmbeddable.getServiceId()))
                 .type(serviceEmbeddable.getType())
-                .category(serviceEmbeddable.getCategory())
+                .category(ServiceCategory.valueOf(serviceEmbeddable.getCategory()))
                 .description(serviceEmbeddable.getDescription())
                 .duration(serviceEmbeddable.getDuration())
                 .price(new Money(serviceEmbeddable.getPrice()))
-                .petSize(serviceEmbeddable.getPetSize())
+                .petSize(PetSize.valueOf(serviceEmbeddable.getPetSize()))
                 .build();
     }
 

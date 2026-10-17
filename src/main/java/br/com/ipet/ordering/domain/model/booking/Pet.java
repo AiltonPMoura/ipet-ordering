@@ -1,18 +1,19 @@
 package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.pet.PetId;
+import br.com.ipet.ordering.domain.model.pet.PetSize;
+import br.com.ipet.ordering.domain.model.pet.PetType;
 import lombok.Builder;
-
-import java.util.UUID;
 
 @Builder
 public record Pet(
-        UUID id,
+        PetId id,
+        PetType type,
+        PetSize size,
         String name,
-        String type,
         String breed,
         String gender,
-        String size,
         Double weight,
         Integer age) {
 

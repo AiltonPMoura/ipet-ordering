@@ -3,7 +3,7 @@ package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 import br.com.ipet.ordering.domain.model.booking.Pet;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBooking;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
-import br.com.ipet.ordering.domain.model.booking.appointment.PetAppointment;
+import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentPetService;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceRepository;
@@ -69,31 +69,31 @@ public class AppointmentBookingPersistenceMapper {
         var petAppointmentsPersistenceMap = petAppointmentsPersistence.stream()
                 .collect(Collectors.toMap(PetAppointmentPersistenceEntity::getId, item -> item));
 
-        return petAppointments.stream().map(petAppointment -> {
-            var petAppointmentPersistence = petAppointmentsPersistenceMap.getOrDefault(petAppointment.id().value(), new PetAppointmentPersistenceEntity());
-            return this.mergePet(petAppointmentPersistence, petAppointment);
+        return petAppointments.stream().map(appointmentPetService -> {
+            var petAppointmentPersistence = petAppointmentsPersistenceMap.getOrDefault(appointmentPetService.id().value(), new PetAppointmentPersistenceEntity());
+            return this.mergePet(petAppointmentPersistence, appointmentPetService);
         }).collect(Collectors.toSet());
     }
 
-    private PetAppointmentPersistenceEntity fromDomainPetAppointment(PetAppointment petAppointment) {
-        return this.mergePet(new PetAppointmentPersistenceEntity(), petAppointment);
+    private PetAppointmentPersistenceEntity fromDomainPetAppointment(AppointmentPetService appointmentPetService) {
+        return this.mergePet(new PetAppointmentPersistenceEntity(), appointmentPetService);
     }
 
-    private PetAppointmentPersistenceEntity mergePet(PetAppointmentPersistenceEntity petAppointmentPersistence, PetAppointment petAppointment) {
-        petAppointmentPersistence.setId(petAppointment.id().value());
-        petAppointmentPersistence.setPet(this.toPetEmbeddable(petAppointment.pet()));
-        petAppointmentPersistence.setService(this.toServiceEmbeddable(petAppointment.service()));
+    private PetAppointmentPersistenceEntity mergePet(PetAppointmentPersistenceEntity petAppointmentPersistence, AppointmentPetService appointmentPetService) {
+        petAppointmentPersistence.setId(appointmentPetService.id().value());
+        petAppointmentPersistence.setPet(this.toPetEmbeddable(appointmentPetService.pet()));
+        petAppointmentPersistence.setService(this.toServiceEmbeddable(appointmentPetService.service()));
         return petAppointmentPersistence;
     }
 
     private PetEmbeddable toPetEmbeddable(Pet pet) {
         return PetEmbeddable.builder()
-                .petId(pet.id())
+                .petId(pet.id().value())
                 .name(pet.name())
-                .petType(pet.type())
+                .petType(pet.type().name())
                 .breed(pet.breed())
                 .gender(pet.gender())
-                .size(pet.size())
+                .size(pet.size().name())
                 .weight(pet.weight())
                 .age(pet.age())
                 .build();
@@ -103,11 +103,11 @@ public class AppointmentBookingPersistenceMapper {
         return ServiceEmbeddable.builder()
                 .serviceId(service.id().value())
                 .type(service.type())
-                .category(service.category())
+                .category(service.category().name())
                 .description(service.description())
                 .duration(service.duration())
                 .price(service.price().value())
-                .petSize(service.petSize())
+                .petSize(service.petSize().name())
                 .build();
     }
 

@@ -9,18 +9,18 @@ import java.util.Objects;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
-public class PetAppointment {
-    private PetAppointmentId id;
+public class AppointmentPetService {
+    private AppointmentPetServiceId id;
     private BookingId appointmentBookingId;
     private Pet pet;
     private AppointmentService service;
 
-    static PetAppointment create(BookingId appointmentBookingId, Pet pet, AppointmentService service) {
-        return new PetAppointment(new PetAppointmentId(), appointmentBookingId, pet, service);
+    static AppointmentPetService create(BookingId appointmentBookingId, Pet pet, AppointmentService service) {
+        return new AppointmentPetService(new AppointmentPetServiceId(), appointmentBookingId, pet, service);
     }
 
     @Builder(builderClassName = "ExistingPetAppointmentBuilder", builderMethodName = "existing")
-    private PetAppointment(PetAppointmentId id, BookingId appointmentBookingId, Pet pet, AppointmentService service) {
+    private AppointmentPetService(AppointmentPetServiceId id, BookingId appointmentBookingId, Pet pet, AppointmentService service) {
         this.setId(id);
         this.setAppointmentBookingId(appointmentBookingId);
         this.setPet(pet);
@@ -34,12 +34,12 @@ public class PetAppointment {
         this.setPet(pet);
     }*/
 
-    public PetAppointmentId id() {
+    public AppointmentPetServiceId id() {
         return id;
     }
 
-    private void setId(PetAppointmentId id) {
-        requiresNonNull("pet id", id);
+    private void setId(AppointmentPetServiceId id) {
+        requiresNonNull("pet service id", id);
         this.id = id;
     }
 
@@ -73,7 +73,7 @@ public class PetAppointment {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        PetAppointment that = (PetAppointment) o;
+        AppointmentPetService that = (AppointmentPetService) o;
         return Objects.equals(id, that.id);
     }
 

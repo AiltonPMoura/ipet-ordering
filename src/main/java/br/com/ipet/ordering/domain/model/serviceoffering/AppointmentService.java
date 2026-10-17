@@ -2,19 +2,18 @@ package br.com.ipet.ordering.domain.model.serviceoffering;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
+import br.com.ipet.ordering.domain.model.pet.PetSize;
 import lombok.Builder;
-
-import java.math.BigDecimal;
 
 @Builder
 public record AppointmentService(
-        ServiceOfferingId id,
-        String type,
-        String category,
-        String description,
-        Integer duration,
+        ServiceId id,
+        PetSize petSize,
         Money price,
-        String petSize) {
+        String type,
+        ServiceCategory category,
+        String description,
+        Integer duration) {
 
     public AppointmentService {
         FieldValidator.requiresNonNull("id", id);

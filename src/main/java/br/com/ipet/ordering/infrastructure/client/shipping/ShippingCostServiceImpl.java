@@ -3,12 +3,12 @@ package br.com.ipet.ordering.infrastructure.client.shipping;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.order.shipping.ShippingCostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class ShippingCostServiceImpl implements ShippingCostService {
 
