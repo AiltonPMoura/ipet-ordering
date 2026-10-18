@@ -16,7 +16,7 @@ public interface AppointmentBookingPersistenceRepository
     @Query("""
         SELECT CASE WHEN EXISTS (
             SELECT booking.id FROM AppointmentBookingPersistenceEntity booking
-            WHERE booking.scheduleId = :scheduleId
+            WHERE booking.schedule.id = :scheduleId
               AND booking.scheduledStart < :requestedEnd
               AND booking.scheduledEnd > :requestedStart
         ) THEN true ELSE false END
@@ -24,14 +24,13 @@ public interface AppointmentBookingPersistenceRepository
     boolean existsConflictingBooking(UUID scheduleId, LocalDateTime requestedStart, LocalDateTime requestedEnd);
 
     @Query("""
-        SELECT new br.com.ipet.ordering.application.booking.appointment.AppointmentBookingBlockOutput(
+        SELECT
             booking.scheduledStart,
             booking.scheduledEnd
-        )
         FROM AppointmentBookingPersistenceEntity booking
         WHERE booking.schedule.id = :scheduleId
-        AND booking.scheduledStart >= :windowStart
-        AND booking.scheduledStart <= :windowEnd
+            AND booking.scheduledStart < :windowEnd
+            AND booking.scheduledEnd > :windowStart
         AND (
             booking.status IN (
                 'PENDING_APPROVAL', 'SCHEDULED', 'PICKING_UP',

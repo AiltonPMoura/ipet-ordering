@@ -203,7 +203,7 @@ public final class StayBooking extends Booking
 
     private void verifyIfServiceSupportsPetSize(Pet pet, StayService stayService) {
         if (!pet.size().equals(stayService.petSize()))
-            throw new StayBookingDoesNotSupportPetSizeException(pet.size(), stayService.petSize());
+            throw new StayBookingDoesNotSupportPetSizeException(pet.size().name(), stayService.petSize());
     }
 
     private void recalculateTotals() {

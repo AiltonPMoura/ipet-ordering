@@ -148,7 +148,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
         );
 
         return blockedBookings.stream()
-                .collect(Collectors.groupingBy(block -> block.startDate().atZoneSameInstant(zoneId).toLocalDate()));
+                .collect(Collectors.groupingBy(block -> block.scheduledStart().atZone(zoneId).toLocalDate()));
     }
 
     private Map<DayOfWeek, AppointmentWorkDayPersistenceEntity> mapWorkDaysByDayOfWeek(Set<AppointmentWorkDayPersistenceEntity> workDays) {
@@ -193,8 +193,8 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
         LocalTime slotEnd = slotStart.plusMinutes(30);
 
         return bookings.stream().anyMatch(booking -> {
-            LocalTime bookingStart = booking.startDate().atZoneSameInstant(zoneId).toLocalTime();
-            LocalTime bookingEnd = booking.endDate().atZoneSameInstant(zoneId).toLocalTime();
+            LocalTime bookingStart = booking.scheduledStart().atZone(zoneId).toLocalTime();
+            LocalTime bookingEnd = booking.scheduledEnd().atZone(zoneId).toLocalTime();
 
             return slotStart.isBefore(bookingEnd) && slotEnd.isAfter(bookingStart);
         });
