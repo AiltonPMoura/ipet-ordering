@@ -21,9 +21,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(of = "id")
-@Table(name = "pet_appointment")
+@Table(name = "appointment_pet_service")
 @Entity
-public class PetAppointmentPersistenceEntity {
+public class AppointmentPetServicePersistenceEntity {
 
     @Id
     @EqualsAndHashCode.Include

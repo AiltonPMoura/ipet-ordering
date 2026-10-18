@@ -1,7 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 
 import br.com.ipet.ordering.infrastructure.persistence.booking.AbstractBooking;
-import br.com.ipet.ordering.infrastructure.persistence.order.OrderItemPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.schedule.appointment.AppointmentSchedulePersistenceEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
@@ -16,7 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -26,7 +24,6 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
@@ -51,11 +48,11 @@ public class AppointmentBookingPersistenceEntity extends AbstractBooking {
     private OffsetDateTime returnedAt;
 
     @OneToMany(mappedBy = "appointmentBooking", cascade = CascadeType.ALL)
-    private Set<PetAppointmentPersistenceEntity> petAppointments = new HashSet<>();
+    private Set<AppointmentPetServicePersistenceEntity> appointmentPetServices = new HashSet<>();
 
-    public void setPetAppointments(Set<PetAppointmentPersistenceEntity> petAppointments) {
-        petAppointments.forEach(petAppointment -> petAppointment.setAppointmentBooking(this));
-        this.petAppointments = petAppointments;
+    public void setAppointmentPetServices(Set<AppointmentPetServicePersistenceEntity> appointmentPetServices) {
+        appointmentPetServices.forEach(appointmentPetService -> appointmentPetService.setAppointmentBooking(this));
+        this.appointmentPetServices = appointmentPetServices;
     }
 
     public UUID getScheduleId() {

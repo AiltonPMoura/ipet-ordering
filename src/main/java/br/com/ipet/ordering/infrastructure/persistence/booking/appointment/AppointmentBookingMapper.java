@@ -43,7 +43,7 @@ public class AppointmentBookingMapper {
                 .customerId(new CustomerId(appointmentBookingPersistence.getCustomerId()))
                 .companyId(new CompanyId(appointmentBookingPersistence.getCompanyId()))
                 .scheduleId(new ScheduleId(appointmentBookingPersistence.getScheduleId()))
-                .appointmentPetServices(this.toPetAppointments(appointmentBookingPersistence.getPetAppointments()))
+                .appointmentPetServices(this.toAppointmentPetServices(appointmentBookingPersistence.getAppointmentPetServices()))
                 .totalPets(new Quantity(appointmentBookingPersistence.getTotalPets()))
                 .totalAmount(new Money(appointmentBookingPersistence.getTotalAmount()))
                 .paymentMethod(PaymentMethod.valueOf(appointmentBookingPersistence.getPaymentMethod()))
@@ -66,13 +66,13 @@ public class AppointmentBookingMapper {
                 .build();
     }
 
-    private Set<AppointmentPetService> toPetAppointments(Set<PetAppointmentPersistenceEntity> petAppointmentsPersistence) {
-        return petAppointmentsPersistence.stream()
-                .map(petAppointmentPersistence -> AppointmentPetService.existing()
-                        .id(new AppointmentPetServiceId(petAppointmentPersistence.getId()))
-                        .appointmentBookingId(new BookingId(petAppointmentPersistence.getAppointmentBookingId()))
-                        .pet(this.toPet(petAppointmentPersistence.getPet()))
-                        .service(this.toService(petAppointmentPersistence.getService()))
+    private Set<AppointmentPetService> toAppointmentPetServices(Set<AppointmentPetServicePersistenceEntity> appointmentPetServicePersistences) {
+        return appointmentPetServicePersistences.stream()
+                .map(appointmentPetServicePersistence -> AppointmentPetService.existing()
+                        .id(new AppointmentPetServiceId(appointmentPetServicePersistence.getId()))
+                        .appointmentBookingId(new BookingId(appointmentPetServicePersistence.getAppointmentBookingId()))
+                        .pet(this.toPet(appointmentPetServicePersistence.getPet()))
+                        .service(this.toService(appointmentPetServicePersistence.getService()))
                         .build())
                 .collect(Collectors.toSet());
     }
@@ -85,7 +85,6 @@ public class AppointmentBookingMapper {
                 petEmbeddable.getName(),
                 petEmbeddable.getBreed(),
                 petEmbeddable.getGender(),
-
                 petEmbeddable.getWeight(),
                 petEmbeddable.getAge()
         );

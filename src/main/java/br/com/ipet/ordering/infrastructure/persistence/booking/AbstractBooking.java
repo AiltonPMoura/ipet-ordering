@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.math.BigDecimal;
@@ -24,10 +23,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @ToString(of = "id")
 @MappedSuperclass
 public class AbstractBooking extends AbstractAggregateRoot<AbstractBooking> {

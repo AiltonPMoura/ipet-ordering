@@ -44,7 +44,7 @@ public class AppointmentBookingPersistenceMapper {
         appointmentBookingPersistence.setPaymentStatus(appointmentBooking.paymentStatus().name());
         appointmentBookingPersistence.setBilling(this.toBillingEmbeddable(appointmentBooking.billing()));
         appointmentBookingPersistence.setPetTransport(this.toPetTransportEmbeddable(appointmentBooking));
-        appointmentBookingPersistence.setPetAppointments(this.mergePetAppointments(appointmentBookingPersistence, appointmentBooking));
+        appointmentBookingPersistence.setAppointmentPetServices(this.mergeAppointmentPetServices(appointmentBookingPersistence, appointmentBooking));
         appointmentBookingPersistence.setRequestedAt(appointmentBooking.requestedAt());
         appointmentBookingPersistence.setScheduledAt(appointmentBooking.scheduledAt());
         appointmentBookingPersistence.setPaidAt(appointmentBooking.paidAt());
@@ -58,32 +58,32 @@ public class AppointmentBookingPersistenceMapper {
         return appointmentBookingPersistence;
     }
 
-    private Set<PetAppointmentPersistenceEntity> mergePetAppointments(AppointmentBookingPersistenceEntity appointmentBookingPersistence,
-                                                                      AppointmentBooking appointmentBooking) {
-        var petAppointmentsPersistence = appointmentBookingPersistence.getPetAppointments();
-        var petAppointments = appointmentBooking.petAppointments();
+    private Set<AppointmentPetServicePersistenceEntity> mergeAppointmentPetServices(AppointmentBookingPersistenceEntity appointmentBookingPersistence,
+                                                                                    AppointmentBooking appointmentBooking) {
+        var appointmentPetServicePersistences = appointmentBookingPersistence.getAppointmentPetServices();
+        var appointmentPetServices = appointmentBooking.appointmentPetServices();
 
-        if (petAppointmentsPersistence.isEmpty())
-            return petAppointments.stream().map(this::fromDomainPetAppointment).collect(Collectors.toSet());
+        if (appointmentPetServicePersistences.isEmpty())
+            return appointmentPetServices.stream().map(this::fromDomainAppointmentPetService).collect(Collectors.toSet());
 
-        var petAppointmentsPersistenceMap = petAppointmentsPersistence.stream()
-                .collect(Collectors.toMap(PetAppointmentPersistenceEntity::getId, item -> item));
+        var appointmentPetServicePersistenceMap = appointmentPetServicePersistences.stream()
+                .collect(Collectors.toMap(AppointmentPetServicePersistenceEntity::getId, appointmentPetService -> appointmentPetService));
 
-        return petAppointments.stream().map(appointmentPetService -> {
-            var petAppointmentPersistence = petAppointmentsPersistenceMap.getOrDefault(appointmentPetService.id().value(), new PetAppointmentPersistenceEntity());
-            return this.mergePet(petAppointmentPersistence, appointmentPetService);
+        return appointmentPetServices.stream().map(appointmentPetService -> {
+            var appointmentPetServicePersistence = appointmentPetServicePersistenceMap.getOrDefault(appointmentPetService.id().value(), new AppointmentPetServicePersistenceEntity());
+            return this.mergePet(appointmentPetServicePersistence, appointmentPetService);
         }).collect(Collectors.toSet());
     }
 
-    private PetAppointmentPersistenceEntity fromDomainPetAppointment(AppointmentPetService appointmentPetService) {
-        return this.mergePet(new PetAppointmentPersistenceEntity(), appointmentPetService);
+    private AppointmentPetServicePersistenceEntity fromDomainAppointmentPetService(AppointmentPetService appointmentPetService) {
+        return this.mergePet(new AppointmentPetServicePersistenceEntity(), appointmentPetService);
     }
 
-    private PetAppointmentPersistenceEntity mergePet(PetAppointmentPersistenceEntity petAppointmentPersistence, AppointmentPetService appointmentPetService) {
-        petAppointmentPersistence.setId(appointmentPetService.id().value());
-        petAppointmentPersistence.setPet(this.toPetEmbeddable(appointmentPetService.pet()));
-        petAppointmentPersistence.setService(this.toServiceEmbeddable(appointmentPetService.service()));
-        return petAppointmentPersistence;
+    private AppointmentPetServicePersistenceEntity mergePet(AppointmentPetServicePersistenceEntity appointmentPetServicePersistence, AppointmentPetService appointmentPetService) {
+        appointmentPetServicePersistence.setId(appointmentPetService.id().value());
+        appointmentPetServicePersistence.setPet(this.toPetEmbeddable(appointmentPetService.pet()));
+        appointmentPetServicePersistence.setService(this.toServiceEmbeddable(appointmentPetService.service()));
+        return appointmentPetServicePersistence;
     }
 
     private PetEmbeddable toPetEmbeddable(Pet pet) {

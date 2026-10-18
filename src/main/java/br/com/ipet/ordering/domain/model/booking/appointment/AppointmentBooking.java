@@ -284,7 +284,7 @@ public final class AppointmentBooking
         this.appointmentStatus = appointmentStatus;
     }
 
-    public Set<AppointmentPetService> petAppointments() {
+    public Set<AppointmentPetService> appointmentPetServices() {
         return appointmentPetServices;
     }
 
