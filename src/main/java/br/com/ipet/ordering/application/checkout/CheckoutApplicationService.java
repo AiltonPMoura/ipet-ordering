@@ -2,7 +2,6 @@ package br.com.ipet.ordering.application.checkout;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Company;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Customer;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
@@ -15,7 +14,7 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.order.CheckoutService;
 import br.com.ipet.ordering.domain.model.order.DeliveryCompany;
 import br.com.ipet.ordering.domain.model.order.Orders;
-import br.com.ipet.ordering.domain.model.order.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
 import br.com.ipet.ordering.domain.model.order.Shipping;
 import br.com.ipet.ordering.domain.model.order.shipping.ShippingCostService;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCartId;
@@ -39,7 +38,7 @@ public class CheckoutApplicationService {
     private final Customers customers;
     private final ShippingCostService shippingCostService;
 
-    public UUID checkout(CheckoutInput input) {
+    public UUID checkout(OrderInput input) {
         FieldValidator.requiresNonNull("input", input);
 
         var shoppingCart = shoppingCarts.ofId(new ShoppingCartId(input.getShoppingCartId()))
@@ -59,14 +58,13 @@ public class CheckoutApplicationService {
                 shoppingCart,
                 new CustomerId(customer.id().value()),
                 new CompanyId(company.id().value()),
-                new Billing(Customer.builder()
+                Billing.builder()
                         .fullName(customer.fullName())
                         .document(customer.document())
                         .email(customer.email())
                         .phone(customer.phone())
                         .address(customer.principalAddress())
-                        .build()
-                ),
+                        .build(),
                 Shipping.builder()
                         .address(customerAddress)
                         .cost(shippingCost.cost())

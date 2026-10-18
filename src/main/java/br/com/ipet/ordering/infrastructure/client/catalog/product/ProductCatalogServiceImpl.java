@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.infrastructure.client.catalog;
+package br.com.ipet.ordering.infrastructure.client.catalog.product;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
@@ -7,16 +7,15 @@ import br.com.ipet.ordering.domain.model.product.ProductCatalogService;
 import br.com.ipet.ordering.domain.model.product.ProductDescription;
 import br.com.ipet.ordering.domain.model.product.ProductId;
 import br.com.ipet.ordering.domain.model.product.ProductName;
-import br.com.ipet.ordering.domain.model.schedule.category.ServiceCategory;
-import br.com.ipet.ordering.domain.model.serviceoffering.ServiceOfferingCatalogService;
+import br.com.ipet.ordering.infrastructure.client.catalog.CatalogAPIClient;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class CatalogServiceImpl implements ProductCatalogService, ServiceOfferingCatalogService {
+public class ProductCatalogServiceImpl implements ProductCatalogService {
 
     private final CatalogAPIClient catalogAPIClient;
 
@@ -31,16 +30,6 @@ public class CatalogServiceImpl implements ProductCatalogService, ServiceOfferin
                 .price(new Money(productResponse.price()))
                 .inStock(productResponse.inStock())
                 .build());
-    }
-
-    @Override
-    public Optional<Object> ofId(Object id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<ServiceCategory> ofCompanyId(CompanyId companyId) {
-        return Optional.of(ServiceCategory.valueOf(catalogAPIClient.findSubcategory(companyId).name()));
     }
 
 }

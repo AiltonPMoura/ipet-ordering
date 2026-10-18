@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.presentation.schedule.appointment;
 
+import br.com.ipet.ordering.application.commons.NameInput;
 import br.com.ipet.ordering.application.schedule.ScheduleInput;
 import br.com.ipet.ordering.application.schedule.appointment.management.AppointmentScheduleApplicationService;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleDetailOutput;
@@ -27,12 +28,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AppointmentScheduleController {
 
-    private final AppointmentScheduleApplicationService appointmentScheduleApplicationService;
-    private final AppointmentScheduleQueryService appointmentScheduleQueryService;
+    private final AppointmentScheduleApplicationService applicationService;
+    private final AppointmentScheduleQueryService queryService;
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody ScheduleInput input) {
-        var appointmentScheduleId = appointmentScheduleApplicationService.create(input);
+        var appointmentScheduleId = applicationService.create(input);
 
         var url = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{appointmentScheduleId}")
@@ -43,30 +44,32 @@ public class AppointmentScheduleController {
     }
 
     @PutMapping("/{appointmentScheduleId}/name")
-    public void changeName(@PathVariable UUID appointmentScheduleId, @RequestBody String name) {
-        appointmentScheduleApplicationService.changeName(appointmentScheduleId, new CompanyId().value(), name);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changeName(@PathVariable UUID appointmentScheduleId, @RequestBody NameInput name) {
+        applicationService.changeName(appointmentScheduleId, new CompanyId().value(), name);
     }
 
-    @PutMapping("/{appointmentScheduleId}/locked-dates")
-    public void changeLockedDates(@PathVariable UUID appointmentScheduleId, @RequestBody List<LocalDate> lockedDates) {
-        appointmentScheduleApplicationService.changeLockedDates(appointmentScheduleId, new CompanyId().value(), lockedDates);
+    @PutMapping("/{appointmentScheduleId}/blocked-dates")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changeLockedDates(@PathVariable UUID appointmentScheduleId, @RequestBody List<LocalDate> blockedDates) {
+        applicationService.changeBlockedDates(appointmentScheduleId, new CompanyId().value(), blockedDates);
     }
 
     @GetMapping("/{appointmentScheduleId}")
     public AppointmentScheduleDetailOutput findById(@PathVariable UUID appointmentScheduleId) {
-        return appointmentScheduleQueryService.findByCompany(appointmentScheduleId);
+        return queryService.findById(appointmentScheduleId);
     }
 
     @PostMapping("/{appointmentScheduleId}/activate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void active(@PathVariable UUID appointmentScheduleId) {
-        appointmentScheduleApplicationService.activate(appointmentScheduleId, new CompanyId().value());
+    public void activate(@PathVariable UUID appointmentScheduleId) {
+        applicationService.activate(appointmentScheduleId, new CompanyId().value());
     }
 
     @PostMapping("/{appointmentScheduleId}/deactivate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inactive(@PathVariable UUID appointmentScheduleId) {
-        appointmentScheduleApplicationService.deactivate(appointmentScheduleId, new CompanyId().value());
+    public void deactivate(@PathVariable UUID appointmentScheduleId) {
+        applicationService.deactivate(appointmentScheduleId, new CompanyId().value());
     }
 
 }

@@ -3,8 +3,10 @@ package br.com.ipet.ordering.infrastructure.client.catalog;
 import br.com.ipet.ordering.infrastructure.client.catalog.product.ProductResponse;
 import br.com.ipet.ordering.infrastructure.client.catalog.serviceoffering.AppointmentServiceResponse;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.GetExchange;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface CatalogAPIClient {
@@ -15,4 +17,6 @@ public interface CatalogAPIClient {
     @GetExchange(value = "/v1/companies/{companyId}/services/{serviceId}", accept = "application/json")
     AppointmentServiceResponse findServiceById(@PathVariable UUID companyId, @PathVariable UUID serviceId);
 
+    @GetExchange(value = "/v1/companies/{companyId}/services", accept = "application/json")
+    List<AppointmentServiceResponse> findAllServicesById(@PathVariable UUID companyId, @RequestBody List<UUID> serviceIds);
 }

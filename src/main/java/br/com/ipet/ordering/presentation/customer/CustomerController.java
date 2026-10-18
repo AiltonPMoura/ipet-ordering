@@ -70,7 +70,7 @@ public class CustomerController {
         //customerManagementApplicationService.delete(customerId);
     }
 
-    @PatchMapping("/{customerId}/email")
+    @PutMapping("/{customerId}/email")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeEmail(@PathVariable UUID customerId, @RequestBody EmailInput email) {
         customerManagementApplicationService.changeEmail(customerId, email);

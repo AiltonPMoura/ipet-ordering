@@ -15,8 +15,13 @@ import java.util.UUID;
 @NoArgsConstructor
 public class OrderSummaryOutput {
     private UUID id;
-    private BigDecimal totalAmount;
+    private CustomerMinimalOutput customer;
     private Integer totalItems;
-    private String status;
+    private BigDecimal totalAmount;
     private OffsetDateTime placedAt;
+    private OffsetDateTime paidAt;
+    private OffsetDateTime readyAt;
+    private OffsetDateTime canceledAt;
+    private String status;
+    private String paymentMethod;
 }

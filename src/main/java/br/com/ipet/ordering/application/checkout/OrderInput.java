@@ -11,7 +11,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckoutInput {
+public class OrderInput {
     private UUID shoppingCartId;
     private UUID companyId;
     private UUID customerId;

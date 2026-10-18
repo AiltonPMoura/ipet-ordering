@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model.order;
 
+import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
@@ -13,7 +14,7 @@ public class CheckoutService {
 
     public Order checkout(ShoppingCart shoppingCart, CustomerId customerId, CompanyId companyId,
                           Billing billing, Shipping shipping,
-                          DeliveryCompany deliveryCompany, OrderPaymentMethod orderPaymentMethod) {
+                          DeliveryCompany deliveryCompany, PaymentMethod paymentMethod) {
 
         if (shoppingCart.isEmpty())
             throw new ShoppingCartCantProceedToCheckoutException("");
@@ -22,7 +23,7 @@ public class CheckoutService {
         order.changeBilling(billing);
         order.changeShipping(shipping);
         order.changeDeliveryCompany(deliveryCompany);
-        order.changePaymentMethod(orderPaymentMethod);
+        order.changePaymentMethod(paymentMethod);
 
         shoppingCart.items().forEach(item -> order.addItem(item.product(), item.quantity()));
 

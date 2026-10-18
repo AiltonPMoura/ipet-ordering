@@ -37,7 +37,13 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
     private final Mapper mapper;
 
     @Override
-    public AppointmentScheduleDetailOutput findByCompany(UUID companyId) {
+    public AppointmentScheduleDetailOutput findById(UUID scheduleId) {
+        var appointmentSchedulePersistence = repository.findById(scheduleId).orElseThrow(() -> new ScheduNotFoundException(""));
+        return mapper.convert(appointmentSchedulePersistence, AppointmentScheduleDetailOutput.class);
+    }
+
+    @Override
+    public AppointmentScheduleDetailOutput findByCompanyId(UUID companyId) {
         var appointmentSchedulePersistence = repository.findByCompany_Id(companyId).orElseThrow(() -> new ScheduNotFoundException(""));
         return mapper.convert(appointmentSchedulePersistence, AppointmentScheduleDetailOutput.class);
     }

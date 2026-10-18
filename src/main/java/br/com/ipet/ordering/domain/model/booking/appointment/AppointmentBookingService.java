@@ -20,32 +20,23 @@ public class AppointmentBookingService {
                                    LocalDateTime requestedStart,
                                    Set<PetServicePair> petServicePairs) {
 
-        var requestedEnd = this.calculateRequestedEnd(requestedStart, petServicePairs);
-
-        appointmentSchedule.verifyOperatingHours(requestedStart, requestedEnd);
-
-        this.verifyTimeSlotAvailability(appointmentSchedule, requestedStart, requestedEnd);
-
         var appointmentBooking = AppointmentBooking.create(
                 customerId,
                 appointmentSchedule.companyId(),
                 appointmentSchedule,
-                requestedStart,
-                requestedEnd
+                requestedStart
         );
 
         petServicePairs.forEach(petServicePair -> appointmentBooking.addAppointmentPetService(petServicePair.pet(), petServicePair.service()));
 
+        var requestedEnd = appointmentBooking.scheduledEnd();
+
+        appointmentSchedule.verifyOperatingHours(requestedStart, requestedEnd);
+        this.verifyTimeSlotAvailability(appointmentSchedule, requestedStart, requestedEnd);
+
         appointmentBooking.request(customerId, appointmentSchedule.companyId());
 
         return appointmentBooking;
-    }
-
-    private LocalDateTime calculateRequestedEnd(LocalDateTime requestedStart, Set<PetServicePair> petServicePairs) {
-        return requestedStart.plusMinutes(petServicePairs.stream()
-                .map(PetServicePair::service)
-                .mapToInt(AppointmentService::duration)
-                .sum());
     }
 
     private void verifyTimeSlotAvailability(AppointmentSchedule appointmentSchedule, LocalDateTime requestedStart, LocalDateTime requestedEnd) {

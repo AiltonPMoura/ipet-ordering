@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.application.schedule.appointment.management;
 
+import br.com.ipet.ordering.application.commons.NameInput;
 import br.com.ipet.ordering.application.schedule.ScheduleInput;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.schedule.BlockedDate;
@@ -47,16 +48,16 @@ public class AppointmentScheduleApplicationService {
         return appointmentSchedule.id().value();
     }
 
-    public void changeName(UUID scheduleId, UUID companyId, String name) {
+    public void changeName(UUID scheduleId, UUID companyId, NameInput name) {
         requiresNonNull("name", name);
 
         var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
-        appointmentSchedule.changeName(new ScheduleName(name), new CompanyId(companyId));
+        appointmentSchedule.changeName(new ScheduleName(name.getName()), new CompanyId(companyId));
 
         appointmentSchedules.add(appointmentSchedule);
     }
 
-    public void changeLockedDates(UUID scheduleId, UUID companyId, List<LocalDate> dates) {
+    public void changeBlockedDates(UUID scheduleId, UUID companyId, List<LocalDate> dates) {
         requiresNonNull("dates", dates);
 
         var appointmentSchedule = this.findAppointmentSchedule(scheduleId);

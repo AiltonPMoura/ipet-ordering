@@ -1,9 +1,9 @@
 package br.com.ipet.ordering.presentation.company;
 
+import br.com.ipet.ordering.application.commons.EmailInput;
 import br.com.ipet.ordering.application.company.management.CompanyInput;
 import br.com.ipet.ordering.application.company.management.CompanyManagementApplicationService;
 import br.com.ipet.ordering.application.company.management.CompanyUpdateInput;
-import br.com.ipet.ordering.application.commons.EmailInput;
 import br.com.ipet.ordering.application.company.query.CompanyDetailOutput;
 import br.com.ipet.ordering.application.company.query.CompanyFilter;
 import br.com.ipet.ordering.application.company.query.CompanyQueryService;

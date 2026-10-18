@@ -56,12 +56,11 @@ public final class AppointmentBooking
 
     static AppointmentBooking create(CustomerId customerId, CompanyId companyId,
                                      AppointmentSchedule appointmentSchedule,
-                                     LocalDateTime requestedStart,
-                                     LocalDateTime requestedEnd) {
+                                     LocalDateTime requestedStart) {
 
         return new AppointmentBooking(new BookingId(), customerId, companyId, appointmentSchedule.id(),
                 Quantity.ZERO, Money.ZERO, null, null, null,
-                requestedStart, requestedEnd,
+                requestedStart, null,
                 null, AppointmentBookingStatus.DRAFT, Set.of(), null, null,
                 null, null, null, null,
                 null, null, null, null
@@ -93,18 +92,18 @@ public final class AppointmentBooking
     void addAppointmentPetService(Pet pet, AppointmentService appointmentService) {
         this.verifyIfChangeable();
         this.verifyIfServiceSupportsPetSize(pet, appointmentService);
-        var item = AppointmentPetService.create(this.id(), pet, appointmentService);
-        this.appointmentPetServices.add(item);
+        var appointmentPetService = AppointmentPetService.create(this.id(), pet, appointmentService);
+        this.appointmentPetServices.add(appointmentPetService);
         this.recalculateTotals();
-        this.recalculateSchedule();
+        this.recalculateScheduleEnd();
     }
 
     public void removeAppointmentPetService(AppointmentPetServiceId appointmentPetServiceId) {
         this.verifyIfChangeable();
-        var petAppointment = this.findPetAppointmentById(appointmentPetServiceId);
-        this.appointmentPetServices.remove(petAppointment);
+        var appointmentPetService = this.findPetAppointmentById(appointmentPetServiceId);
+        this.appointmentPetServices.remove(appointmentPetService);
         this.recalculateTotals();
-        this.recalculateSchedule();
+        this.recalculateScheduleEnd();
     }
 
     public void request(CustomerId customerId, CompanyId companyId) {
@@ -212,9 +211,9 @@ public final class AppointmentBooking
         this.setTotalPets(new Quantity(this.appointmentPetServices.size()));
     }
 
-    private void recalculateSchedule() {
+    private void recalculateScheduleEnd() {
         var totalDuration = this.appointmentPetServices.stream()
-                .mapToLong(item -> item.service().duration())
+                .mapToInt(appointmentPetService -> appointmentPetService.service().duration())
                 .sum();
 
         this.setScheduledEnd(this.scheduledStart().plusMinutes(totalDuration));
