@@ -23,6 +23,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -86,20 +87,24 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
             ZoneId zoneId,
             LocalDateTime nowOffset) {
 
-        var workDayOptional = schedule.getWorkDays().stream()
-                .filter(workDay -> workDay.getDayOfWeek().equals(today.getDayOfWeek()))
-                .findFirst();
+        var workDayTodayOptional = this.findAvailableWorkDayToday(schedule, today, currentTime);
+        if (workDayTodayOptional.isEmpty()) return 1;
 
-        boolean isWorkingDay = workDayOptional.isPresent() && currentTime.isBefore(workDayOptional.get().getEndTime());
-        boolean isBlockedDay = schedule.getBlockedDates().contains(today);
-
-        if (!isWorkingDay || isBlockedDay) {
-            return 1;
-        }
-
-        boolean isFullyBooked = this.checkIfTodayIsFullyBooked(schedule.getId(), workDayOptional.get(), today, zoneId, nowOffset);
-
+        boolean isFullyBooked = this.checkIfTodayIsFullyBooked(schedule.getId(), workDayTodayOptional.get(), today, zoneId, nowOffset);
         return isFullyBooked ? 1 : 0;
+    }
+
+    private Optional<AppointmentWorkDayPersistenceEntity> findAvailableWorkDayToday(
+            AppointmentSchedulePersistenceEntity schedule,
+            LocalDate today,
+            LocalTime currentTime) {
+
+        if (schedule.getBlockedDates().contains(today)) return Optional.empty();
+
+        return schedule.getWorkDays().stream()
+                .filter(workDay -> workDay.getDayOfWeek().equals(today.getDayOfWeek()))
+                .filter(workDay -> currentTime.isBefore(workDay.getEndTime()))
+                .findFirst();
     }
 
     private boolean checkIfTodayIsFullyBooked(
@@ -109,8 +114,8 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
             ZoneId zoneId,
             LocalDateTime nowOffset) {
 
-        LocalDateTime windowStart = today.atStartOfDay(zoneId).toLocalDateTime();
-        LocalDateTime windowEnd = today.atTime(LocalTime.MAX).atZone(zoneId).toLocalDateTime();
+        LocalDateTime windowStart = today.atTime(workDay.getStartTime());
+        LocalDateTime windowEnd = today.atTime(workDay.getEndTime());
         LocalDateTime gracePeriod = nowOffset.minusMinutes(20);
 
         var todayBookings = bookingQueryService.findBlockedBookings(

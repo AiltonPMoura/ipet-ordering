@@ -41,9 +41,9 @@ public class AppointmentBookingPersistenceMapper {
         appointmentBookingPersistence.setTotalAmount(appointmentBooking.totalAmount().value());
         appointmentBookingPersistence.setStatus(appointmentBooking.appointmentStatus().name());
         appointmentBookingPersistence.setPaymentMethod(appointmentBooking.paymentMethod().name());
-        appointmentBookingPersistence.setPaymentStatus(appointmentBooking.paymentStatus().name());
+        /*appointmentBookingPersistence.setPaymentStatus(appointmentBooking.paymentStatus().name());
         appointmentBookingPersistence.setBilling(this.toBillingEmbeddable(appointmentBooking.billing()));
-        appointmentBookingPersistence.setPetTransport(this.toPetTransportEmbeddable(appointmentBooking));
+        appointmentBookingPersistence.setPetTransport(this.toPetTransportEmbeddable(appointmentBooking));*/
         appointmentBookingPersistence.setAppointmentPetServices(this.mergeAppointmentPetServices(appointmentBookingPersistence, appointmentBooking));
         appointmentBookingPersistence.setRequestedAt(appointmentBooking.requestedAt());
         appointmentBookingPersistence.setScheduledAt(appointmentBooking.scheduledAt());

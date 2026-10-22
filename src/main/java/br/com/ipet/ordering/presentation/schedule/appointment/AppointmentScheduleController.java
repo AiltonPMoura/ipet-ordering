@@ -6,6 +6,7 @@ import br.com.ipet.ordering.application.schedule.appointment.management.Appointm
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleDetailOutput;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleQueryService;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleAvailabilityOutput;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,11 @@ public class AppointmentScheduleController {
     @GetMapping("/{appointmentScheduleId}")
     public AppointmentScheduleDetailOutput findById(@PathVariable UUID appointmentScheduleId) {
         return queryService.findById(appointmentScheduleId);
+    }
+
+    @GetMapping("/{companyId}/availability")
+    public ScheduleAvailabilityOutput findScheduleAvailabilityByCompanyId(@PathVariable UUID companyId) {
+        return queryService.findScheduleAvailability(companyId);
     }
 
     @PostMapping("/{appointmentScheduleId}/activate")

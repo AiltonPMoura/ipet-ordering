@@ -3,6 +3,10 @@ server:
   servlet:
     context-path: /api
 
+springdoc:
+  swagger-ui:
+    url: /api/openapi/ordering.yml
+
 spring:
   application:
     name: Ordering

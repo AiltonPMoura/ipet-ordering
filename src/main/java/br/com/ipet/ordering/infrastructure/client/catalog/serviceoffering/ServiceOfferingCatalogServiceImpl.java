@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,20 +22,38 @@ public class ServiceOfferingCatalogServiceImpl implements ServiceOfferingCatalog
 
     private final CatalogAPIClient catalogAPIClient;
 
-    @Override
+    /*@Override
     public Optional<AppointmentService> ofIdAndCompanyId(ServiceId serviceId, CompanyId companyId) {
         var serviceResponse = catalogAPIClient.findServiceById(companyId.value(), serviceId.value());
         return Optional.of(this.buildAppointmentService(serviceResponse));
+    }*/
+
+    @Override
+    public Optional<AppointmentService> ofIdAndCompanyId(ServiceId serviceId, CompanyId companyId) {
+        return Optional.of(AppointmentService.builder()
+                .id(new ServiceId(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6")))
+                .type("BATH")
+                .category(ServiceCategory.valueOf("HYGIENE"))
+                .description("Bath service for pets")
+                .duration(60)
+                .price(new Money("50"))
+                .petSize(PetSize.valueOf("MEDIUM"))
+                .build());
     }
 
     @Override
+    public Set<AppointmentService> ofIdsAndCompanyId(Set<ServiceId> ids, CompanyId companyId) {
+        return Set.of(ofIdAndCompanyId(ids.iterator().next(), companyId).orElseThrow());
+    }
+
+    /*@Override
     public Set<AppointmentService> ofIdsAndCompanyId(Set<ServiceId> ids, CompanyId companyId) {
         var serviceIds = ids.stream().map(ServiceId::value).toList();
 
         return catalogAPIClient.findAllServicesById(companyId.value(), serviceIds).stream()
                 .map(this::buildAppointmentService)
                 .collect(Collectors.toSet());
-    }
+    }*/
 
     private AppointmentService buildAppointmentService(AppointmentServiceResponse serviceResponse) {
         return AppointmentService.builder()

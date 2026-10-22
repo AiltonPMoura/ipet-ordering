@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum ServiceCategory {
-    HIGIENE,
+    HYGIENE,
     HEALTH,
     DAYCARE,
     HOSTING

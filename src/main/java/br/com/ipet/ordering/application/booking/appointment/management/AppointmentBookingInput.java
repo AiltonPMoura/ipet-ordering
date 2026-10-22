@@ -8,5 +8,6 @@ public record AppointmentBookingInput(UUID customerId,
                                       UUID appointmentScheduleId,
                                       UUID companyId,
                                       LocalDateTime requestedStart,
-                                      List<AppointmentPetServiceInput> appointments) {
+                                      List<AppointmentPetServiceInput> appointments,
+                                      String paymentMethod) {
 }

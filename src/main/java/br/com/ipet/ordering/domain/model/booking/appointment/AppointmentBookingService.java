@@ -1,5 +1,6 @@
 package br.com.ipet.ordering.domain.model.booking.appointment;
 
+import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
@@ -18,7 +19,8 @@ public class AppointmentBookingService {
     public AppointmentBooking book(CustomerId customerId,
                                    AppointmentSchedule appointmentSchedule,
                                    LocalDateTime requestedStart,
-                                   Set<PetServicePair> petServicePairs) {
+                                   Set<PetServicePair> petServicePairs,
+                                   PaymentMethod paymentMethod) {
 
         var appointmentBooking = AppointmentBooking.create(
                 customerId,
@@ -34,6 +36,7 @@ public class AppointmentBookingService {
         appointmentSchedule.verifyOperatingHours(requestedStart, requestedEnd);
         this.verifyTimeSlotAvailability(appointmentSchedule, requestedStart, requestedEnd);
 
+        appointmentBooking.changePaymentMethod(paymentMethod);
         appointmentBooking.request(customerId, appointmentSchedule.companyId());
 
         return appointmentBooking;

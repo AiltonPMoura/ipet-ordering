@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.HashSet;
 import java.util.Set;
 
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.CANCELED;
@@ -61,7 +62,7 @@ public final class AppointmentBooking
         return new AppointmentBooking(new BookingId(), customerId, companyId, appointmentSchedule.id(),
                 Quantity.ZERO, Money.ZERO, null, null, null,
                 requestedStart, null,
-                null, AppointmentBookingStatus.DRAFT, Set.of(), null, null,
+                null, AppointmentBookingStatus.DRAFT, new HashSet<>(), null, null,
                 null, null, null, null,
                 null, null, null, null
         );
@@ -110,6 +111,12 @@ public final class AppointmentBooking
         this.verifyIfCanChangeToRequested(customerId, companyId);
         this.changeStatus(REQUESTED);
         this.setRequestedAt(OffsetDateTime.now(ZoneOffset.UTC));
+    }
+
+    public void changePaymentMethod(PaymentMethod paymentMethod) {
+        FieldValidator.requiresNonNull("paymentMethod", paymentMethod);
+        this.verifyIfChangeable();
+        super.setPaymentMethod(paymentMethod);
     }
 
     public void markAsPaid() {
@@ -204,8 +211,8 @@ public final class AppointmentBooking
     private void recalculateTotals() {
         var totalPetAppointmentTransportAmount = this.appointmentPetServices.stream()
                 .map(appointmentPetService -> appointmentPetService.service().price().value())
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .add(this.transport.cost().value());
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                //.add(this.transport.cost().value());
 
         this.setTotalAmount(new Money(totalPetAppointmentTransportAmount));
         this.setTotalPets(new Quantity(this.appointmentPetServices.size()));
@@ -243,11 +250,11 @@ public final class AppointmentBooking
         if (this.paymentMethod() == null)
             throw AppointmentBookingCannotBeRequestedException.noPaymentMethod(this.id().toString());
 
-        if (this.billing() == null)
+/*        if (this.billing() == null)
             throw AppointmentBookingCannotBeRequestedException.noBilling(this.id().toString());
 
         if (this.transport == null)
-            throw AppointmentBookingCannotBeRequestedException.noPetTransport(this.id().toString());
+            throw AppointmentBookingCannotBeRequestedException.noPetTransport(this.id().toString());*/
     }
 
     public LocalDateTime scheduledStart() {

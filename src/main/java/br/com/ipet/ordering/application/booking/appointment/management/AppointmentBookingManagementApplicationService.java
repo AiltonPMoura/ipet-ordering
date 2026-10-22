@@ -5,6 +5,7 @@ import br.com.ipet.ordering.domain.model.booking.Pet;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingService;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookings;
 import br.com.ipet.ordering.domain.model.booking.appointment.PetServicePair;
+import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.pet.PetId;
@@ -47,7 +48,8 @@ public class AppointmentBookingManagementApplicationService {
                 new CustomerId(input.customerId()),
                 appointmentSchedule,
                 input.requestedStart(),
-                petServicePairs
+                petServicePairs,
+                PaymentMethod.valueOf(input.paymentMethod())
         );
 
         appointmentBookings.add(appointmentBooking);
