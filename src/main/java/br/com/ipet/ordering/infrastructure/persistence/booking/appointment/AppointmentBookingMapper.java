@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 
 import br.com.ipet.ordering.domain.model.booking.BookingId;
-import br.com.ipet.ordering.domain.model.booking.appointment.PetTransport;
+import br.com.ipet.ordering.domain.model.booking.appointment.TransportDetail;
 import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
 import br.com.ipet.ordering.domain.model.commons.PaymentStatus;
 import br.com.ipet.ordering.domain.model.booking.Pet;
@@ -49,7 +49,7 @@ public class AppointmentBookingMapper {
                 .paymentMethod(PaymentMethod.valueOf(appointmentBookingPersistence.getPaymentMethod()))
                 .paymentStatus(PaymentStatus.valueOf(appointmentBookingPersistence.getPaymentStatus()))
                 .billing(this.toBilling(appointmentBookingPersistence.getBilling()))
-                .transport(new PetTransport(new Money(appointmentBookingPersistence.getPetTransport().getCost()), null, null))
+                .transportDetail(this.toPetTransport(appointmentBookingPersistence.getPetTransportDetail()))
                 .appointmentStatus(AppointmentBookingStatus.valueOf(appointmentBookingPersistence.getStatus()))
                 .scheduledStart(appointmentBookingPersistence.getScheduledStart())
                 .scheduledEnd(appointmentBookingPersistence.getScheduledEnd())
@@ -109,6 +109,13 @@ public class AppointmentBookingMapper {
                 .phone(new Phone(billingEmbeddable.getPhone()))
                 .email(new Email(billingEmbeddable.getEmail()))
                 .address(this.toAddress(billingEmbeddable.getAddress()))
+                .build();
+    }
+
+    private TransportDetail toPetTransport(PetTransportDetailEmbeddable petTransportDetailEmbeddable) {
+        return TransportDetail.builder()
+                .cost(new Money(petTransportDetailEmbeddable.getCost()))
+                .address(this.toAddress(petTransportDetailEmbeddable.getAddress()))
                 .build();
     }
 

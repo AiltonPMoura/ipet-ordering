@@ -25,6 +25,7 @@ public class PetPersistenceMapper {
         petPersistence.setGender(pet.gender().name());
         petPersistence.setWeight(pet.weight().value());
         petPersistence.setAge(pet.age().value());
+        petPersistence.addEvents(pet.domainEvents());
         return petPersistence;
     }
 

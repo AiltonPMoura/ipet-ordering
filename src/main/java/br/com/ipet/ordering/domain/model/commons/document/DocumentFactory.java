@@ -19,4 +19,9 @@ public final class DocumentFactory {
         throw new DocumentIsNotValidException();
     }
 
+    public static Document cnh(String value) {
+        FieldValidator.requiresNonBlank("cnh", value);
+        return new Cnh(value.trim());
+    }
+
 }

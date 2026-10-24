@@ -42,8 +42,8 @@ public class AppointmentBookingPersistenceMapper {
         appointmentBookingPersistence.setStatus(appointmentBooking.appointmentStatus().name());
         appointmentBookingPersistence.setPaymentMethod(appointmentBooking.paymentMethod().name());
         /*appointmentBookingPersistence.setPaymentStatus(appointmentBooking.paymentStatus().name());
-        appointmentBookingPersistence.setBilling(this.toBillingEmbeddable(appointmentBooking.billing()));
-        appointmentBookingPersistence.setPetTransport(this.toPetTransportEmbeddable(appointmentBooking));*/
+        appointmentBookingPersistence.setBilling(this.toBillingEmbeddable(appointmentBooking.billing()));*/
+        appointmentBookingPersistence.setPetTransportDetail(this.toPetTransportDetailEmbeddable(appointmentBooking));
         appointmentBookingPersistence.setAppointmentPetServices(this.mergeAppointmentPetServices(appointmentBookingPersistence, appointmentBooking));
         appointmentBookingPersistence.setRequestedAt(appointmentBooking.requestedAt());
         appointmentBookingPersistence.setScheduledAt(appointmentBooking.scheduledAt());
@@ -111,9 +111,10 @@ public class AppointmentBookingPersistenceMapper {
                 .build();
     }
 
-    private PetTransportEmbeddable toPetTransportEmbeddable(AppointmentBooking appointmentBooking) {
-        return PetTransportEmbeddable.builder()
-                .cost(appointmentBooking.transport().cost().value())
+    private PetTransportDetailEmbeddable toPetTransportDetailEmbeddable(AppointmentBooking appointmentBooking) {
+        return PetTransportDetailEmbeddable.builder()
+                .cost(appointmentBooking.transportDetail().cost().value())
+                .address(this.toAddressEmbeddable(appointmentBooking.transportDetail().address()))
                 .build();
     }
 

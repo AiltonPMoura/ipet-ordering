@@ -48,7 +48,7 @@ public final class AppointmentBooking
 
     private LocalDateTime scheduledStart;
     private LocalDateTime scheduledEnd;
-    private PetTransport transport;
+    private TransportDetail transportDetail;
     private AppointmentBookingStatus appointmentStatus;
     private Set<AppointmentPetService> appointmentPetServices;
     private OffsetDateTime inProgressAt;
@@ -73,7 +73,7 @@ public final class AppointmentBooking
                                Quantity totalPets, Money totalAmount,
                                PaymentMethod paymentMethod, PaymentStatus paymentStatus, Billing billing,
                                LocalDateTime scheduledStart, LocalDateTime scheduledEnd,
-                               PetTransport transport, AppointmentBookingStatus appointmentStatus, Set<AppointmentPetService> appointmentPetServices,
+                               TransportDetail transportDetail, AppointmentBookingStatus appointmentStatus, Set<AppointmentPetService> appointmentPetServices,
                                OffsetDateTime requestedAt,
                                OffsetDateTime paidAt, OffsetDateTime scheduledAt,
                                OffsetDateTime completedAt, OffsetDateTime cancelAt, OffsetDateTime refundedAt,
@@ -82,7 +82,7 @@ public final class AppointmentBooking
                 requestedAt, paidAt, scheduledAt, completedAt, cancelAt, refundedAt, cancelationReason);
         this.setScheduledStart(scheduledStart);
         this.setScheduledEnd(scheduledEnd);
-        this.setTransport(transport);
+        this.setTransportDetail(transportDetail);
         this.setAppointmentStatus(appointmentStatus);
         this.setAppointmentPetServices(appointmentPetServices);
         this.setInProgressAt(inProgressAt);
@@ -117,6 +117,13 @@ public final class AppointmentBooking
         FieldValidator.requiresNonNull("paymentMethod", paymentMethod);
         this.verifyIfChangeable();
         super.setPaymentMethod(paymentMethod);
+    }
+
+    public void changeTransportDetail(TransportDetail transportDetail) {
+        FieldValidator.requiresNonNull("transportDetail", transportDetail);
+        this.verifyIfChangeable();
+        this.setTransportDetail(transportDetail);
+        this.recalculateTotals();
     }
 
     public void markAsPaid() {
@@ -212,7 +219,9 @@ public final class AppointmentBooking
         var totalPetAppointmentTransportAmount = this.appointmentPetServices.stream()
                 .map(appointmentPetService -> appointmentPetService.service().price().value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-                //.add(this.transport.cost().value());
+
+        if (this.transportDetail != null)
+            totalPetAppointmentTransportAmount = totalPetAppointmentTransportAmount.add(this.transportDetail.cost().value());
 
         this.setTotalAmount(new Money(totalPetAppointmentTransportAmount));
         this.setTotalPets(new Quantity(this.appointmentPetServices.size()));
@@ -273,12 +282,12 @@ public final class AppointmentBooking
         this.scheduledEnd = scheduledEnd;
     }
 
-    public PetTransport transport() {
-        return transport;
+    public TransportDetail transportDetail() {
+        return transportDetail;
     }
 
-    private void setTransport(PetTransport transport) {
-        this.transport = transport;
+    private void setTransportDetail(TransportDetail transportDetail) {
+        this.transportDetail = transportDetail;
     }
 
     public AppointmentBookingStatus appointmentStatus() {

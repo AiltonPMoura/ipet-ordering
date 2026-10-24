@@ -1,19 +1,17 @@
 package br.com.ipet.ordering.domain.model.booking.appointment;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Company;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import lombok.Builder;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
 @Builder
-public record PetTransport(Money cost, Address address, Company company) {
+public record TransportDetail(Money cost, Address address) {
 
-     public PetTransport {
+     public TransportDetail {
          requiresNonNull("cost", cost);
-//         requiresNonNull("address", address);
-//         requiresNonNull("company", company);
+         requiresNonNull("address", address);
      }
 
 }

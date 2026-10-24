@@ -67,6 +67,7 @@ public class Company
     }
 
     private void setId(CompanyId id) {
+        FieldValidator.requiresNonNull("companyId", id);
         this.id = id;
     }
 

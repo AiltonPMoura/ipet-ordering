@@ -12,7 +12,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @Data
@@ -20,10 +22,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(of = "id")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 @Table(name = "pet")
-public class PetPersistenceEntity {
+public class PetPersistenceEntity extends AbstractAggregateRoot<PetPersistenceEntity> {
 
     @Id
     @EqualsAndHashCode.Include
@@ -43,6 +45,16 @@ public class PetPersistenceEntity {
 
     public UUID getCustomerId() {
         return this.getCustomer().getId();
+    }
+
+    public Collection<Object> getEvents() {
+        return super.domainEvents();
+    }
+
+    public void addEvents(Collection<Object> events) {
+        if (events != null)
+            for (Object event : events)
+                this.registerEvent(event);
     }
 
 }

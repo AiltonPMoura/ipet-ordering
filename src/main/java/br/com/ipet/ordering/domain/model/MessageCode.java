@@ -25,6 +25,12 @@ public class MessageCode {
         public static final String NOT_FOUND = "pet.not.found";
     }
 
+    public static class PetTransport {
+        private PetTransport(){}
+        public static final String NOT_FOUND = "pet.transport.not.found";
+        public static final String CANNOT_REMOVE_LAST = "pet.transport.cannot.remove.last";
+    }
+
     public static class Booking {
         private Booking(){}
         public static final String ERROR_CANNOT_BE_REQUEST_HAS_NO_APPOINTMENTS = "error.appointment.cannot.be.request.has.no.appointments";

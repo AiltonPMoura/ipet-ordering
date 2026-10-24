@@ -41,7 +41,7 @@ public class AppointmentBookingPersistenceEntity extends AbstractBooking {
     private String status;
 
     @Embedded
-    private PetTransportEmbeddable petTransport;
+    private PetTransportDetailEmbeddable petTransportDetail;
 
     private OffsetDateTime inProgressAt;
     private OffsetDateTime readyAt;

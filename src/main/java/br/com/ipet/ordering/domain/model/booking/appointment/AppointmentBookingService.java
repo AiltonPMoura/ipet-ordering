@@ -3,7 +3,6 @@ package br.com.ipet.ordering.domain.model.booking.appointment;
 import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
-import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +19,7 @@ public class AppointmentBookingService {
                                    AppointmentSchedule appointmentSchedule,
                                    LocalDateTime requestedStart,
                                    Set<PetServicePair> petServicePairs,
+                                   TransportDetail transportDetail,
                                    PaymentMethod paymentMethod) {
 
         var appointmentBooking = AppointmentBooking.create(
@@ -36,6 +36,7 @@ public class AppointmentBookingService {
         appointmentSchedule.verifyOperatingHours(requestedStart, requestedEnd);
         this.verifyTimeSlotAvailability(appointmentSchedule, requestedStart, requestedEnd);
 
+        appointmentBooking.changeTransportDetail(transportDetail);
         appointmentBooking.changePaymentMethod(paymentMethod);
         appointmentBooking.request(customerId, appointmentSchedule.companyId());
 

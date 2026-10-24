@@ -5,16 +5,21 @@ import br.com.ipet.ordering.domain.model.booking.Pet;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingService;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookings;
 import br.com.ipet.ordering.domain.model.booking.appointment.PetServicePair;
+import br.com.ipet.ordering.domain.model.booking.appointment.TransportDetail;
 import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.customer.Customers;
 import br.com.ipet.ordering.domain.model.pet.PetId;
 import br.com.ipet.ordering.domain.model.pet.Pets;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedules;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
-import br.com.ipet.ordering.domain.model.serviceoffering.ServiceOfferingCatalogService;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceId;
+import br.com.ipet.ordering.domain.model.serviceoffering.ServiceOfferingCatalogService;
+import br.com.ipet.ordering.domain.model.transport.PetTransports;
+import br.com.ipet.ordering.domain.model.transport.TransportFreightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,21 +39,39 @@ public class AppointmentBookingManagementApplicationService {
     private final AppointmentBookings appointmentBookings;
     private final AppointmentSchedules appointmentSchedules;
     private final Pets pets;
+    private final PetTransports petTransports;
     private final ServiceOfferingCatalogService serviceOfferingCatalogService;
+    private final TransportFreightService transportFreightService;
+    private final Customers customers;
+    //private final FeeService feeService;
 
     public UUID create(AppointmentBookingInput input) {
         var appointmentSchedule = appointmentSchedules.ofId(new ScheduleId(input.appointmentScheduleId()))
                 .orElseThrow(() -> new DomainException("Agenda não encontrada."));
 
+        var customer = customers.ofId(new CustomerId(input.customerId()))
+                .orElseThrow(() -> new DomainException("Cliente não encontrado."));
+
         var petsById = this.findCustomerPetsMappedById(input);
         var appointmentServicesById = this.findAppointmentServicesMappedById(input);
         var petServicePairs = this.buildPetServicePairs(input, petsById, appointmentServicesById);
+
+        var petTransport = petTransports.ofCompanyId(new CompanyId(input.companyId()))
+                .orElseThrow(() -> new DomainException("Transporte não encontrado para a agenda."));
+
+        var petSizes = petServicePairs.stream().map(pair -> pair.pet().size()).toList();
+        var baseFee = new Money("10");// feeService.calculate(customer.principalAddress(), addressOrigem);
+
+        var freightResult = this.transportFreightService.calculate(petTransport, petSizes, baseFee);
+
+        var transportDetail = new TransportDetail(freightResult.totalFreightCost(), customer.principalAddress());
 
         var appointmentBooking = appointmentBookingService.book(
                 new CustomerId(input.customerId()),
                 appointmentSchedule,
                 input.requestedStart(),
                 petServicePairs,
+                transportDetail,
                 PaymentMethod.valueOf(input.paymentMethod())
         );
 

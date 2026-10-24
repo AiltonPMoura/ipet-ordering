@@ -1,7 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
-import br.com.ipet.ordering.infrastructure.persistence.order.DeliveryCompanyEmbeddable;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,10 +14,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class PetTransportEmbeddable {
+public class PetTransportDetailEmbeddable {
 
     private BigDecimal cost;
-    //private AddressEmbeddable address;
-    //private DeliveryCompanyEmbeddable company;
+    private AddressEmbeddable address;
 
 }
