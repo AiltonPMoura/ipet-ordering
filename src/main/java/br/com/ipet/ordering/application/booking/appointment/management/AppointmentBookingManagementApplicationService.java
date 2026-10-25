@@ -7,11 +7,17 @@ import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookings
 import br.com.ipet.ordering.domain.model.booking.appointment.PetServicePair;
 import br.com.ipet.ordering.domain.model.booking.appointment.TransportDetail;
 import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
+import br.com.ipet.ordering.domain.model.commons.routing.RoutePricingService;
+import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
+import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
+import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
 import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
 import br.com.ipet.ordering.domain.model.customer.Customers;
 import br.com.ipet.ordering.domain.model.pet.PetId;
+import br.com.ipet.ordering.domain.model.pet.PetSize;
 import br.com.ipet.ordering.domain.model.pet.Pets;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedules;
@@ -19,11 +25,12 @@ import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceId;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceOfferingCatalogService;
 import br.com.ipet.ordering.domain.model.transport.PetTransports;
-import br.com.ipet.ordering.domain.model.transport.TransportFreightService;
+import br.com.ipet.ordering.domain.model.transport.PetTransportPricingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -41,30 +48,33 @@ public class AppointmentBookingManagementApplicationService {
     private final Pets pets;
     private final PetTransports petTransports;
     private final ServiceOfferingCatalogService serviceOfferingCatalogService;
-    private final TransportFreightService transportFreightService;
+    private final PetTransportPricingService petTransportPricingService;
     private final Customers customers;
-    //private final FeeService feeService;
+    private final Companies companies;
+    private final RoutePricingService routePricingService;
 
     public UUID create(AppointmentBookingInput input) {
         var appointmentSchedule = appointmentSchedules.ofId(new ScheduleId(input.appointmentScheduleId()))
                 .orElseThrow(() -> new DomainException("Agenda não encontrada."));
 
         var customer = customers.ofId(new CustomerId(input.customerId()))
-                .orElseThrow(() -> new DomainException("Cliente não encontrado."));
+                .orElseThrow(() -> new CustomerNotFoundException(""));
 
-        var petsById = this.findCustomerPetsMappedById(input);
-        var appointmentServicesById = this.findAppointmentServicesMappedById(input);
-        var petServicePairs = this.buildPetServicePairs(input, petsById, appointmentServicesById);
+        var company = companies.ofId(new CompanyId(input.companyId()))
+                .orElseThrow(() -> new CompanyNotFoundException(""));
 
         var petTransport = petTransports.ofCompanyId(new CompanyId(input.companyId()))
                 .orElseThrow(() -> new DomainException("Transporte não encontrado para a agenda."));
 
-        var petSizes = petServicePairs.stream().map(pair -> pair.pet().size()).toList();
-        var baseFee = new Money("10");// feeService.calculate(customer.principalAddress(), addressOrigem);
+        var petsById = this.findCustomerPetsMappedById(input);
+        var servicesById = this.findAppointmentServicesMappedById(input);
+        var petServicePairs = this.buildPetServicePairs(input, petsById, servicesById);
 
-        var freightResult = this.transportFreightService.calculate(petTransport, petSizes, baseFee);
-
-        var transportDetail = new TransportDetail(freightResult.totalFreightCost(), customer.principalAddress());
+        var customerAddress = customer.findAddress(new CustomerAddressId(input.customerAddressId()));
+        var routeCost = this.calculateRouteCost(company.address().zipCode(), customerAddress.zipCode());
+        var petSizes = this.getPetSizes(petsById);
+        var pricingResult = this.petTransportPricingService.calculate(petTransport, petSizes, routeCost.cost());
+        var transportDetail = new TransportDetail(pricingResult.totalTransportCost(), customer.principalAddress());
 
         var appointmentBooking = appointmentBookingService.book(
                 new CustomerId(input.customerId()),
@@ -101,18 +111,29 @@ public class AppointmentBookingManagementApplicationService {
 
     private Set<PetServicePair> buildPetServicePairs(AppointmentBookingInput input,
                                                      Map<PetId, Pet> petsById,
-                                                     Map<ServiceId, AppointmentService> appointmentServicesById) {
+                                                     Map<ServiceId, AppointmentService> servicesById) {
         return input.appointments().stream()
                 .map(appointmentInput -> {
                     var pet = Optional.ofNullable(petsById.get(new PetId(appointmentInput.petId())))
                             .orElseThrow(() -> new DomainException("Pet não encontrado: " + appointmentInput.petId()));
 
-                    var service = Optional.ofNullable(appointmentServicesById.get(new ServiceId(appointmentInput.serviceId())))
+                    var service = Optional.ofNullable(servicesById.get(new ServiceId(appointmentInput.serviceId())))
                             .orElseThrow(() -> new DomainException("Serviço não encontrado: " + appointmentInput.serviceId()));
 
                     return new PetServicePair(pet, service);
                 })
                 .collect(Collectors.toSet());
+    }
+
+    private List<PetSize> getPetSizes(Map<PetId, Pet> petsById) {
+        return petsById.values().stream().map(Pet::size).toList();
+    }
+
+    private RoutePricingService.CalculationRouteCost calculateRouteCost(ZipCode origin, ZipCode destiny) {
+        return routePricingService.calculateRouteCost(RoutePricingService.CalculationRequest.builder()
+                .origin(origin)
+                .destination(destiny)
+                .build());
     }
 
     private Pet buildBookingPet(br.com.ipet.ordering.domain.model.pet.Pet pet) {

@@ -16,7 +16,7 @@ import br.com.ipet.ordering.domain.model.order.DeliveryCompany;
 import br.com.ipet.ordering.domain.model.order.Orders;
 import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
 import br.com.ipet.ordering.domain.model.order.Shipping;
-import br.com.ipet.ordering.domain.model.order.shipping.ShippingCostService;
+import br.com.ipet.ordering.domain.model.commons.routing.RoutePricingService;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCartId;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCartNotFoundException;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCarts;
@@ -36,7 +36,7 @@ public class CheckoutApplicationService {
     private final ShoppingCarts shoppingCarts;
     private final Companies companies;
     private final Customers customers;
-    private final ShippingCostService shippingCostService;
+    private final RoutePricingService routePricingService;
 
     public UUID checkout(OrderInput input) {
         FieldValidator.requiresNonNull("input", input);
@@ -86,8 +86,8 @@ public class CheckoutApplicationService {
         return order.id().value();
     }
 
-    private ShippingCostService.CalculationResult calculateShippingCost(ZipCode origin, ZipCode destiny) {
-        return shippingCostService.calculate(ShippingCostService.CalculationRequest.builder()
+    private RoutePricingService.CalculationResult calculateShippingCost(ZipCode origin, ZipCode destiny) {
+        return routePricingService.calculate(RoutePricingService.CalculationRequest.builder()
                 .origin(origin)
                 .destination(destiny)
                 .build());

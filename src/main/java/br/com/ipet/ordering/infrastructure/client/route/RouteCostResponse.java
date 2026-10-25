@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.infrastructure.client.shipping;
+package br.com.ipet.ordering.infrastructure.client.route;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeliveryCostResponse {
+public class RouteCostResponse {
     private String deliveryCost;
-    private Long estimatedDaysToDelivery;
 }

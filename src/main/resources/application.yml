@@ -28,7 +28,7 @@ spring:
 
 ipet:
   integrations:
-    shipping:
+    route:
       url: "http://localhost:8780"
     catalog:
       url: "http://localhost:8081/api"

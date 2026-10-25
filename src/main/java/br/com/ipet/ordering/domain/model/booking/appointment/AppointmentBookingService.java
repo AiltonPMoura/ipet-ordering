@@ -29,6 +29,9 @@ public class AppointmentBookingService {
                 requestedStart
         );
 
+        appointmentBooking.changeTransportDetail(transportDetail);
+        appointmentBooking.changePaymentMethod(paymentMethod);
+
         petServicePairs.forEach(petServicePair -> appointmentBooking.addAppointmentPetService(petServicePair.pet(), petServicePair.service()));
 
         var requestedEnd = appointmentBooking.scheduledEnd();
@@ -36,8 +39,6 @@ public class AppointmentBookingService {
         appointmentSchedule.verifyOperatingHours(requestedStart, requestedEnd);
         this.verifyTimeSlotAvailability(appointmentSchedule, requestedStart, requestedEnd);
 
-        appointmentBooking.changeTransportDetail(transportDetail);
-        appointmentBooking.changePaymentMethod(paymentMethod);
         appointmentBooking.request(customerId, appointmentSchedule.companyId());
 
         return appointmentBooking;

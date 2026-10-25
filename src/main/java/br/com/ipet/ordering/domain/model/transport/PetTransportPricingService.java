@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class TransportFreightService {
+public class PetTransportPricingService {
 
-    public FreightResult calculate(PetTransport transport, List<PetSize> petsToTransport, Money baseFee) {
+    public PetTransportPricingResult calculate(PetTransport transport, List<PetSize> petsToTransport, Money routeCost) {
         FieldValidator.requiresNonNull("transport", transport);
         FieldValidator.requiresNonNull("petsToTransport", petsToTransport);
-        FieldValidator.requiresNonNull("baseFee", baseFee);
+        FieldValidator.requiresNonNull("routeCost", routeCost);
 
         var totalSlotsNeeded = petsToTransport.stream()
                 .mapToInt(this::calculateRequiredSlots)
@@ -22,9 +22,9 @@ public class TransportFreightService {
 
         var vehicleSlots = transport.capacity().value();
         var totalTrips = (int) Math.ceil((double) totalSlotsNeeded / vehicleSlots);
-        var totalFreightCost = baseFee.multiply(new Quantity(totalTrips));
+        var totaltransportCost = routeCost.multiply(new Quantity(totalTrips));
 
-        return new FreightResult(totalTrips, totalFreightCost);
+        return new PetTransportPricingResult(totalTrips, totaltransportCost);
     }
 
     private int calculateRequiredSlots(PetSize petSize) {

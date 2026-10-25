@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.infrastructure.client.shipping;
+package br.com.ipet.ordering.infrastructure.client.route;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -8,14 +8,14 @@ import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 @Configuration
-public class ShippingAPIClientConfig {
+public class RoutePricingAPIClientConfig {
 
     @Bean
-    public ShippingAPIClient shippingApiClient(@Value("${ipet.integrations.shipping.url}") String shippingUrl) {
-        var restClient = RestClient.builder().baseUrl(shippingUrl).build();
+    public RoutePricingAPIClient routePricingApiClient(@Value("${ipet.integrations.route.url}") String routePricingUrl) {
+        var restClient = RestClient.builder().baseUrl(routePricingUrl).build();
         var restClientAdapter = RestClientAdapter.create(restClient);
         var httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(restClientAdapter).build();
-        return httpServiceProxyFactory.createClient(ShippingAPIClient.class);
+        return httpServiceProxyFactory.createClient(RoutePricingAPIClient.class);
 
     }
 

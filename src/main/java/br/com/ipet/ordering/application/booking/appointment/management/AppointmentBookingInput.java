@@ -7,6 +7,7 @@ import java.util.UUID;
 public record AppointmentBookingInput(UUID customerId,
                                       UUID appointmentScheduleId,
                                       UUID companyId,
+                                      UUID customerAddressId,
                                       LocalDateTime requestedStart,
                                       List<AppointmentPetServiceInput> appointments,
                                       String paymentMethod) {
