@@ -2,9 +2,9 @@ package br.com.ipet.ordering.application.schedule.appointment.management;
 
 import br.com.ipet.ordering.application.commons.NameInput;
 import br.com.ipet.ordering.application.schedule.ScheduleInput;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.schedule.BlockedDate;
-import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
+import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleName;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleNotFoundException;
 import br.com.ipet.ordering.domain.model.schedule.ServiceCategory;

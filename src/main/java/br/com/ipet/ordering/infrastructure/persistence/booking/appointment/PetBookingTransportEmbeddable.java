@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class PetTransportDetailEmbeddable {
+public class PetBookingTransportEmbeddable {
 
     private BigDecimal cost;
     private AddressEmbeddable address;

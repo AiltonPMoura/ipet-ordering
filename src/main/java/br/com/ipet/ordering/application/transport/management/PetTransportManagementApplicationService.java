@@ -3,7 +3,7 @@ package br.com.ipet.ordering.application.transport.management;
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.transport.Driver;
 import br.com.ipet.ordering.domain.model.transport.PetCapacity;
 import br.com.ipet.ordering.domain.model.transport.PetTransportId;

@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.shoppingcart;
 
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCart;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCartId;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCarts;

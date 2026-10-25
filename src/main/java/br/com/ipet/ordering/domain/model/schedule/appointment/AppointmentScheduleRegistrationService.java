@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.domain.model.schedule.appointment;
 
 import br.com.ipet.ordering.domain.model.company.Companies;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleAlreadyExistsException;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleName;

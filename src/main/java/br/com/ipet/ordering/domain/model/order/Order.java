@@ -3,14 +3,14 @@ package br.com.ipet.ordering.domain.model.order;
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.enums.PaymentMethod;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.domain.model.product.ProductDoesNotBelongsToCompany;
 import lombok.Builder;
 

@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.domain.model.pet;
+package br.com.ipet.ordering.domain.model.commons.enums;
 
 public enum PetSize {
     SMALL,

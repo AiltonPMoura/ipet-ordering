@@ -3,7 +3,7 @@ package br.com.ipet.ordering.domain.model.transport;
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import lombok.Builder;
 
 import java.time.OffsetDateTime;

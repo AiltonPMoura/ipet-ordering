@@ -3,7 +3,7 @@ package br.com.ipet.ordering.presentation.schedule.appointment;
 import br.com.ipet.ordering.application.schedule.appointment.management.AppointmentScheduleApplicationService;
 import br.com.ipet.ordering.application.schedule.appointment.management.LockedTimeInput;
 import br.com.ipet.ordering.application.schedule.appointment.management.LockedTimeUpdateInput;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;

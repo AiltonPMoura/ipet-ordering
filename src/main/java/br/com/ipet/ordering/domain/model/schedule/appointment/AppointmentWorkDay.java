@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.domain.model.schedule.appointment;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
+import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import lombok.Builder;
 
 import java.time.DayOfWeek;

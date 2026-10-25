@@ -3,18 +3,12 @@ package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 import br.com.ipet.ordering.domain.model.booking.BookingId;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBooking;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookings;
-import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
-import br.com.ipet.ordering.domain.model.customer.Customer;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
-import br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
+import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -61,7 +55,7 @@ public class AppointmentBookingProvider implements AppointmentBookings {
     }
 
     @Override
-    public boolean hasTimeSlotConflict(ScheduleId appointmentScheduleId, LocalDateTime scheduledStart, LocalDateTime scheduledEnd) {
+    public boolean existsTimeSlotConflict(ScheduleId appointmentScheduleId, LocalDateTime scheduledStart, LocalDateTime scheduledEnd) {
         return appointmentBookingRepository.existsConflictingBooking(appointmentScheduleId.value(), scheduledStart, scheduledEnd);
     }
 }

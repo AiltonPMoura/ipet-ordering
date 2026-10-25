@@ -1,9 +1,9 @@
 package br.com.ipet.ordering.domain.model.order;
 
-import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.enums.PaymentMethod;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.domain.model.shoppingcart.ShoppingCart;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

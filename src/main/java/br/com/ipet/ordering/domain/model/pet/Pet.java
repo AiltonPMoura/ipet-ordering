@@ -3,8 +3,11 @@ package br.com.ipet.ordering.domain.model.pet;
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.FieldValidator;
+import br.com.ipet.ordering.domain.model.commons.enums.PetSize;
+import br.com.ipet.ordering.domain.model.commons.enums.PetType;
+import br.com.ipet.ordering.domain.model.commons.id.PetId;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Photo;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import lombok.AccessLevel;
 import lombok.Builder;
 

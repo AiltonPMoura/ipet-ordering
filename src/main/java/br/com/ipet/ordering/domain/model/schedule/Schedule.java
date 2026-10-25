@@ -2,7 +2,8 @@ package br.com.ipet.ordering.domain.model.schedule;
 
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 
 import java.time.OffsetDateTime;
 import java.util.Set;

@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.domain.model.booking.stay;
 
 import br.com.ipet.ordering.domain.model.booking.BookingId;
-import br.com.ipet.ordering.domain.model.booking.Pet;
+import br.com.ipet.ordering.domain.model.booking.BookingPet;
 import lombok.Builder;
 
 import java.util.Objects;
@@ -11,18 +11,18 @@ import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 public class PetStay {
     private PetStayId id;
     private BookingId bookingId;
-    private Pet pet;
+    private BookingPet bookingPet;
     private StayService service;
 
-    static PetStay create(BookingId bookingId, Pet pet, StayService service) {
-        return new PetStay(new PetStayId(), bookingId, pet, service);
+    static PetStay create(BookingId bookingId, BookingPet bookingPet, StayService service) {
+        return new PetStay(new PetStayId(), bookingId, bookingPet, service);
     }
 
     @Builder(builderClassName = "ExistingPetStayBuilder", builderMethodName = "existing")
-    private PetStay(PetStayId id, BookingId bookingId, Pet pet, StayService service) {
+    private PetStay(PetStayId id, BookingId bookingId, BookingPet bookingPet, StayService service) {
         this.setId(id);
         this.setBookingId(bookingId);
-        this.setPet(pet);
+        this.setBookingPet(bookingPet);
         this.setService(service);
     }
 
@@ -60,13 +60,13 @@ public class PetStay {
         this.service = service;
     }
 
-    public Pet pet() {
-        return this.pet;
+    public BookingPet bookingPet() {
+        return this.bookingPet;
     }
 
-    private void setPet(Pet pet) {
-        requiresNonNull("pet", pet);
-        this.pet = pet;
+    private void setBookingPet(BookingPet bookingPet) {
+        requiresNonNull("pet", bookingPet);
+        this.bookingPet = bookingPet;
     }
 
     @Override

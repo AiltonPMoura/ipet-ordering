@@ -16,7 +16,6 @@ public class RoutePricingAPIClientConfig {
         var restClientAdapter = RestClientAdapter.create(restClient);
         var httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(restClientAdapter).build();
         return httpServiceProxyFactory.createClient(RoutePricingAPIClient.class);
-
     }
 
 }

@@ -2,7 +2,7 @@ package br.com.ipet.ordering.application.shoppingcart.management;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.domain.model.product.ProductCatalogService;
 import br.com.ipet.ordering.domain.model.product.ProductId;
 import br.com.ipet.ordering.domain.model.product.ProductNotFoundException;

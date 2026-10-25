@@ -1,15 +1,15 @@
 package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 
 import br.com.ipet.ordering.domain.model.booking.BookingId;
-import br.com.ipet.ordering.domain.model.booking.appointment.TransportDetail;
-import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
-import br.com.ipet.ordering.domain.model.commons.PaymentStatus;
-import br.com.ipet.ordering.domain.model.booking.Pet;
+import br.com.ipet.ordering.domain.model.booking.BookingPet;
+import br.com.ipet.ordering.domain.model.booking.PetBookingTransport;
+import br.com.ipet.ordering.domain.model.commons.enums.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.enums.PaymentStatus;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBooking;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus;
-import br.com.ipet.ordering.domain.model.pet.PetId;
-import br.com.ipet.ordering.domain.model.pet.PetSize;
-import br.com.ipet.ordering.domain.model.pet.PetType;
+import br.com.ipet.ordering.domain.model.commons.id.PetId;
+import br.com.ipet.ordering.domain.model.commons.enums.PetSize;
+import br.com.ipet.ordering.domain.model.commons.enums.PetType;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentPetService;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentPetServiceId;
@@ -22,9 +22,9 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceCategory;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceId;
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
@@ -49,7 +49,7 @@ public class AppointmentBookingMapper {
                 .paymentMethod(PaymentMethod.valueOf(appointmentBookingPersistence.getPaymentMethod()))
                 .paymentStatus(PaymentStatus.valueOf(appointmentBookingPersistence.getPaymentStatus()))
                 .billing(this.toBilling(appointmentBookingPersistence.getBilling()))
-                .transportDetail(this.toPetTransport(appointmentBookingPersistence.getPetTransportDetail()))
+                .petBookingTransport(this.toPetTransport(appointmentBookingPersistence.getPetBookingTransport()))
                 .appointmentStatus(AppointmentBookingStatus.valueOf(appointmentBookingPersistence.getStatus()))
                 .scheduledStart(appointmentBookingPersistence.getScheduledStart())
                 .scheduledEnd(appointmentBookingPersistence.getScheduledEnd())
@@ -71,14 +71,14 @@ public class AppointmentBookingMapper {
                 .map(appointmentPetServicePersistence -> AppointmentPetService.existing()
                         .id(new AppointmentPetServiceId(appointmentPetServicePersistence.getId()))
                         .appointmentBookingId(new BookingId(appointmentPetServicePersistence.getAppointmentBookingId()))
-                        .pet(this.toPet(appointmentPetServicePersistence.getPet()))
+                        .bookingPet(this.toPet(appointmentPetServicePersistence.getPet()))
                         .service(this.toService(appointmentPetServicePersistence.getService()))
                         .build())
                 .collect(Collectors.toSet());
     }
 
-    private Pet toPet(PetEmbeddable petEmbeddable) {
-        return new Pet(
+    private BookingPet toPet(PetEmbeddable petEmbeddable) {
+        return new BookingPet(
                 new PetId(petEmbeddable.getPetId()),
                 PetType.valueOf(petEmbeddable.getPetType()),
                 PetSize.valueOf(petEmbeddable.getSize()),
@@ -112,10 +112,10 @@ public class AppointmentBookingMapper {
                 .build();
     }
 
-    private TransportDetail toPetTransport(PetTransportDetailEmbeddable petTransportDetailEmbeddable) {
-        return TransportDetail.builder()
-                .cost(new Money(petTransportDetailEmbeddable.getCost()))
-                .address(this.toAddress(petTransportDetailEmbeddable.getAddress()))
+    private PetBookingTransport toPetTransport(PetBookingTransportEmbeddable petBookingTransportEmbeddable) {
+        return PetBookingTransport.builder()
+                .cost(new Money(petBookingTransportEmbeddable.getCost()))
+                .address(this.toAddress(petBookingTransportEmbeddable.getAddress()))
                 .build();
     }
 

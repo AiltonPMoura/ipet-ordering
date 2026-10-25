@@ -3,7 +3,7 @@ package br.com.ipet.ordering.infrastructure.persistence.transport;
 import br.com.ipet.ordering.domain.model.transport.PetTransport;
 import br.com.ipet.ordering.domain.model.transport.PetTransportId;
 import br.com.ipet.ordering.domain.model.transport.PetTransports;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +33,8 @@ public class PetTransportPersistenceProvider implements PetTransports {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<PetTransport> ofCompanyId(CompanyId companyId) {
-        return petTransportRepository.findFirstByCompany_Id(companyId.value())
+    public Optional<PetTransport> ofCompanyWithHighestCapacity(CompanyId companyId) {
+        return petTransportRepository.findFirstByCompany_IdOrderByPetCapacityDesc(companyId.value())
                 .map(petTransportMapper::toDomain);
     }
 

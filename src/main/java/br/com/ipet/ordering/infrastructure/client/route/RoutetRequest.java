@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeliveryCostResponse {
-    private String deliveryCost;
-    private Long estimatedDaysToDelivery;
+public class RoutetRequest {
+    private String originZipCode;
+    private String destinationZipCode;
 }

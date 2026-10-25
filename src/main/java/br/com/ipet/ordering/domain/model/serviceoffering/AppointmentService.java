@@ -2,7 +2,7 @@ package br.com.ipet.ordering.domain.model.serviceoffering;
 
 import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
-import br.com.ipet.ordering.domain.model.pet.PetSize;
+import br.com.ipet.ordering.domain.model.commons.enums.PetSize;
 import lombok.Builder;
 
 @Builder

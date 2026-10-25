@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.domain.model.commons;
+package br.com.ipet.ordering.domain.model.commons.enums;
 
 import java.util.Collections;
 import java.util.EnumMap;

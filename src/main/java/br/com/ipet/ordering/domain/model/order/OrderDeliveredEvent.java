@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.domain.model.order;
 
-import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 
 import java.time.OffsetDateTime;
 

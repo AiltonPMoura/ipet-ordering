@@ -2,11 +2,11 @@ package br.com.ipet.ordering.domain.model.schedule.appointment;
 
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.DomainException;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.schedule.BlockedDate;
 import br.com.ipet.ordering.domain.model.schedule.Schedule;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleDontSupportSubcategoryException;
-import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
+import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleName;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleStatus;
 import br.com.ipet.ordering.domain.model.schedule.ServiceCategory;

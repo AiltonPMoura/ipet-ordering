@@ -10,7 +10,7 @@ import br.com.ipet.ordering.domain.model.customer.BirthDate;
 import br.com.ipet.ordering.domain.model.customer.Customer;
 import br.com.ipet.ordering.domain.model.customer.CustomerAddress;
 import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.infrastructure.persistence.commons.AddressEmbeddable;
 import org.springframework.stereotype.Component;
 

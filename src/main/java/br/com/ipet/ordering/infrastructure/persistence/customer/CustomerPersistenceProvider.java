@@ -2,7 +2,7 @@ package br.com.ipet.ordering.infrastructure.persistence.customer;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.customer.Customer;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.Customers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

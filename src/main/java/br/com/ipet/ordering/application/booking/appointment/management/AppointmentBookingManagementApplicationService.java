@@ -1,25 +1,26 @@
 package br.com.ipet.ordering.application.booking.appointment.management;
 
 import br.com.ipet.ordering.domain.model.DomainException;
-import br.com.ipet.ordering.domain.model.booking.Pet;
+import br.com.ipet.ordering.domain.model.booking.BookingPet;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingService;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookings;
 import br.com.ipet.ordering.domain.model.booking.appointment.PetServicePair;
-import br.com.ipet.ordering.domain.model.booking.appointment.TransportDetail;
-import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
+import br.com.ipet.ordering.domain.model.booking.PetBookingTransport;
+import br.com.ipet.ordering.domain.model.commons.enums.PaymentMethod;
 import br.com.ipet.ordering.domain.model.commons.routing.RoutePricingService;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.Companies;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
 import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
 import br.com.ipet.ordering.domain.model.customer.Customers;
-import br.com.ipet.ordering.domain.model.pet.PetId;
-import br.com.ipet.ordering.domain.model.pet.PetSize;
+import br.com.ipet.ordering.domain.model.commons.id.PetId;
+import br.com.ipet.ordering.domain.model.commons.enums.PetSize;
+import br.com.ipet.ordering.domain.model.pet.Pet;
 import br.com.ipet.ordering.domain.model.pet.Pets;
-import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
+import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedules;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceId;
@@ -43,15 +44,15 @@ import java.util.stream.Collectors;
 public class AppointmentBookingManagementApplicationService {
 
     private final AppointmentBookingService appointmentBookingService;
+    private final ServiceOfferingCatalogService serviceOfferingCatalogService;
+    private final PetTransportPricingService petTransportPricingService;
+    private final RoutePricingService routePricingService;
     private final AppointmentBookings appointmentBookings;
     private final AppointmentSchedules appointmentSchedules;
     private final Pets pets;
     private final PetTransports petTransports;
-    private final ServiceOfferingCatalogService serviceOfferingCatalogService;
-    private final PetTransportPricingService petTransportPricingService;
     private final Customers customers;
     private final Companies companies;
-    private final RoutePricingService routePricingService;
 
     public UUID create(AppointmentBookingInput input) {
         var appointmentSchedule = appointmentSchedules.ofId(new ScheduleId(input.appointmentScheduleId()))
@@ -63,7 +64,7 @@ public class AppointmentBookingManagementApplicationService {
         var company = companies.ofId(new CompanyId(input.companyId()))
                 .orElseThrow(() -> new CompanyNotFoundException(""));
 
-        var petTransport = petTransports.ofCompanyId(new CompanyId(input.companyId()))
+        var petTransport = petTransports.ofCompanyWithHighestCapacity(new CompanyId(input.companyId()))
                 .orElseThrow(() -> new DomainException("Transporte não encontrado para a agenda."));
 
         var petsById = this.findCustomerPetsMappedById(input);
@@ -71,17 +72,19 @@ public class AppointmentBookingManagementApplicationService {
         var petServicePairs = this.buildPetServicePairs(input, petsById, servicesById);
 
         var customerAddress = customer.findAddress(new CustomerAddressId(input.customerAddressId()));
-        var routeCost = this.calculateRouteCost(company.address().zipCode(), customerAddress.zipCode());
+        var routeResult = this.calculateRoutePrice(company.address().zipCode(), customerAddress.zipCode());
         var petSizes = this.getPetSizes(petsById);
-        var pricingResult = this.petTransportPricingService.calculate(petTransport, petSizes, routeCost.cost());
-        var transportDetail = new TransportDetail(pricingResult.totalTransportCost(), customer.principalAddress());
+        var pricingResult = this.petTransportPricingService.calculate(petTransport, petSizes, routeResult.cost());
 
         var appointmentBooking = appointmentBookingService.book(
                 new CustomerId(input.customerId()),
                 appointmentSchedule,
                 input.requestedStart(),
                 petServicePairs,
-                transportDetail,
+                PetBookingTransport.builder()
+                        .cost(pricingResult.totalTransportCost())
+                        .address(customer.principalAddress())
+                        .build(),
                 PaymentMethod.valueOf(input.paymentMethod())
         );
 
@@ -99,18 +102,18 @@ public class AppointmentBookingManagementApplicationService {
                 .collect(Collectors.toMap(AppointmentService::id, service -> service));
     }
 
-    private Map<PetId, Pet> findCustomerPetsMappedById(AppointmentBookingInput input) {
+    private Map<PetId, BookingPet> findCustomerPetsMappedById(AppointmentBookingInput input) {
         var petIds = input.appointments().stream()
                 .map(appointmentInput -> new PetId(appointmentInput.petId()))
                 .collect(Collectors.toSet());
 
         return pets.ofCustomerAndIds(new CustomerId(input.customerId()), petIds).stream()
                 .map(this::buildBookingPet)
-                .collect(Collectors.toMap(Pet::id, pet -> pet));
+                .collect(Collectors.toMap(BookingPet::id, pet -> pet));
     }
 
     private Set<PetServicePair> buildPetServicePairs(AppointmentBookingInput input,
-                                                     Map<PetId, Pet> petsById,
+                                                     Map<PetId, BookingPet> petsById,
                                                      Map<ServiceId, AppointmentService> servicesById) {
         return input.appointments().stream()
                 .map(appointmentInput -> {
@@ -125,19 +128,19 @@ public class AppointmentBookingManagementApplicationService {
                 .collect(Collectors.toSet());
     }
 
-    private List<PetSize> getPetSizes(Map<PetId, Pet> petsById) {
-        return petsById.values().stream().map(Pet::size).toList();
+    private List<PetSize> getPetSizes(Map<PetId, BookingPet> petsById) {
+        return petsById.values().stream().map(BookingPet::size).toList();
     }
 
-    private RoutePricingService.CalculationRouteCost calculateRouteCost(ZipCode origin, ZipCode destiny) {
-        return routePricingService.calculateRouteCost(RoutePricingService.CalculationRequest.builder()
+    private RoutePricingService.CalculationResult calculateRoutePrice(ZipCode origin, ZipCode destination) {
+        return routePricingService.calculate(RoutePricingService.CalculationRequest.builder()
                 .origin(origin)
-                .destination(destiny)
+                .destination(destination)
                 .build());
     }
 
-    private Pet buildBookingPet(br.com.ipet.ordering.domain.model.pet.Pet pet) {
-        return Pet.builder()
+    private BookingPet buildBookingPet(Pet pet) {
+        return BookingPet.builder()
                 .id(pet.id())
                 .type(pet.type())
                 .size(pet.size())

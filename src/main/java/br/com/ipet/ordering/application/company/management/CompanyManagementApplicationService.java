@@ -7,7 +7,7 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Phone;
 import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.company.Company;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.company.CompanyName;
 import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
 import br.com.ipet.ordering.domain.model.company.CompanyService;

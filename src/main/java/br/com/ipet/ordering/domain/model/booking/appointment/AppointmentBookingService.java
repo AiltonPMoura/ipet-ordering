@@ -1,7 +1,8 @@
 package br.com.ipet.ordering.domain.model.booking.appointment;
 
-import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.booking.PetBookingTransport;
+import br.com.ipet.ordering.domain.model.commons.enums.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class AppointmentBookingService {
                                    AppointmentSchedule appointmentSchedule,
                                    LocalDateTime requestedStart,
                                    Set<PetServicePair> petServicePairs,
-                                   TransportDetail transportDetail,
+                                   PetBookingTransport petBookingTransport,
                                    PaymentMethod paymentMethod) {
 
         var appointmentBooking = AppointmentBooking.create(
@@ -29,23 +30,24 @@ public class AppointmentBookingService {
                 requestedStart
         );
 
-        appointmentBooking.changeTransportDetail(transportDetail);
+        appointmentBooking.changeTransport(petBookingTransport);
         appointmentBooking.changePaymentMethod(paymentMethod);
 
-        petServicePairs.forEach(petServicePair -> appointmentBooking.addAppointmentPetService(petServicePair.pet(), petServicePair.service()));
+        petServicePairs.forEach(petServicePair -> appointmentBooking.addAppointmentPetService(petServicePair.bookingPet(), petServicePair.service()));
 
-        var requestedEnd = appointmentBooking.scheduledEnd();
+        var scheduledEnd = appointmentBooking.scheduledEnd();
 
-        appointmentSchedule.verifyOperatingHours(requestedStart, requestedEnd);
-        this.verifyTimeSlotAvailability(appointmentSchedule, requestedStart, requestedEnd);
+        appointmentSchedule.verifyOperatingHours(requestedStart, scheduledEnd);
+
+        this.verifyNoTimeSlotConflict(appointmentSchedule, requestedStart, scheduledEnd);
 
         appointmentBooking.request(customerId, appointmentSchedule.companyId());
 
         return appointmentBooking;
     }
 
-    private void verifyTimeSlotAvailability(AppointmentSchedule appointmentSchedule, LocalDateTime requestedStart, LocalDateTime requestedEnd) {
-        if (appointmentBookings.hasTimeSlotConflict(appointmentSchedule.id(), requestedStart, requestedEnd))
+    private void verifyNoTimeSlotConflict(AppointmentSchedule appointmentSchedule, LocalDateTime requestedStart, LocalDateTime requestedEnd) {
+        if (appointmentBookings.existsTimeSlotConflict(appointmentSchedule.id(), requestedStart, requestedEnd))
             throw new RuntimeException("Horário já reservado.");
     }
 

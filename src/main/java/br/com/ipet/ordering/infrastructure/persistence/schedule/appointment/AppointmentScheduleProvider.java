@@ -1,9 +1,7 @@
 package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
-import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedules;
 import lombok.RequiredArgsConstructor;

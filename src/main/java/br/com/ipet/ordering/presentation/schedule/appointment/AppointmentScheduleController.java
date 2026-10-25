@@ -5,7 +5,7 @@ import br.com.ipet.ordering.application.schedule.ScheduleInput;
 import br.com.ipet.ordering.application.schedule.appointment.management.AppointmentScheduleApplicationService;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleDetailOutput;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleQueryService;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleAvailabilityOutput;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

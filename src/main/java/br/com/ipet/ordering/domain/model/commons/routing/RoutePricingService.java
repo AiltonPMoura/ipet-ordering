@@ -9,14 +9,10 @@ import java.time.LocalDate;
 public interface RoutePricingService {
     CalculationResult calculate(CalculationRequest request);
 
-    CalculationRouteCost calculateRouteCost(CalculationRequest request);
-
     @Builder
     record CalculationRequest(ZipCode origin, ZipCode destination) {}
 
     @Builder
-    record CalculationResult(Money cost, LocalDate expetedDate) {}
+    record CalculationResult(Money cost, LocalDate expectedDate) {}
 
-    @Builder
-    record CalculationRouteCost(Money cost) {}
 }

@@ -5,15 +5,15 @@ import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.booking.AppointmentBookingIsNotDraftToChangeException;
 import br.com.ipet.ordering.domain.model.booking.Booking;
 import br.com.ipet.ordering.domain.model.booking.BookingId;
-import br.com.ipet.ordering.domain.model.booking.Pet;
+import br.com.ipet.ordering.domain.model.booking.BookingPet;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
-import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.enums.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -71,10 +71,10 @@ public final class StayBooking extends Booking
         this.setCheckOutAt(checkOutAt);
     }
 
-    void addPetStay(Pet pet, StayService service) {
+    void addPetStay(BookingPet bookingPet, StayService service) {
         this.verifyIfChangeable();
-        this.verifyIfServiceSupportsPetSize(pet, service);
-        var item = PetStay.create(this.id(), pet, service);
+        this.verifyIfServiceSupportsPetSize(bookingPet, service);
+        var item = PetStay.create(this.id(), bookingPet, service);
         this.stays.add(item);
         this.recalculateTotals();
         //this.recalculateSchedule();
@@ -201,9 +201,9 @@ public final class StayBooking extends Booking
             throw new AppointmentBookingIsNotDraftToChangeException(this.id().toString());
     }
 
-    private void verifyIfServiceSupportsPetSize(Pet pet, StayService stayService) {
-        if (!pet.size().equals(stayService.petSize()))
-            throw new StayBookingDoesNotSupportPetSizeException(pet.size().name(), stayService.petSize());
+    private void verifyIfServiceSupportsPetSize(BookingPet bookingPet, StayService stayService) {
+        if (!bookingPet.size().equals(stayService.petSize()))
+            throw new StayBookingDoesNotSupportPetSizeException(bookingPet.size().name(), stayService.petSize());
     }
 
     private void recalculateTotals() {

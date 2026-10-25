@@ -2,23 +2,23 @@ package br.com.ipet.ordering.domain.model.booking;
 
 import br.com.ipet.ordering.domain.model.AbstractEventSourceEntity;
 import br.com.ipet.ordering.domain.model.FieldValidator;
-import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
-import br.com.ipet.ordering.domain.model.commons.PaymentStatus;
+import br.com.ipet.ordering.domain.model.commons.enums.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.enums.PaymentStatus;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.domain.model.order.OrderDoesNotAssociatedWithCompany;
 import br.com.ipet.ordering.domain.model.order.OrderDoesNotBelongsToTheCustomer;
-import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
+import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 
 import java.time.OffsetDateTime;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
-import static br.com.ipet.ordering.domain.model.commons.PaymentStatus.PAID;
-import static br.com.ipet.ordering.domain.model.commons.PaymentStatus.REFUNDED;
+import static br.com.ipet.ordering.domain.model.commons.enums.PaymentStatus.PAID;
+import static br.com.ipet.ordering.domain.model.commons.enums.PaymentStatus.REFUNDED;
 
 public abstract class Booking extends AbstractEventSourceEntity {
 

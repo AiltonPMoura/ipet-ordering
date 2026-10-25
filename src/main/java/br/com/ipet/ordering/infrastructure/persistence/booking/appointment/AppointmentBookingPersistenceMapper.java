@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 
-import br.com.ipet.ordering.domain.model.booking.Pet;
+import br.com.ipet.ordering.domain.model.booking.BookingPet;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBooking;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import br.com.ipet.ordering.domain.model.booking.appointment.AppointmentPetService;
@@ -43,7 +43,7 @@ public class AppointmentBookingPersistenceMapper {
         appointmentBookingPersistence.setPaymentMethod(appointmentBooking.paymentMethod().name());
         /*appointmentBookingPersistence.setPaymentStatus(appointmentBooking.paymentStatus().name());
         appointmentBookingPersistence.setBilling(this.toBillingEmbeddable(appointmentBooking.billing()));*/
-        appointmentBookingPersistence.setPetTransportDetail(this.toPetTransportDetailEmbeddable(appointmentBooking));
+        appointmentBookingPersistence.setPetBookingTransport(this.toPetBookingTransportEmbeddable(appointmentBooking));
         appointmentBookingPersistence.setAppointmentPetServices(this.mergeAppointmentPetServices(appointmentBookingPersistence, appointmentBooking));
         appointmentBookingPersistence.setRequestedAt(appointmentBooking.requestedAt());
         appointmentBookingPersistence.setScheduledAt(appointmentBooking.scheduledAt());
@@ -81,21 +81,21 @@ public class AppointmentBookingPersistenceMapper {
 
     private AppointmentPetServicePersistenceEntity mergePet(AppointmentPetServicePersistenceEntity appointmentPetServicePersistence, AppointmentPetService appointmentPetService) {
         appointmentPetServicePersistence.setId(appointmentPetService.id().value());
-        appointmentPetServicePersistence.setPet(this.toPetEmbeddable(appointmentPetService.pet()));
+        appointmentPetServicePersistence.setPet(this.toPetEmbeddable(appointmentPetService.bookingPet()));
         appointmentPetServicePersistence.setService(this.toServiceEmbeddable(appointmentPetService.service()));
         return appointmentPetServicePersistence;
     }
 
-    private PetEmbeddable toPetEmbeddable(Pet pet) {
+    private PetEmbeddable toPetEmbeddable(BookingPet bookingPet) {
         return PetEmbeddable.builder()
-                .petId(pet.id().value())
-                .name(pet.name())
-                .petType(pet.type().name())
-                .breed(pet.breed())
-                .gender(pet.gender())
-                .size(pet.size().name())
-                .weight(pet.weight())
-                .age(pet.age())
+                .petId(bookingPet.id().value())
+                .name(bookingPet.name())
+                .petType(bookingPet.type().name())
+                .breed(bookingPet.breed())
+                .gender(bookingPet.gender())
+                .size(bookingPet.size().name())
+                .weight(bookingPet.weight())
+                .age(bookingPet.age())
                 .build();
     }
 
@@ -111,10 +111,10 @@ public class AppointmentBookingPersistenceMapper {
                 .build();
     }
 
-    private PetTransportDetailEmbeddable toPetTransportDetailEmbeddable(AppointmentBooking appointmentBooking) {
-        return PetTransportDetailEmbeddable.builder()
-                .cost(appointmentBooking.transportDetail().cost().value())
-                .address(this.toAddressEmbeddable(appointmentBooking.transportDetail().address()))
+    private PetBookingTransportEmbeddable toPetBookingTransportEmbeddable(AppointmentBooking appointmentBooking) {
+        return PetBookingTransportEmbeddable.builder()
+                .cost(appointmentBooking.petBookingTransport().cost().value())
+                .address(this.toAddressEmbeddable(appointmentBooking.petBookingTransport().address()))
                 .build();
     }
 

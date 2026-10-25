@@ -1,7 +1,7 @@
 package br.com.ipet.ordering.infrastructure.client.catalog.product;
 
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.product.Product;
 import br.com.ipet.ordering.domain.model.product.ProductCatalogService;
 import br.com.ipet.ordering.domain.model.product.ProductDescription;

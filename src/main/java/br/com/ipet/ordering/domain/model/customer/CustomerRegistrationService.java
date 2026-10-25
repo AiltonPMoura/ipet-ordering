@@ -1,6 +1,7 @@
 package br.com.ipet.ordering.domain.model.customer;
 
 import br.com.ipet.ordering.domain.model.commons.document.Document;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Address;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Email;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;

@@ -6,17 +6,18 @@ import br.com.ipet.ordering.domain.model.booking.AppointmentBookingDoesNotSuppor
 import br.com.ipet.ordering.domain.model.booking.AppointmentBookingIsNotDraftToChangeException;
 import br.com.ipet.ordering.domain.model.booking.Booking;
 import br.com.ipet.ordering.domain.model.booking.BookingId;
-import br.com.ipet.ordering.domain.model.commons.PaymentMethod;
-import br.com.ipet.ordering.domain.model.commons.PaymentStatus;
-import br.com.ipet.ordering.domain.model.booking.Pet;
+import br.com.ipet.ordering.domain.model.booking.PetBookingTransport;
+import br.com.ipet.ordering.domain.model.commons.enums.PaymentMethod;
+import br.com.ipet.ordering.domain.model.commons.enums.PaymentStatus;
+import br.com.ipet.ordering.domain.model.booking.BookingPet;
 import br.com.ipet.ordering.domain.model.booking.PetAppointmentNotFoundException;
 import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusException;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Billing;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.Quantity;
-import br.com.ipet.ordering.domain.model.company.CompanyId;
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
-import br.com.ipet.ordering.domain.model.schedule.ScheduleId;
+import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import lombok.Builder;
@@ -39,8 +40,8 @@ import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentB
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.RETURNED;
 import static br.com.ipet.ordering.domain.model.booking.appointment.AppointmentBookingStatus.SCHEDULED;
 
-import static br.com.ipet.ordering.domain.model.commons.PaymentStatus.PAID;
-import static br.com.ipet.ordering.domain.model.commons.PaymentStatus.REFUNDED;
+import static br.com.ipet.ordering.domain.model.commons.enums.PaymentStatus.PAID;
+import static br.com.ipet.ordering.domain.model.commons.enums.PaymentStatus.REFUNDED;
 
 public final class AppointmentBooking
         extends Booking
@@ -48,7 +49,7 @@ public final class AppointmentBooking
 
     private LocalDateTime scheduledStart;
     private LocalDateTime scheduledEnd;
-    private TransportDetail transportDetail;
+    private PetBookingTransport petBookingTransport;
     private AppointmentBookingStatus appointmentStatus;
     private Set<AppointmentPetService> appointmentPetServices;
     private OffsetDateTime inProgressAt;
@@ -73,7 +74,7 @@ public final class AppointmentBooking
                                Quantity totalPets, Money totalAmount,
                                PaymentMethod paymentMethod, PaymentStatus paymentStatus, Billing billing,
                                LocalDateTime scheduledStart, LocalDateTime scheduledEnd,
-                               TransportDetail transportDetail, AppointmentBookingStatus appointmentStatus, Set<AppointmentPetService> appointmentPetServices,
+                               PetBookingTransport petBookingTransport, AppointmentBookingStatus appointmentStatus, Set<AppointmentPetService> appointmentPetServices,
                                OffsetDateTime requestedAt,
                                OffsetDateTime paidAt, OffsetDateTime scheduledAt,
                                OffsetDateTime completedAt, OffsetDateTime cancelAt, OffsetDateTime refundedAt,
@@ -82,7 +83,7 @@ public final class AppointmentBooking
                 requestedAt, paidAt, scheduledAt, completedAt, cancelAt, refundedAt, cancelationReason);
         this.setScheduledStart(scheduledStart);
         this.setScheduledEnd(scheduledEnd);
-        this.setTransportDetail(transportDetail);
+        this.setPetBookingTransport(petBookingTransport);
         this.setAppointmentStatus(appointmentStatus);
         this.setAppointmentPetServices(appointmentPetServices);
         this.setInProgressAt(inProgressAt);
@@ -90,10 +91,10 @@ public final class AppointmentBooking
         this.setReturnedAt(returnedAt);
     }
 
-    void addAppointmentPetService(Pet pet, AppointmentService appointmentService) {
+    void addAppointmentPetService(BookingPet bookingPet, AppointmentService appointmentService) {
         this.verifyIfChangeable();
-        this.verifyIfServiceSupportsPetSize(pet, appointmentService);
-        var appointmentPetService = AppointmentPetService.create(this.id(), pet, appointmentService);
+        this.verifyIfServiceSupportsPetSize(bookingPet, appointmentService);
+        var appointmentPetService = AppointmentPetService.create(this.id(), bookingPet, appointmentService);
         this.appointmentPetServices.add(appointmentPetService);
         this.recalculateTotals();
         this.recalculateScheduleEnd();
@@ -119,10 +120,10 @@ public final class AppointmentBooking
         super.setPaymentMethod(paymentMethod);
     }
 
-    public void changeTransportDetail(TransportDetail transportDetail) {
-        FieldValidator.requiresNonNull("transportDetail", transportDetail);
+    public void changeTransport(PetBookingTransport petBookingTransport) {
+        FieldValidator.requiresNonNull("transportDetail", petBookingTransport);
         this.verifyIfChangeable();
-        this.setTransportDetail(transportDetail);
+        this.setPetBookingTransport(petBookingTransport);
         this.recalculateTotals();
     }
 
@@ -210,9 +211,9 @@ public final class AppointmentBooking
             throw new AppointmentBookingIsNotDraftToChangeException(this.id().toString());
     }
 
-    private void verifyIfServiceSupportsPetSize(Pet pet, AppointmentService appointmentService) {
-        if (!pet.size().equals(appointmentService.petSize()))
-            throw new AppointmentBookingDoesNotSupportPetSizeException(pet.size().name(), appointmentService.petSize().name());
+    private void verifyIfServiceSupportsPetSize(BookingPet bookingPet, AppointmentService appointmentService) {
+        if (!bookingPet.size().equals(appointmentService.petSize()))
+            throw new AppointmentBookingDoesNotSupportPetSizeException(bookingPet.size().name(), appointmentService.petSize().name());
     }
 
     private void recalculateTotals() {
@@ -220,8 +221,8 @@ public final class AppointmentBooking
                 .map(appointmentPetService -> appointmentPetService.service().price().value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (this.transportDetail != null)
-            totalPetAppointmentTransportAmount = totalPetAppointmentTransportAmount.add(this.transportDetail.cost().value());
+        if (this.petBookingTransport != null)
+            totalPetAppointmentTransportAmount = totalPetAppointmentTransportAmount.add(this.petBookingTransport.cost().value());
 
         this.setTotalAmount(new Money(totalPetAppointmentTransportAmount));
         this.setTotalPets(new Quantity(this.appointmentPetServices.size()));
@@ -260,10 +261,10 @@ public final class AppointmentBooking
             throw AppointmentBookingCannotBeRequestedException.noPaymentMethod(this.id().toString());
 
 /*        if (this.billing() == null)
-            throw AppointmentBookingCannotBeRequestedException.noBilling(this.id().toString());
+            throw AppointmentBookingCannotBeRequestedException.noBilling(this.id().toString());*/
 
-        if (this.transport == null)
-            throw AppointmentBookingCannotBeRequestedException.noPetTransport(this.id().toString());*/
+        if (this.petBookingTransport == null)
+            throw AppointmentBookingCannotBeRequestedException.noPetTransport(this.id().toString());
     }
 
     public LocalDateTime scheduledStart() {
@@ -282,12 +283,12 @@ public final class AppointmentBooking
         this.scheduledEnd = scheduledEnd;
     }
 
-    public TransportDetail transportDetail() {
-        return transportDetail;
+    public PetBookingTransport petBookingTransport() {
+        return petBookingTransport;
     }
 
-    private void setTransportDetail(TransportDetail transportDetail) {
-        this.transportDetail = transportDetail;
+    private void setPetBookingTransport(PetBookingTransport petBookingTransport) {
+        this.petBookingTransport = petBookingTransport;
     }
 
     public AppointmentBookingStatus appointmentStatus() {

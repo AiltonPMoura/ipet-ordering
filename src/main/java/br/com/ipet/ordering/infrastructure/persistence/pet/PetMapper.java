@@ -1,15 +1,15 @@
 package br.com.ipet.ordering.infrastructure.persistence.pet;
 
-import br.com.ipet.ordering.domain.model.customer.CustomerId;
+import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.domain.model.pet.PetAge;
-import br.com.ipet.ordering.domain.model.pet.PetId;
+import br.com.ipet.ordering.domain.model.commons.id.PetId;
 import br.com.ipet.ordering.domain.model.pet.PetName;
-import br.com.ipet.ordering.domain.model.pet.PetType;
+import br.com.ipet.ordering.domain.model.commons.enums.PetType;
 import br.com.ipet.ordering.domain.model.pet.PetWeight;
 import br.com.ipet.ordering.domain.model.pet.Breed;
 import br.com.ipet.ordering.domain.model.pet.PetGender;
 import br.com.ipet.ordering.domain.model.pet.Pet;
-import br.com.ipet.ordering.domain.model.pet.PetSize;
+import br.com.ipet.ordering.domain.model.commons.enums.PetSize;
 import org.springframework.stereotype.Component;
 
 @Component
