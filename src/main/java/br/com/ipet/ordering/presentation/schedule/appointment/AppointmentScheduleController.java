@@ -3,6 +3,7 @@ package br.com.ipet.ordering.presentation.schedule.appointment;
 import br.com.ipet.ordering.application.commons.NameInput;
 import br.com.ipet.ordering.application.schedule.ScheduleInput;
 import br.com.ipet.ordering.application.schedule.appointment.management.AppointmentScheduleApplicationService;
+import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleAvailabilityFilter;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleDetailOutput;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleQueryService;
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
@@ -61,9 +62,9 @@ public class AppointmentScheduleController {
         return queryService.findById(appointmentScheduleId);
     }
 
-    @GetMapping("/{companyId}/availability")
-    public ScheduleAvailabilityOutput findScheduleAvailabilityByCompanyId(@PathVariable UUID companyId) {
-        return queryService.findScheduleAvailability(companyId);
+    @PostMapping("/availability")
+    public ScheduleAvailabilityOutput findScheduleAvailability(@RequestBody AppointmentScheduleAvailabilityFilter filter) {
+        return queryService.findScheduleAvailability(filter);
     }
 
     @PostMapping("/{appointmentScheduleId}/activate")
