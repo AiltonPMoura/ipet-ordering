@@ -3,6 +3,8 @@ package br.com.ipet.ordering.presentation.exception.handler;
 import br.com.ipet.ordering.domain.model.DomainEntityNotFoundException;
 import br.com.ipet.ordering.domain.model.DomainException;
 import br.com.ipet.ordering.domain.model.customer.CustomerEmailIsInUseException;
+import br.com.ipet.ordering.domain.model.transport.LicensePlateIsNotValidException;
+import br.com.ipet.ordering.domain.model.transport.PetTransportLicensePlateIsInUseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -69,6 +71,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                     "/errors/conflict",
                     emailsNotUnique.getMessage(),
                     emailsNotUnique.getValues()
+            );
+            case PetTransportLicensePlateIsInUseException licensePlateInUse -> buildProblemDetail(HttpStatus.CONFLICT,
+                    "Conflict",
+                    "/errors/conflict",
+                    licensePlateInUse.getMessage(),
+                    licensePlateInUse.getValues()
+            );
+            case LicensePlateIsNotValidException invalidLicensePlate -> buildProblemDetail(
+                    HttpStatus.UNPROCESSABLE_CONTENT,
+                    "Unprocessable Content",
+                    "/errors/unprocessable-content",
+                    invalidLicensePlate.getMessage(),
+                    invalidLicensePlate.getValues()
             );
             default -> buildProblemDetail(HttpStatus.UNPROCESSABLE_CONTENT,
                     "Unprocessable Content",

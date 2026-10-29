@@ -2,6 +2,7 @@ package br.com.ipet.ordering.infrastructure.persistence.transport;
 
 import br.com.ipet.ordering.domain.model.transport.PetTransport;
 import br.com.ipet.ordering.domain.model.transport.PetTransportId;
+import br.com.ipet.ordering.domain.model.transport.LicensePlate;
 import br.com.ipet.ordering.domain.model.transport.PetTransports;
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,8 @@ public class PetTransportPersistenceProvider implements PetTransports {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<PetTransport> ofCompanyWithHighestCapacity(CompanyId companyId) {
-        return petTransportRepository.findFirstByCompany_IdOrderByPetCapacityDesc(companyId.value())
+    public Optional<PetTransport> ofCompanyWithHighestCapacityAndActive(CompanyId companyId) {
+        return petTransportRepository.findHighestCapacityActiveByCompanyId(companyId.value())
                 .map(petTransportMapper::toDomain);
     }
 
@@ -63,6 +64,18 @@ public class PetTransportPersistenceProvider implements PetTransports {
     @Transactional(readOnly = true)
     public long countByCompany(CompanyId companyId) {
         return petTransportRepository.countByCompany_Id(companyId.value());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByCompany(CompanyId companyId) {
+        return petTransportRepository.existsByCompany_Id(companyId.value());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isLicensePlateUnique(LicensePlate licensePlate, PetTransportId petTransportId) {
+        return !petTransportRepository.existsByVehicle_LicensePlateAndIdNot(licensePlate.value(), petTransportId.value());
     }
 
     @Override

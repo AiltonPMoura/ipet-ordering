@@ -29,6 +29,8 @@ public class MessageCode {
         private PetTransport(){}
         public static final String NOT_FOUND = "pet.transport.not.found";
         public static final String CANNOT_REMOVE_LAST = "pet.transport.cannot.remove.last";
+        public static final String LICENSE_PLATE_IN_USE = "pet.transport.license.plate.in.use";
+        public static final String INVALID_LICENSE_PLATE = "pet.transport.license.plate.invalid";
     }
 
     public static class Booking {

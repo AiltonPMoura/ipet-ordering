@@ -15,6 +15,7 @@ import br.com.ipet.ordering.domain.model.schedule.ScheduleNotFoundException;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceId;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceOfferingCatalogService;
+import br.com.ipet.ordering.infrastructure.persistence.transport.PetTransportPersistenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +42,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
     private final AppointmentSchedulePersistenceRepository repository;
     private final AppointmentBookingQueryService bookingQueryService;
     private final ServiceOfferingCatalogService serviceOfferingCatalogService;
+    private final PetTransportPersistenceRepository petTransportRepository;
     private final Mapper mapper;
 
     @Override
@@ -67,27 +69,35 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
     public ScheduleAvailabilityOutput findScheduleAvailability(AppointmentScheduleAvailabilityFilter filter) {
         var companyId = filter.companyId();
 
-        var schedule = repository.findByCompany_Id(companyId)
-                .orElseThrow(() -> new ScheduleNotFoundException("Agenda não encontrada para a empresa."));
-
-        long totalServiceDurationMinutes = this.calculateTotalServiceDurationInMinutes(companyId, filter.serviceIds());
-
         var zoneId = ZoneId.of("America/Sao_Paulo"); // TODO: Usar schedule.getCompany().getTimezone()
         var today = LocalDate.now(zoneId);
         var currentTime = LocalTime.now(zoneId);
         var nowOffset = LocalDateTime.now(zoneId);
 
-        long daysToSkip = this.calculateWorkDaysToSkip(schedule, today, currentTime, totalServiceDurationMinutes, zoneId, nowOffset);
-        var candidateDates = this.generateCandidateDates(schedule, today, daysToSkip);
+        var schedule = repository.findByCompany_Id(companyId);
+
+        if (schedule.isEmpty() || this.hasNoActivePetTransport(companyId))
+            return buildEmptyAvailability(today);
+
+        var appointmentSchedule = schedule.get();
+
+        long totalServiceDurationMinutes = this.calculateTotalServiceDurationInMinutes(companyId, filter.serviceIds());
+
+        long daysToSkip = this.calculateWorkDaysToSkip(appointmentSchedule, today, currentTime, totalServiceDurationMinutes, zoneId, nowOffset);
+        var candidateDates = this.generateCandidateDates(appointmentSchedule, today, daysToSkip);
 
         if (candidateDates.isEmpty()) return buildEmptyAvailability(today);
 
-        var blockedBookingsByDate = this.findBlockedBookingsByDate(schedule.getId(), candidateDates, nowOffset, zoneId);
-        var workDayMap = this.mapWorkDaysByDayOfWeek(schedule.getWorkDays());
+        var blockedBookingsByDate = this.findBlockedBookingsByDate(appointmentSchedule.getId(), candidateDates, nowOffset, zoneId);
+        var workDayMap = this.mapWorkDaysByDayOfWeek(appointmentSchedule.getWorkDays());
         var availableDays = this.generateAvailableDaysWithTimeSlots(candidateDates, workDayMap, blockedBookingsByDate, totalServiceDurationMinutes, zoneId);
         var daysWithAvailableTimes = this.removeDaysWithoutTimeSlots(availableDays);
 
         return buildScheduleAvailability(daysWithAvailableTimes, today);
+    }
+
+    private boolean hasNoActivePetTransport(UUID companyId) {
+        return !petTransportRepository.existsActiveByCompanyId(companyId);
     }
 
     private long calculateTotalServiceDurationInMinutes(UUID companyId, List<UUID> serviceIds) {

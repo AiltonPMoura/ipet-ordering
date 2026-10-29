@@ -3,6 +3,8 @@ package br.com.ipet.ordering.infrastructure.persistence.booking;
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
 import br.com.ipet.ordering.infrastructure.persistence.order.BillingEmbeddable;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -48,6 +50,18 @@ public class AbstractBooking extends AbstractAggregateRoot<AbstractBooking> {
     private String paymentStatus;
 
     @Embedded
+    @AttributeOverride(name = "firstName", column = @Column(name = "billing_first_name"))
+    @AttributeOverride(name = "lastName", column = @Column(name = "billing_last_name"))
+    @AttributeOverride(name = "document", column = @Column(name = "billing_document"))
+    @AttributeOverride(name = "phone", column = @Column(name = "billing_phone"))
+    @AttributeOverride(name = "email", column = @Column(name = "billing_email"))
+    @AttributeOverride(name = "address.street", column = @Column(name = "billing_address_street"))
+    @AttributeOverride(name = "address.number", column = @Column(name = "billing_address_number"))
+    @AttributeOverride(name = "address.complement", column = @Column(name = "billing_address_complement"))
+    @AttributeOverride(name = "address.neighborhood", column = @Column(name = "billing_address_neighborhood"))
+    @AttributeOverride(name = "address.city", column = @Column(name = "billing_address_city"))
+    @AttributeOverride(name = "address.state", column = @Column(name = "billing_address_state"))
+    @AttributeOverride(name = "address.zipCode", column = @Column(name = "billing_address_zipCode"))
     private BillingEmbeddable billing;
 
     private OffsetDateTime requestedAt;

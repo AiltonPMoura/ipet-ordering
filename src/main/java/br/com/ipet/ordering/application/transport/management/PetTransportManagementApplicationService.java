@@ -5,10 +5,12 @@ import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.transport.Driver;
+import br.com.ipet.ordering.domain.model.transport.LicensePlate;
 import br.com.ipet.ordering.domain.model.transport.PetCapacity;
 import br.com.ipet.ordering.domain.model.transport.PetTransportId;
 import br.com.ipet.ordering.domain.model.transport.PetTransportNotFoundException;
 import br.com.ipet.ordering.domain.model.transport.PetTransportRegistrationService;
+import br.com.ipet.ordering.domain.model.transport.PetTransportStatus;
 import br.com.ipet.ordering.domain.model.transport.PetTransports;
 import br.com.ipet.ordering.domain.model.transport.Vehicle;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,8 @@ public class PetTransportManagementApplicationService {
                 new CompanyId(input.companyId()),
                 this.toDriver(input.driver()),
                 this.toVehicle(input.vehicle()),
-                new PetCapacity(input.petCapacity())
+                new PetCapacity(input.petCapacity()),
+                PetTransportStatus.valueOf(input.status())
         );
 
         petTransports.add(petTransport);
@@ -51,6 +54,19 @@ public class PetTransportManagementApplicationService {
         petTransport.changeDriver(this.toDriver(input.driver()));
         petTransport.changeCapacity(new PetCapacity(input.petCapacity()));
 
+        petTransports.add(petTransport);
+    }
+
+    public void updateStatus(UUID companyId, UUID petTransportId, PetTransportStatusInput input) {
+        FieldValidator.requiresNonNull("companyId", companyId);
+        FieldValidator.requiresNonNull("petTransportId", petTransportId);
+        FieldValidator.requiresNonNull("petTransportStatusInput", input);
+        FieldValidator.requiresNonNull("status", input.status());
+
+        var petTransport = petTransports.ofIdAndCompanyId(new PetTransportId(petTransportId), new CompanyId(companyId))
+                .orElseThrow(() -> new PetTransportNotFoundException(petTransportId.toString()));
+
+        petTransport.changeStatus(PetTransportStatus.valueOf(input.status()));
         petTransports.add(petTransport);
     }
 
@@ -81,7 +97,7 @@ public class PetTransportManagementApplicationService {
         FieldValidator.requiresNonNull("vehicleInput", input);
 
         return Vehicle.builder()
-                .licensePlate(input.licensePlate())
+                .licensePlate(new LicensePlate(input.licensePlate()))
                 .brand(input.brand())
                 .model(input.model())
                 .build();

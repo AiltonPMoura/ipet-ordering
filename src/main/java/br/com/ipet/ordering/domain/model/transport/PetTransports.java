@@ -8,7 +8,9 @@ import java.util.Optional;
 public interface PetTransports extends RemoveCapableRepository<PetTransport, PetTransportId> {
 
     Optional<PetTransport> ofIdAndCompanyId(PetTransportId id, CompanyId companyId);
-    Optional<PetTransport> ofCompanyWithHighestCapacity(CompanyId companyId);
+    Optional<PetTransport> ofCompanyWithHighestCapacityAndActive(CompanyId companyId);
     long countByCompany(CompanyId companyId);
+    boolean existsByCompany(CompanyId companyId);
+    boolean isLicensePlateUnique(LicensePlate licensePlate, PetTransportId petTransportId);
 
 }

@@ -51,10 +51,9 @@ public class PetTransportPersistenceEntity extends AbstractAggregateRoot<PetTran
     @AttributeOverride(name = "model", column = @Column(name = "vehicle_model"))
     private VehicleEmbeddable vehicle;
 
-    @Column(name = "pet_capacity")
     private Integer petCapacity;
+    private String status;
 
-    @Column(name = "registered_at")
     private OffsetDateTime registeredAt;
 
     public UUID getCompanyId() {

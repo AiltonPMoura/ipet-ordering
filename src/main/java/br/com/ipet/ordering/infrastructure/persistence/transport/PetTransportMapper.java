@@ -4,9 +4,11 @@ import br.com.ipet.ordering.domain.model.commons.document.DocumentFactory;
 import br.com.ipet.ordering.domain.model.commons.valueobject.FullName;
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.transport.Driver;
+import br.com.ipet.ordering.domain.model.transport.LicensePlate;
 import br.com.ipet.ordering.domain.model.transport.PetCapacity;
 import br.com.ipet.ordering.domain.model.transport.PetTransport;
 import br.com.ipet.ordering.domain.model.transport.PetTransportId;
+import br.com.ipet.ordering.domain.model.transport.PetTransportStatus;
 import br.com.ipet.ordering.domain.model.transport.Vehicle;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,7 @@ public class PetTransportMapper {
                 .driver(this.toDriver(petTransportPersistence.getDriver()))
                 .vehicle(this.toVehicle(petTransportPersistence.getVehicle()))
                 .capacity(new PetCapacity(petTransportPersistence.getPetCapacity()))
+                .status(PetTransportStatus.valueOf(petTransportPersistence.getStatus()))
                 .registeredAt(petTransportPersistence.getRegisteredAt())
                 .build();
     }
@@ -36,7 +39,7 @@ public class PetTransportMapper {
 
     private Vehicle toVehicle(VehicleEmbeddable vehicleEmbeddable) {
         return Vehicle.builder()
-                .licensePlate(vehicleEmbeddable.getLicensePlate())
+                .licensePlate(new LicensePlate(vehicleEmbeddable.getLicensePlate()))
                 .brand(vehicleEmbeddable.getBrand())
                 .model(vehicleEmbeddable.getModel())
                 .build();

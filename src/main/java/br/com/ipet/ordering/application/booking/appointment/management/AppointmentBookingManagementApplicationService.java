@@ -64,8 +64,8 @@ public class AppointmentBookingManagementApplicationService {
         var company = companies.ofId(new CompanyId(input.companyId()))
                 .orElseThrow(() -> new CompanyNotFoundException(""));
 
-        var petTransport = petTransports.ofCompanyWithHighestCapacity(new CompanyId(input.companyId()))
-                .orElseThrow(() -> new DomainException("Transporte não encontrado para a agenda."));
+        var petTransport = petTransports.ofCompanyWithHighestCapacityAndActive(new CompanyId(input.companyId()))
+                .orElseThrow(() -> new DomainException("Empresa não possui um transporte ativo para o agendamento."));
 
         var petsById = this.findCustomerPetsMappedById(input);
         var servicesById = this.findAppointmentServicesMappedById(input);

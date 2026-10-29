@@ -17,22 +17,24 @@ public class PetTransport
     private Driver driver;
     private Vehicle vehicle;
     private PetCapacity capacity;
+    private PetTransportStatus status;
     private OffsetDateTime registeredAt;
 
     @Builder(builderClassName = "CreateNewPetTransportBuilder", builderMethodName = "createNew")
-    private static PetTransport create(CompanyId companyId, Driver driver, Vehicle vehicle, PetCapacity capacity) {
-        return new PetTransport(new PetTransportId(), companyId, driver, vehicle, capacity, OffsetDateTime.now());
+    private static PetTransport create(CompanyId companyId, Driver driver, Vehicle vehicle, PetCapacity capacity, PetTransportStatus status) {
+        return new PetTransport(new PetTransportId(), companyId, driver, vehicle, capacity, status, OffsetDateTime.now());
     }
 
     @Builder(builderClassName = "CreateExistingPetTransportBuilder", builderMethodName = "existing")
     public PetTransport(PetTransportId id, CompanyId companyId,
-                        Driver driver, Vehicle vehicle, PetCapacity capacity,
+                        Driver driver, Vehicle vehicle, PetCapacity capacity, PetTransportStatus status,
                         OffsetDateTime registeredAt) {
         this.setId(id);
         this.setCompanyId(companyId);
         this.setDriver(driver);
         this.setVehicle(vehicle);
         this.setCapacity(capacity);
+        this.setStatus(status);
         this.setRegisteredAt(registeredAt);
     }
 
@@ -42,6 +44,10 @@ public class PetTransport
 
     public void changeCapacity(PetCapacity capacity) {
         this.setCapacity(capacity);
+    }
+
+    public void changeStatus(PetTransportStatus status) {
+        this.setStatus(status);
     }
 
     @Override
@@ -88,6 +94,15 @@ public class PetTransport
     private void setCapacity(PetCapacity capacity) {
         FieldValidator.requiresNonNull("capacity", capacity);
         this.capacity = capacity;
+    }
+
+    public PetTransportStatus status() {
+        return status;
+    }
+
+    private void setStatus(PetTransportStatus status) {
+        FieldValidator.requiresNonNull("status", status);
+        this.status = status;
     }
 
     public OffsetDateTime registeredAt() {

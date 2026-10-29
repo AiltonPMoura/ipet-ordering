@@ -23,6 +23,7 @@ public class PetTransportPersistenceMapper {
         persistenceEntity.setDriver(this.toDriverEmbeddable(petTransport.driver()));
         persistenceEntity.setVehicle(this.toVehicleEmbeddable(petTransport.vehicle()));
         persistenceEntity.setPetCapacity(petTransport.capacity().value());
+        persistenceEntity.setStatus(petTransport.status().name());
         persistenceEntity.setRegisteredAt(petTransport.registeredAt());
         persistenceEntity.addEvents(petTransport.domainEvents());
         return persistenceEntity;
@@ -38,7 +39,7 @@ public class PetTransportPersistenceMapper {
 
     private VehicleEmbeddable toVehicleEmbeddable(Vehicle vehicle) {
         return VehicleEmbeddable.builder()
-                .licensePlate(vehicle.licensePlate())
+                .licensePlate(vehicle.licensePlate().value())
                 .brand(vehicle.brand())
                 .model(vehicle.model())
                 .build();

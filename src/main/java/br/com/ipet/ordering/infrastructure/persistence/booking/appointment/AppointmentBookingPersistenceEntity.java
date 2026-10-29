@@ -2,7 +2,9 @@ package br.com.ipet.ordering.infrastructure.persistence.booking.appointment;
 
 import br.com.ipet.ordering.infrastructure.persistence.booking.AbstractBooking;
 import br.com.ipet.ordering.infrastructure.persistence.schedule.appointment.AppointmentSchedulePersistenceEntity;
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -41,6 +43,14 @@ public class AppointmentBookingPersistenceEntity extends AbstractBooking {
     private String status;
 
     @Embedded
+    @AttributeOverride(name = "cost", column = @Column(name = "pet_transport_cost"))
+    @AttributeOverride(name = "address.street", column = @Column(name = "pet_transport_address_street"))
+    @AttributeOverride(name = "address.number", column = @Column(name = "pet_transport_address_number"))
+    @AttributeOverride(name = "address.neighborhood", column = @Column(name = "pet_transport_address_neighborhood"))
+    @AttributeOverride(name = "address.complement", column = @Column(name = "pet_transport_address_complement"))
+    @AttributeOverride(name = "address.city", column = @Column(name = "pet_transport_address_city"))
+    @AttributeOverride(name = "address.state", column = @Column(name = "pet_transport_address_state"))
+    @AttributeOverride(name = "address.zipCode", column = @Column(name = "pet_transport_address_zip_code"))
     private PetBookingTransportEmbeddable petBookingTransport;
 
     private OffsetDateTime inProgressAt;

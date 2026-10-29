@@ -14,21 +14,37 @@ public class PetTransportRegistrationService {
     private final Companies companies;
     private final PetTransports petTransports;
 
-    public PetTransport register(CompanyId companyId, Driver driver, Vehicle vehicle, PetCapacity capacity) {
+    public PetTransport register(CompanyId companyId, Driver driver, Vehicle vehicle,
+                                 PetCapacity capacity, PetTransportStatus status) {
         FieldValidator.requiresNonNull("companyId", companyId);
         FieldValidator.requiresNonNull("driver", driver);
         FieldValidator.requiresNonNull("vehicle", vehicle);
         FieldValidator.requiresNonNull("capacity", capacity);
+        FieldValidator.requiresNonNull("status", status);
 
-        if (!companies.exists(companyId))
-            throw new CompanyNotFoundException("");
+        this.verifyIfCompanyExists(companyId);
 
-        return PetTransport.createNew()
+        var petTransport = PetTransport.createNew()
                 .companyId(companyId)
                 .driver(driver)
                 .vehicle(vehicle)
                 .capacity(capacity)
+                .status(status)
                 .build();
+
+        this.verifyIfLicensePlateIsUnique(petTransport.vehicle().licensePlate(), petTransport.id());
+
+        return petTransport;
+    }
+
+    private void verifyIfCompanyExists(CompanyId companyId) {
+        if (!companies.exists(companyId))
+            throw new CompanyNotFoundException("");
+    }
+
+    private void verifyIfLicensePlateIsUnique(LicensePlate licensePlate, PetTransportId petTransportId) {
+        if (!petTransports.isLicensePlateUnique(licensePlate, petTransportId))
+            throw new PetTransportLicensePlateIsInUseException(licensePlate.value());
     }
 
     public void validateRemoval(CompanyId companyId) {

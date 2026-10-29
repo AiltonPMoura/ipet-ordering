@@ -8,5 +8,6 @@ import java.util.UUID;
 public record PetTransportInput(UUID companyId,
                                 DriverInput driver,
                                 VehicleInput vehicle,
-                                Integer petCapacity) {
+                                Integer petCapacity,
+                                String status) {
 }
