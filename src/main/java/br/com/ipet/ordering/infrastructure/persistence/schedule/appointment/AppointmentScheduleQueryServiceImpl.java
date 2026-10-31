@@ -2,6 +2,7 @@ package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
 import br.com.ipet.ordering.application.booking.appointment.query.AppointmentBookingBlockOutput;
 import br.com.ipet.ordering.application.booking.appointment.query.AppointmentBookingQueryService;
+import br.com.ipet.ordering.application.commons.AppointmentPetServiceInput;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleAvailabilityFilter;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleDetailOutput;
 import br.com.ipet.ordering.application.schedule.appointment.query.AppointmentScheduleFilter;
@@ -69,20 +70,19 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
     public ScheduleAvailabilityOutput findScheduleAvailability(AppointmentScheduleAvailabilityFilter filter) {
         var companyId = filter.companyId();
 
-        var zoneId = ZoneId.of("America/Sao_Paulo"); // TODO: Usar schedule.getCompany().getTimezone()
+        // TODO: Usar schedule.getCompany().getTimezone()
+        var zoneId = ZoneId.of("America/Sao_Paulo");
         var today = LocalDate.now(zoneId);
         var currentTime = LocalTime.now(zoneId);
         var nowOffset = LocalDateTime.now(zoneId);
 
         var schedule = repository.findByCompany_Id(companyId);
+        long totalServiceDurationMinutes = this.calculateTotalServiceDurationInMinutes(companyId, filter.petServices());
 
-        if (schedule.isEmpty() || this.hasNoActivePetTransport(companyId))
+        if (schedule.isEmpty() || this.hasNoActivePetTransport(companyId) || totalServiceDurationMinutes == 0)
             return buildEmptyAvailability(today);
 
         var appointmentSchedule = schedule.get();
-
-        long totalServiceDurationMinutes = this.calculateTotalServiceDurationInMinutes(companyId, filter.serviceIds());
-
         long daysToSkip = this.calculateWorkDaysToSkip(appointmentSchedule, today, currentTime, totalServiceDurationMinutes, zoneId, nowOffset);
         var candidateDates = this.generateCandidateDates(appointmentSchedule, today, daysToSkip);
 
@@ -100,13 +100,20 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
         return !petTransportRepository.existsActiveByCompanyId(companyId);
     }
 
-    private long calculateTotalServiceDurationInMinutes(UUID companyId, List<UUID> serviceIds) {
-        var services = serviceOfferingCatalogService.ofIdsAndCompanyId(
-                serviceIds.stream().map(ServiceId::new).collect(Collectors.toSet()),
-                new CompanyId(companyId)
-        );
+    private long calculateTotalServiceDurationInMinutes(UUID companyId, Set<AppointmentPetServiceInput> appointments) {
+        var serviceIds = appointments.stream()
+                .map(appointment -> new ServiceId(appointment.serviceId()))
+                .collect(Collectors.toSet());
 
-        return services.stream().mapToInt(AppointmentService::duration).sum();
+        var services = serviceOfferingCatalogService.ofIdsAndCompanyId(serviceIds, new CompanyId(companyId));
+
+        var serviceDurationsById = services.stream().collect(Collectors.toMap(AppointmentService::id, AppointmentService::duration));
+
+        if (!serviceDurationsById.keySet().containsAll(serviceIds)) return 0;
+
+        return appointments.stream()
+                .mapToInt(appointment -> serviceDurationsById.get(new ServiceId(appointment.serviceId())))
+                .sum();
     }
 
     private long calculateWorkDaysToSkip(

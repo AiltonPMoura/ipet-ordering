@@ -7,7 +7,7 @@ import java.time.LocalTime;
 
 public record BlockedTimeSlot(LocalTime startTime, LocalTime endTime) {
 
-    private static final int LOCKED_TIME_INTERVAL_MINUTES = 60;
+    private static final int LOCKED_TIME_INTERVAL_MINUTES = 30;
 
     public BlockedTimeSlot {
         FieldValidator.requiresNonNull("start locked time", startTime);

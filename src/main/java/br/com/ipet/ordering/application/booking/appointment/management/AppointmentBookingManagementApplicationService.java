@@ -94,7 +94,7 @@ public class AppointmentBookingManagementApplicationService {
     }
 
     private Map<ServiceId, AppointmentService> findAppointmentServicesMappedById(AppointmentBookingInput input) {
-        var serviceIds = input.appointments().stream()
+        var serviceIds = input.petServices().stream()
                 .map(appointmentInput -> new ServiceId(appointmentInput.serviceId()))
                 .collect(Collectors.toSet());
 
@@ -103,7 +103,7 @@ public class AppointmentBookingManagementApplicationService {
     }
 
     private Map<PetId, BookingPet> findCustomerPetsMappedById(AppointmentBookingInput input) {
-        var petIds = input.appointments().stream()
+        var petIds = input.petServices().stream()
                 .map(appointmentInput -> new PetId(appointmentInput.petId()))
                 .collect(Collectors.toSet());
 
@@ -115,7 +115,7 @@ public class AppointmentBookingManagementApplicationService {
     private Set<PetServicePair> buildPetServicePairs(AppointmentBookingInput input,
                                                      Map<PetId, BookingPet> petsById,
                                                      Map<ServiceId, AppointmentService> servicesById) {
-        return input.appointments().stream()
+        return input.petServices().stream()
                 .map(appointmentInput -> {
                     var pet = Optional.ofNullable(petsById.get(new PetId(appointmentInput.petId())))
                             .orElseThrow(() -> new DomainException("Pet não encontrado: " + appointmentInput.petId()));

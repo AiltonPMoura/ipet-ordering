@@ -1,4 +1,4 @@
-package br.com.ipet.ordering.application.booking.appointment.management;
+package br.com.ipet.ordering.application.commons;
 
 import java.util.UUID;
 

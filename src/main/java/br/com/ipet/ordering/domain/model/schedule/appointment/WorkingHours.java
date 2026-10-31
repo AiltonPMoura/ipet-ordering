@@ -10,8 +10,8 @@ public record WorkingHours(LocalTime startTime, LocalTime endTime) {
 
     private static final LocalTime MINIMUM_START_WORKING = LocalTime.of(8, 0);
     private static final LocalTime MAXIMUM_END_WORKING = LocalTime.of(18, 0);
-    private static final int WORKING_HOURS_INTERVAL_IN_MINUTES = 60;
-    private static final int MINIMUM_WORKING_HOURS_IN_MINUTES = 60;
+    private static final int WORKING_HOURS_INTERVAL_IN_MINUTES = 30;
+    private static final int MINIMUM_WORKING_HOURS_IN_MINUTES = 30;
 
     public WorkingHours {
         requiresNonNull("startTime", startTime);
