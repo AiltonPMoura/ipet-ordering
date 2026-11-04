@@ -34,6 +34,7 @@ public class CompanyMapper {
                 .number(addressEmbeddable.getNumber())
                 .neighborhood(addressEmbeddable.getNeighborhood())
                 .city(addressEmbeddable.getCity())
+                .state(addressEmbeddable.getState())
                 .complement(addressEmbeddable.getComplement())
                 .zipCode(new ZipCode(addressEmbeddable.getZipCode()))
                 .build();

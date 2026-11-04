@@ -3,7 +3,7 @@ package br.com.ipet.ordering.application.schedule.appointment.management;
 import br.com.ipet.ordering.application.commons.NameInput;
 import br.com.ipet.ordering.application.schedule.ScheduleInput;
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
-import br.com.ipet.ordering.domain.model.schedule.BlockedDate;
+import br.com.ipet.ordering.domain.model.schedule.LockedDate;
 import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleName;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleNotFoundException;
@@ -12,7 +12,7 @@ import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedul
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentScheduleRegistrationService;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedules;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDayId;
-import br.com.ipet.ordering.domain.model.schedule.appointment.BlockedTimeSlot;
+import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTimeSlot;
 import br.com.ipet.ordering.domain.model.schedule.appointment.WorkingHours;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -57,12 +57,12 @@ public class AppointmentScheduleApplicationService {
         appointmentSchedules.add(appointmentSchedule);
     }
 
-    public void changeBlockedDates(UUID scheduleId, UUID companyId, List<LocalDate> dates) {
+    public void changeLockedDates(UUID scheduleId, UUID companyId, List<LocalDate> dates) {
         requiresNonNull("dates", dates);
 
         var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
-        var lockedDates = dates.stream().map(BlockedDate::new).collect(Collectors.toSet());
-        appointmentSchedule.changeBlockedDates(lockedDates, new CompanyId(companyId));
+        var lockedDates = dates.stream().map(LockedDate::new).collect(Collectors.toSet());
+        appointmentSchedule.changeLockedDates(lockedDates, new CompanyId(companyId));
 
         appointmentSchedules.add(appointmentSchedule);
     }
@@ -103,7 +103,7 @@ public class AppointmentScheduleApplicationService {
 
         appointmentSchedule.addWorkDayLockedTime(
                 new AppointmentWorkDayId(workDayId),
-                new BlockedTimeSlot(input.startTime(), input.endTime()),
+                new LockedTimeSlot(input.startTime(), input.endTime()),
                 new CompanyId(companyId)
         );
 
@@ -117,7 +117,7 @@ public class AppointmentScheduleApplicationService {
 
         appointmentSchedule.removeWorkDayLockedTime(
                 new AppointmentWorkDayId(workDayId),
-                new BlockedTimeSlot(input.startTime(), input.endTime()),
+                new LockedTimeSlot(input.startTime(), input.endTime()),
                 new CompanyId(companyId)
         );
 
@@ -132,8 +132,8 @@ public class AppointmentScheduleApplicationService {
 
         appointmentSchedule.changeWorkDayLockedTime(
                 new AppointmentWorkDayId(workDayId),
-                new BlockedTimeSlot(oldInput.startTime(), oldInput.endTime()),
-                new BlockedTimeSlot(newInput.startTime(), newInput.endTime()),
+                new LockedTimeSlot(oldInput.startTime(), oldInput.endTime()),
+                new LockedTimeSlot(newInput.startTime(), newInput.endTime()),
                 new CompanyId(companyId)
         );
 

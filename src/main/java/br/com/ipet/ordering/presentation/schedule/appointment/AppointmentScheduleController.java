@@ -51,10 +51,10 @@ public class AppointmentScheduleController {
         applicationService.changeName(appointmentScheduleId, new CompanyId().value(), name);
     }
 
-    @PutMapping("/{appointmentScheduleId}/blocked-dates")
+    @PutMapping("/{appointmentScheduleId}/locked-dates")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changeLockedDates(@PathVariable UUID appointmentScheduleId, @RequestBody List<LocalDate> blockedDates) {
-        applicationService.changeBlockedDates(appointmentScheduleId, new CompanyId().value(), blockedDates);
+    public void changeLockedDates(@PathVariable UUID appointmentScheduleId, @RequestBody List<LocalDate> lockedDates) {
+        applicationService.changeLockedDates(appointmentScheduleId, new CompanyId().value(), lockedDates);
     }
 
     @GetMapping("/{appointmentScheduleId}")
@@ -70,7 +70,7 @@ public class AppointmentScheduleController {
     @PostMapping("/{appointmentScheduleId}/activate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void activate(@PathVariable UUID appointmentScheduleId) {
-        applicationService.activate(appointmentScheduleId, new CompanyId().value());
+        applicationService.activate(appointmentScheduleId, UUID.fromString("01a1848b-77ee-7198-b159-11541ac98112"));
     }
 
     @PostMapping("/{appointmentScheduleId}/deactivate")

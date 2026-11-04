@@ -3,7 +3,7 @@ package br.com.ipet.ordering.domain.model.schedule.appointment;
 import br.com.ipet.ordering.domain.model.AggregateRoot;
 import br.com.ipet.ordering.domain.model.DomainException;
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
-import br.com.ipet.ordering.domain.model.schedule.BlockedDate;
+import br.com.ipet.ordering.domain.model.schedule.LockedDate;
 import br.com.ipet.ordering.domain.model.schedule.Schedule;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleDontSupportSubcategoryException;
 import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
@@ -45,10 +45,10 @@ public class AppointmentSchedule
 
     @Builder(builderClassName = "ExistingAppointmentScheduledBuilder", builderMethodName = "existing")
     public AppointmentSchedule(ScheduleId id, CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory,
-                               ScheduleStatus status, Set<BlockedDate> blockedDates,
+                               ScheduleStatus status, Set<LockedDate> lockedDates,
                                OffsetDateTime createdAt,
                                Set<AppointmentWorkDay> workDays) {
-        super(id, companyId, name, serviceCategory, status, blockedDates, createdAt);
+        super(id, companyId, name, serviceCategory, status, lockedDates, createdAt);
         this.setWorkDays(workDays);
     }
 
@@ -100,8 +100,8 @@ public class AppointmentSchedule
     }
 
     @Override
-    public void changeBlockedDates(Set<BlockedDate> blockedDates, CompanyId companyId) {
-        super.changeBlockedDates(blockedDates, companyId);
+    public void changeLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
+        super.changeLockedDates(lockedDates, companyId);
     }
 
     public void changeWorkDayHours(AppointmentWorkDayId appointmentWorkDayId, WorkingHours workingHours, CompanyId companyId) {
@@ -110,22 +110,22 @@ public class AppointmentSchedule
         workingDay.changeWorkingHours(workingHours);
     }
 
-    public void addWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, BlockedTimeSlot blockedTimeSlot, CompanyId companyId) {
+    public void addWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, LockedTimeSlot lockedTimeSlot, CompanyId companyId) {
         //this.verifyBelongToCompany(companyId);
         var workingDay = this.findWorkDay(appointmentWorkDayId);
-        workingDay.addBlockedTimeSlot(blockedTimeSlot);
+        workingDay.addLockedTimeSlot(lockedTimeSlot);
     }
 
-    public void removeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, BlockedTimeSlot blockedTimeSlot, CompanyId companyId) {
+    public void removeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, LockedTimeSlot lockedTimeSlot, CompanyId companyId) {
         //this.verifyBelongToCompany(companyId);
         var workingDay = this.findWorkDay(appointmentWorkDayId);
-        workingDay.removeBlockedTimeSlot(blockedTimeSlot);
+        workingDay.removeLockedTimeSlot(lockedTimeSlot);
     }
 
-    public void changeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, BlockedTimeSlot blockedTimeSlot, BlockedTimeSlot newBlockedTimeSlot, CompanyId companyId) {
+    public void changeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, LockedTimeSlot lockedTimeSlot, LockedTimeSlot newLockedTimeSlot, CompanyId companyId) {
         //this.verifyBelongToCompany(companyId);
         var workingDay = this.findWorkDay(appointmentWorkDayId);
-        workingDay.changeBlockedTimeSlot(blockedTimeSlot, newBlockedTimeSlot);
+        workingDay.changeLockedTimeSlot(lockedTimeSlot, newLockedTimeSlot);
     }
 
     @Override
@@ -142,16 +142,16 @@ public class AppointmentSchedule
     }
 
     public void verifyOperatingHours(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        verifyIfNotBlocked(startDateTime.toLocalDate());
+        verifyIfNotLocked(startDateTime.toLocalDate());
         verifyIfWithinWorkingHours(startDateTime, endDateTime);
     }
 
-    private void verifyIfNotBlocked(LocalDate startDate) {
-        boolean isBlocked = this.blockedDates().stream()
-                .map(BlockedDate::date)
+    private void verifyIfNotLocked(LocalDate startDate) {
+        boolean isLocked = this.lockedDates().stream()
+                .map(LockedDate::date)
                 .anyMatch(startDate::equals);
 
-        if (isBlocked) throw new DomainException("A data escolhida está bloqueada e não aceita agendamentos.");
+        if (isLocked) throw new DomainException("A data escolhida está bloqueada e não aceita agendamentos.");
     }
 
     private void verifyIfWithinWorkingHours(LocalDateTime startDateTime, LocalDateTime endDateTime) {

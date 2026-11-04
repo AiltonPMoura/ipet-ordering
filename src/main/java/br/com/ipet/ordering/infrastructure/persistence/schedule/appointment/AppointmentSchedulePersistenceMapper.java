@@ -2,8 +2,8 @@ package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDay;
-import br.com.ipet.ordering.domain.model.schedule.BlockedDate;
-import br.com.ipet.ordering.domain.model.schedule.appointment.BlockedTimeSlot;
+import br.com.ipet.ordering.domain.model.schedule.LockedDate;
+import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTimeSlot;
 import br.com.ipet.ordering.infrastructure.persistence.company.CompanyPersistenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ public class AppointmentSchedulePersistenceMapper {
         appointmentSchedulePersistence.setStatus(appointmentSchedule.status().name());
         appointmentSchedulePersistence.setServiceCategory(appointmentSchedule.serviceCategory().name());
         appointmentSchedulePersistence.setWorkDays(this.mergeWorkDays(appointmentSchedulePersistence, appointmentSchedule));
-        appointmentSchedulePersistence.setBlockedDates(this.mergeBlockedDates(appointmentSchedulePersistence, appointmentSchedule));
+        appointmentSchedulePersistence.setLockedDates(this.mergeLockedDates(appointmentSchedulePersistence, appointmentSchedule));
         return appointmentSchedulePersistence;
     }
 
@@ -62,27 +62,27 @@ public class AppointmentSchedulePersistenceMapper {
         workDayPersistence.setDayOfWeek(appointmentWorkDay.dayOfWeek());
         workDayPersistence.setStartTime(appointmentWorkDay.workingHours().startTime());
         workDayPersistence.setEndTime(appointmentWorkDay.workingHours().endTime());
-        workDayPersistence.setBlockedTimeSlots(this.mergeLockedTimes(workDayPersistence, appointmentWorkDay));
+        workDayPersistence.setLockedTimeSlots(this.mergeLockedTimes(workDayPersistence, appointmentWorkDay));
         return workDayPersistence;
     }
 
-    private Set<LocalDate> mergeBlockedDates(AppointmentSchedulePersistenceEntity appointmentSchedulePersistence,
-                                             AppointmentSchedule appointmentSchedule) {
-        var blockedDatesPersistence = appointmentSchedulePersistence.getBlockedDates();
+    private Set<LocalDate> mergeLockedDates(AppointmentSchedulePersistenceEntity appointmentSchedulePersistence,
+                                            AppointmentSchedule appointmentSchedule) {
+        var lockedDatesPersistence = appointmentSchedulePersistence.getLockedDates();
 
-        blockedDatesPersistence.clear();
+        lockedDatesPersistence.clear();
 
-        blockedDatesPersistence.addAll(appointmentSchedule.blockedDates().stream()
-                .map(BlockedDate::date)
+        lockedDatesPersistence.addAll(appointmentSchedule.lockedDates().stream()
+                .map(LockedDate::date)
                 .collect(Collectors.toSet()));
 
-        return blockedDatesPersistence;
+        return lockedDatesPersistence;
     }
 
-    private Set<BlockedTimeSlotEmbeddable> mergeLockedTimes(AppointmentWorkDayPersistenceEntity workDayPersistence,
-                                                            AppointmentWorkDay appointmentWorkDay) {
+    private Set<LockedTimeSlotEmbeddable> mergeLockedTimes(AppointmentWorkDayPersistenceEntity workDayPersistence,
+                                                           AppointmentWorkDay appointmentWorkDay) {
 
-        var persistenceLockedTimes = workDayPersistence.getBlockedTimeSlots();
+        var persistenceLockedTimes = workDayPersistence.getLockedTimeSlots();
 
         persistenceLockedTimes.clear();
 
@@ -93,8 +93,8 @@ public class AppointmentSchedulePersistenceMapper {
         return persistenceLockedTimes;
     }
 
-    private BlockedTimeSlotEmbeddable toLockedTimeEmbeddable(BlockedTimeSlot blockedTimeSlot) {
-        return new BlockedTimeSlotEmbeddable(blockedTimeSlot.startTime(), blockedTimeSlot.endTime());
+    private LockedTimeSlotEmbeddable toLockedTimeEmbeddable(LockedTimeSlot lockedTimeSlot) {
+        return new LockedTimeSlotEmbeddable(lockedTimeSlot.startTime(), lockedTimeSlot.endTime());
     }
 
 }

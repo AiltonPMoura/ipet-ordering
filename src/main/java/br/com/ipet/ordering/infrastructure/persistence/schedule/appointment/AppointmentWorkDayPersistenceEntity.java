@@ -50,10 +50,10 @@ public class AppointmentWorkDayPersistenceEntity {
 
     @ElementCollection
     @CollectionTable(
-            name = "appointment_workday_blocked_time_slot",
+            name = "appointment_workday_locked_time_slot",
             joinColumns = @JoinColumn(name = "appointment_workday_id")
     )
-    private Set<BlockedTimeSlotEmbeddable> blockedTimeSlots = new HashSet<>();
+    private Set<LockedTimeSlotEmbeddable> lockedTimeSlots = new HashSet<>();
 
     public UUID getAppointmentScheduleId() {
         return this.appointmentSchedule.getId();

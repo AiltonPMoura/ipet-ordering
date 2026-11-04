@@ -5,11 +5,11 @@ import br.com.ipet.ordering.domain.model.FieldValidator;
 import java.time.Duration;
 import java.time.LocalTime;
 
-public record BlockedTimeSlot(LocalTime startTime, LocalTime endTime) {
+public record LockedTimeSlot(LocalTime startTime, LocalTime endTime) {
 
     private static final int LOCKED_TIME_INTERVAL_MINUTES = 30;
 
-    public BlockedTimeSlot {
+    public LockedTimeSlot {
         FieldValidator.requiresNonNull("start locked time", startTime);
         FieldValidator.requiresNonNull("end locked time", endTime);
         FieldValidator.requireStartTimeIsBeforeEndTime(startTime, endTime);
@@ -17,8 +17,8 @@ public record BlockedTimeSlot(LocalTime startTime, LocalTime endTime) {
         this.verifyValidInterval(startTime, endTime);
     }
 
-    public boolean verifyConflict(BlockedTimeSlot newBlockedTimeSlot) {
-        return startTime.isBefore(newBlockedTimeSlot.endTime()) && endTime.isAfter(newBlockedTimeSlot.startTime());
+    public boolean verifyConflict(LockedTimeSlot newLockedTimeSlot) {
+        return startTime.isBefore(newLockedTimeSlot.endTime()) && endTime.isAfter(newLockedTimeSlot.startTime());
     }
 
     public long lockedMinutes() {

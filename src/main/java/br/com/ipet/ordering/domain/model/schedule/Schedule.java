@@ -16,19 +16,19 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     private ScheduleName name;
     private ServiceCategory serviceCategory;
     private ScheduleStatus status;
-    private Set<BlockedDate> blockedDates;
+    private Set<LockedDate> lockedDates;
     private OffsetDateTime createdAt;
 
     protected Schedule(ScheduleId id, CompanyId companyId,
                        ScheduleName name, ServiceCategory serviceCategory,
-                       ScheduleStatus status, Set<BlockedDate> blockedDates,
+                       ScheduleStatus status, Set<LockedDate> lockedDates,
                        OffsetDateTime createdAt) {
         this.setId(id);
         this.setCompanyId(companyId);
         this.setName(name);
         this.setServiceCategory(serviceCategory);
         this.setStatus(status);
-        this.setBlockedDates(blockedDates);
+        this.setLockedDates(lockedDates);
         this.setCreatedAt(createdAt);
     }
 
@@ -37,9 +37,9 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.setName(name);
     }
 
-    protected void changeBlockedDates(Set<BlockedDate> blockedDates, CompanyId companyId) {
+    protected void changeLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
         //this.verifyBelongToCompany(companyId);
-        this.setBlockedDates(blockedDates);
+        this.setLockedDates(lockedDates);
     }
 
     protected void activate(CompanyId companyId) {
@@ -117,13 +117,13 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.status = status;
     }
 
-    public Set<BlockedDate> blockedDates() {
-        return blockedDates;
+    public Set<LockedDate> lockedDates() {
+        return lockedDates;
     }
 
-    private void setBlockedDates(Set<BlockedDate> blockedDates) {
-        requiresNonNull("blockedDates", blockedDates);
-        this.blockedDates = blockedDates;
+    private void setLockedDates(Set<LockedDate> lockedDates) {
+        requiresNonNull("lockedDates", lockedDates);
+        this.lockedDates = lockedDates;
     }
 
     public OffsetDateTime createdAt() {
