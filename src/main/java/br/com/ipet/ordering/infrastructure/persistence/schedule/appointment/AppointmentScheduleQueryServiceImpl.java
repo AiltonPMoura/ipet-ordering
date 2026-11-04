@@ -76,7 +76,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
         var currentTime = LocalTime.now(zoneId);
         var nowOffset = LocalDateTime.now(zoneId);
 
-        var schedule = repository.findByCompany_Id(companyId);
+        var schedule = repository.findByCompanyIdAndActive(companyId);
         long totalServiceDurationMinutes = this.calculateTotalServiceDurationInMinutes(companyId, filter.petServices());
 
         if (schedule.isEmpty() || this.hasNoActivePetTransport(companyId) || totalServiceDurationMinutes == 0)
@@ -137,7 +137,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
             LocalTime currentTime,
             Long totalServiceDurationMinutes) {
 
-        if (schedule.getBlockedDates().contains(today)) return Optional.empty();
+        if (schedule.getLockedDates().contains(today)) return Optional.empty();
 
         return schedule.getWorkDays().stream()
                 .filter(workDay -> workDay.getDayOfWeek().equals(today.getDayOfWeek()))
@@ -157,9 +157,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
         LocalDateTime windowEnd = today.atTime(workDay.getEndTime());
         LocalDateTime gracePeriod = nowOffset.minusMinutes(20);
 
-        var todayBookings = bookingQueryService.findBlockedBookings(
-                scheduleId, windowStart, windowEnd, gracePeriod
-        );
+        var todayBookings = bookingQueryService.findBlockedBookings(scheduleId, windowStart, windowEnd, gracePeriod);
 
         var availableSlots = this.generateTimeSlotsForDay(workDay, todayBookings, totalServiceDurationMinutes, zoneId);
 
@@ -175,7 +173,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
 
         return Stream.iterate(today.plusDays(1), date -> !date.isAfter(endOfWindow), date -> date.plusDays(1))
                 .filter(date -> workingDays.contains(date.getDayOfWeek()))
-                .filter(date -> !schedule.getBlockedDates().contains(date))
+                .filter(date -> !schedule.getLockedDates().contains(date))
                 .skip(daysToSkip)
                 .toList();
     }
@@ -224,12 +222,12 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
                         time -> !time.plusMinutes(totalServiceDurationMinutes).isAfter(workDay.getEndTime()),
                         time -> time.plusMinutes(30)
                 )
-                .filter(time -> !this.isDuringBreak(time, totalServiceDurationMinutes, workDay.getBlockedTimeSlots()))
+                .filter(time -> !this.isDuringBreak(time, totalServiceDurationMinutes, workDay.getLockedTimeSlots()))
                 .filter(time -> !this.isAlreadyBooked(time, totalServiceDurationMinutes, dayBookings, zoneId))
                 .toList();
     }
 
-    private boolean isDuringBreak(LocalTime slotStart, Long totalServiceDurationMinutes, Set<BlockedTimeSlotEmbeddable> breaks) {
+    private boolean isDuringBreak(LocalTime slotStart, Long totalServiceDurationMinutes, Set<LockedTimeSlotEmbeddable> breaks) {
         LocalTime slotEnd = slotStart.plusMinutes(totalServiceDurationMinutes);
 
         return breaks.stream().anyMatch(pause ->

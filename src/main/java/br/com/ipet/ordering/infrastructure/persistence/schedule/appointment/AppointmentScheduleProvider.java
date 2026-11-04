@@ -25,6 +25,12 @@ public class AppointmentScheduleProvider implements AppointmentSchedules {
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<AppointmentSchedule> ofIdAndActive(ScheduleId id) {
+        return appointmentScheduleRepository.findByIdAndActive(id.value()).map(mapper::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public boolean exists(ScheduleId id) {
         return appointmentScheduleRepository.existsById(id.value());
     }

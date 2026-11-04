@@ -55,7 +55,7 @@ public class AppointmentBookingManagementApplicationService {
     private final Companies companies;
 
     public UUID create(AppointmentBookingInput input) {
-        var appointmentSchedule = appointmentSchedules.ofId(new ScheduleId(input.appointmentScheduleId()))
+        var appointmentSchedule = appointmentSchedules.ofIdAndActive(new ScheduleId(input.appointmentScheduleId()))
                 .orElseThrow(() -> new DomainException("Agenda não encontrada."));
 
         var customer = customers.ofId(new CustomerId(input.customerId()))
