@@ -18,12 +18,14 @@ public interface PetTransportPersistenceRepository
 
     boolean existsByCompany_Id(UUID companyId);
 
-    @Query("""
-            SELECT CASE WHEN COUNT(transport) > 0 THEN true ELSE false END
-            FROM PetTransportPersistenceEntity transport
-            WHERE transport.company.id = :companyId
-              AND transport.status = 'ACTIVE'
-            """)
+    @Query(value = """
+            SELECT EXISTS (
+                SELECT 1
+                FROM pet_transport
+                WHERE company_id = :companyId
+                  AND status = 'ACTIVE'
+            )
+            """, nativeQuery = true)
     boolean existsActiveByCompanyId(@Param("companyId") UUID companyId);
 
     boolean existsByVehicle_LicensePlateAndIdNot(String licensePlate, UUID id);

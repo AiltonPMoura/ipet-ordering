@@ -66,6 +66,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
     }
 
 
+    // Verificar mover para um QueryService específico de disponibilidade de agenda
     @Override
     public ScheduleAvailabilityOutput findScheduleAvailability(AppointmentScheduleAvailabilityFilter filter) {
         var companyId = filter.companyId();
@@ -77,9 +78,10 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
         var nowOffset = LocalDateTime.now(zoneId);
 
         var schedule = repository.findByCompanyIdAndActive(companyId);
+        var existsPetTransports = petTransportRepository.existsActiveByCompanyId(companyId);
         long totalServiceDurationMinutes = this.calculateTotalServiceDurationInMinutes(companyId, filter.petServices());
 
-        if (schedule.isEmpty() || this.hasNoActivePetTransport(companyId) || totalServiceDurationMinutes == 0)
+        if (schedule.isEmpty() || !existsPetTransports || totalServiceDurationMinutes == 0)
             return buildEmptyAvailability(today);
 
         var appointmentSchedule = schedule.get();
@@ -96,13 +98,9 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
         return buildScheduleAvailability(daysWithAvailableTimes, today);
     }
 
-    private boolean hasNoActivePetTransport(UUID companyId) {
-        return !petTransportRepository.existsActiveByCompanyId(companyId);
-    }
-
-    private long calculateTotalServiceDurationInMinutes(UUID companyId, Set<AppointmentPetServiceInput> appointments) {
-        var serviceIds = appointments.stream()
-                .map(appointment -> new ServiceId(appointment.serviceId()))
+    private long calculateTotalServiceDurationInMinutes(UUID companyId, Set<AppointmentPetServiceInput> petServices) {
+        var serviceIds = petServices.stream()
+                .map(petService -> new ServiceId(petService.serviceId()))
                 .collect(Collectors.toSet());
 
         var services = serviceOfferingCatalogService.ofIdsAndCompanyId(serviceIds, new CompanyId(companyId));
@@ -111,61 +109,26 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
 
         if (!serviceDurationsById.keySet().containsAll(serviceIds)) return 0;
 
-        return appointments.stream()
-                .mapToInt(appointment -> serviceDurationsById.get(new ServiceId(appointment.serviceId())))
+        return petServices.stream()
+                .mapToInt(petService -> serviceDurationsById.get(new ServiceId(petService.serviceId())))
                 .sum();
     }
 
-    private long calculateWorkDaysToSkip(
-            AppointmentSchedulePersistenceEntity schedule,
-            LocalDate today,
-            LocalTime currentTime,
-            Long totalServiceDurationMinutes,
-            ZoneId zoneId,
-            LocalDateTime nowOffset) {
-
+    private long calculateWorkDaysToSkip(AppointmentSchedulePersistenceEntity schedule,
+                                         LocalDate today, LocalTime currentTime,
+                                         Long totalServiceDurationMinutes,
+                                         ZoneId zoneId, LocalDateTime nowOffset) {
         var workDayTodayOptional = this.findAvailableWorkDayToday(schedule, today, currentTime, totalServiceDurationMinutes);
+
         if (workDayTodayOptional.isEmpty()) return 1;
 
         boolean isFullyBooked = this.checkIfTodayIsFullyBooked(schedule.getId(), workDayTodayOptional.get(), today, zoneId, totalServiceDurationMinutes, nowOffset);
+
         return isFullyBooked ? 1 : 0;
     }
 
-    private Optional<AppointmentWorkDayPersistenceEntity> findAvailableWorkDayToday(
-            AppointmentSchedulePersistenceEntity schedule,
-            LocalDate today,
-            LocalTime currentTime,
-            Long totalServiceDurationMinutes) {
-
-        if (schedule.getLockedDates().contains(today)) return Optional.empty();
-
-        return schedule.getWorkDays().stream()
-                .filter(workDay -> workDay.getDayOfWeek().equals(today.getDayOfWeek()))
-                .filter(workDay -> !currentTime.plusMinutes(totalServiceDurationMinutes).isAfter(workDay.getEndTime()))
-                .findFirst();
-    }
-
-    private boolean checkIfTodayIsFullyBooked(
-            UUID scheduleId,
-            AppointmentWorkDayPersistenceEntity workDay,
-            LocalDate today,
-            ZoneId zoneId,
-            Long totalServiceDurationMinutes,
-            LocalDateTime nowOffset) {
-
-        LocalDateTime windowStart = today.atTime(workDay.getStartTime());
-        LocalDateTime windowEnd = today.atTime(workDay.getEndTime());
-        LocalDateTime gracePeriod = nowOffset.minusMinutes(20);
-
-        var todayBookings = bookingQueryService.findBlockedBookings(scheduleId, windowStart, windowEnd, gracePeriod);
-
-        var availableSlots = this.generateTimeSlotsForDay(workDay, todayBookings, totalServiceDurationMinutes, zoneId);
-
-        return availableSlots.isEmpty();
-    }
-
     private List<LocalDate> generateCandidateDates(AppointmentSchedulePersistenceEntity schedule, LocalDate today, long daysToSkip) {
-        Set<DayOfWeek> workingDays = schedule.getWorkDays().stream()
+        var workingDays = schedule.getWorkDays().stream()
                 .map(AppointmentWorkDayPersistenceEntity::getDayOfWeek)
                 .collect(Collectors.toSet());
 
@@ -173,37 +136,34 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
 
         return Stream.iterate(today.plusDays(1), date -> !date.isAfter(endOfWindow), date -> date.plusDays(1))
                 .filter(date -> workingDays.contains(date.getDayOfWeek()))
-                .filter(date -> !schedule.getLockedDates().contains(date))
+                .filter(date -> !this.isDateLocked(schedule, date))
                 .skip(daysToSkip)
                 .toList();
     }
 
-    private Map<LocalDate, List<AppointmentBookingBlockOutput>> findBlockedBookingsByDate(
-            UUID scheduleId, List<LocalDate> candidateDates, LocalDateTime nowOffset, ZoneId zoneId) {
+    private Map<LocalDate, List<AppointmentBookingBlockOutput>> findBlockedBookingsByDate(UUID scheduleId,
+                                                                                          List<LocalDate> candidateDates,
+                                                                                          LocalDateTime nowOffset, ZoneId zoneId) {
+        var windowStart = candidateDates.getFirst().atStartOfDay(zoneId).toLocalDateTime();
+        var windowEnd = candidateDates.getLast().atTime(LocalTime.MAX).atZone(zoneId).toLocalDateTime();
+        var gracePeriod = nowOffset.minusMinutes(20);
 
-        LocalDateTime windowStart = candidateDates.getFirst().atStartOfDay(zoneId).toLocalDateTime();
-        LocalDateTime windowEnd = candidateDates.getLast().atTime(LocalTime.MAX).atZone(zoneId).toLocalDateTime();
-        LocalDateTime gracePeriod = nowOffset.minusMinutes(20);
+        var blockedBookings = bookingQueryService.findBlockedBookings(scheduleId, windowStart, windowEnd, gracePeriod);
 
-        List<AppointmentBookingBlockOutput> blockedBookings = bookingQueryService.findBlockedBookings(
-                scheduleId, windowStart, windowEnd, gracePeriod
+        return blockedBookings.stream().collect(
+                Collectors.groupingBy(block -> block.scheduledStart().atZone(zoneId).toLocalDate())
         );
-
-        return blockedBookings.stream()
-                .collect(Collectors.groupingBy(block -> block.scheduledStart().atZone(zoneId).toLocalDate()));
     }
 
     private Map<DayOfWeek, AppointmentWorkDayPersistenceEntity> mapWorkDaysByDayOfWeek(Set<AppointmentWorkDayPersistenceEntity> workDays) {
         return workDays.stream().collect(Collectors.toMap(AppointmentWorkDayPersistenceEntity::getDayOfWeek, workDay -> workDay));
     }
 
-    private List<DailyAvailabilityOutput> generateAvailableDaysWithTimeSlots(
-            List<LocalDate> candidateDates,
-            Map<DayOfWeek, AppointmentWorkDayPersistenceEntity> workDayMap,
-            Map<LocalDate, List<AppointmentBookingBlockOutput>> bookingsByDate,
-            Long totalServiceDurationMinutes,
-            ZoneId zoneId) {
-
+    private List<DailyAvailabilityOutput> generateAvailableDaysWithTimeSlots(List<LocalDate> candidateDates,
+                                                                             Map<DayOfWeek, AppointmentWorkDayPersistenceEntity> workDayMap,
+                                                                             Map<LocalDate, List<AppointmentBookingBlockOutput>> bookingsByDate,
+                                                                             Long totalServiceDurationMinutes,
+                                                                             ZoneId zoneId) {
         return candidateDates.stream().map(availableDate -> {
             var workDay = workDayMap.get(availableDate.getDayOfWeek());
             var dayBookings = bookingsByDate.getOrDefault(availableDate, List.of());
@@ -212,12 +172,46 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
         }).toList();
     }
 
-    private List<LocalTime> generateTimeSlotsForDay(
-            AppointmentWorkDayPersistenceEntity workDay,
-            List<AppointmentBookingBlockOutput> dayBookings,
-            Long totalServiceDurationMinutes,
-            ZoneId zoneId) {
+    private List<DailyAvailabilityOutput> removeDaysWithoutTimeSlots(List<DailyAvailabilityOutput> days) {
+        return days.stream()
+                .filter(day -> !day.times().isEmpty())
+                .toList();
+    }
 
+    private Optional<AppointmentWorkDayPersistenceEntity> findAvailableWorkDayToday(AppointmentSchedulePersistenceEntity schedule,
+                                                                                    LocalDate today, LocalTime currentTime,
+                                                                                    Long totalServiceDurationMinutes) {
+        if (this.isDateLocked(schedule, today)) return Optional.empty();
+
+        return schedule.getWorkDays().stream()
+                .filter(workDay -> workDay.getDayOfWeek().equals(today.getDayOfWeek()))
+                .filter(workDay -> !currentTime.plusMinutes(totalServiceDurationMinutes).isAfter(workDay.getEndTime()))
+                .findFirst();
+    }
+
+    private boolean isDateLocked(AppointmentSchedulePersistenceEntity schedule, LocalDate today) {
+        return schedule.getLockedDates().contains(today);
+    }
+
+    private boolean checkIfTodayIsFullyBooked(UUID scheduleId, AppointmentWorkDayPersistenceEntity workDay,
+                                              LocalDate today, ZoneId zoneId,
+                                              Long totalServiceDurationMinutes,
+                                              LocalDateTime nowOffset) {
+        var windowStart = today.atTime(workDay.getStartTime());
+        var windowEnd = today.atTime(workDay.getEndTime());
+        var gracePeriod = nowOffset.minusMinutes(20);
+
+        var todayBookings = bookingQueryService.findBlockedBookings(scheduleId, windowStart, windowEnd, gracePeriod);
+
+        var availableSlots = this.generateTimeSlotsForDay(workDay, todayBookings, totalServiceDurationMinutes, zoneId);
+
+        return availableSlots.isEmpty();
+    }
+
+    private List<LocalTime> generateTimeSlotsForDay(AppointmentWorkDayPersistenceEntity workDay,
+                                                    List<AppointmentBookingBlockOutput> dayBookings,
+                                                    Long totalServiceDurationMinutes,
+                                                    ZoneId zoneId) {
         return Stream.iterate(workDay.getStartTime(),
                         time -> !time.plusMinutes(totalServiceDurationMinutes).isAfter(workDay.getEndTime()),
                         time -> time.plusMinutes(30)
@@ -228,7 +222,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
     }
 
     private boolean isDuringBreak(LocalTime slotStart, Long totalServiceDurationMinutes, Set<LockedTimeSlotEmbeddable> breaks) {
-        LocalTime slotEnd = slotStart.plusMinutes(totalServiceDurationMinutes);
+        var slotEnd = slotStart.plusMinutes(totalServiceDurationMinutes);
 
         return breaks.stream().anyMatch(pause ->
                 slotStart.isBefore(pause.getEndTime()) && slotEnd.isAfter(pause.getStartTime())
@@ -236,21 +230,16 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
     }
 
     private boolean isAlreadyBooked(LocalTime slotStart, Long totalServiceDurationMinutes,
-                                    List<AppointmentBookingBlockOutput> bookings, ZoneId zoneId) {
-        LocalTime slotEnd = slotStart.plusMinutes(totalServiceDurationMinutes);
+                                    List<AppointmentBookingBlockOutput> bookings,
+                                    ZoneId zoneId) {
+        var slotEnd = slotStart.plusMinutes(totalServiceDurationMinutes);
 
         return bookings.stream().anyMatch(booking -> {
-            LocalTime bookingStart = booking.scheduledStart().atZone(zoneId).toLocalTime();
-            LocalTime bookingEnd = booking.scheduledEnd().atZone(zoneId).toLocalTime();
+            var bookingStart = booking.scheduledStart().atZone(zoneId).toLocalTime();
+            var bookingEnd = booking.scheduledEnd().atZone(zoneId).toLocalTime();
 
             return slotStart.isBefore(bookingEnd) && slotEnd.isAfter(bookingStart);
         });
-    }
-
-    private List<DailyAvailabilityOutput> removeDaysWithoutTimeSlots(List<DailyAvailabilityOutput> days) {
-        return days.stream()
-                .filter(day -> !day.times().isEmpty())
-                .toList();
     }
 
     private ScheduleAvailabilityOutput buildEmptyAvailability(LocalDate today) {

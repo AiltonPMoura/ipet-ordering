@@ -8,6 +8,7 @@ import br.com.ipet.ordering.domain.model.booking.appointment.PetServicePair;
 import br.com.ipet.ordering.domain.model.booking.PetBookingTransport;
 import br.com.ipet.ordering.domain.model.commons.enums.PaymentMethod;
 import br.com.ipet.ordering.domain.model.commons.routing.RoutePricingService;
+import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -132,11 +134,13 @@ public class AppointmentBookingManagementApplicationService {
         return petsById.values().stream().map(BookingPet::size).toList();
     }
 
+    //remover mock após implementar integração com o serviço de roteirização
     private RoutePricingService.CalculationResult calculateRoutePrice(ZipCode origin, ZipCode destination) {
-        return routePricingService.calculate(RoutePricingService.CalculationRequest.builder()
+        return new RoutePricingService.CalculationResult(new Money("10"), LocalDate.now());
+        /*routePricingService.calculate(RoutePricingService.CalculationRequest.builder()
                 .origin(origin)
                 .destination(destination)
-                .build());
+                .build());*/
     }
 
     private BookingPet buildBookingPet(Pet pet) {

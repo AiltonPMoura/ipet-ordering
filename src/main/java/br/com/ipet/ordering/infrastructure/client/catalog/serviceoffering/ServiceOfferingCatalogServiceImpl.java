@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ServiceOfferingCatalogServiceImpl implements ServiceOfferingCatalogService {
 
+    private static final UUID MEDIUM_PET_SERVICE_ID = UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6");
+    private static final UUID SMALL_PET_SERVICE_ID = UUID.fromString("297d9874-69dd-462c-a7de-8dcea1ee12db");
+
     private final CatalogAPIClient catalogAPIClient;
 
     /*@Override
@@ -41,14 +44,28 @@ public class ServiceOfferingCatalogServiceImpl implements ServiceOfferingCatalog
     }
 
     private AppointmentService buildMockAppointmentService(ServiceId serviceId) {
+        PetSize petSize = PetSize.MEDIUM;
+        String type = "BATH";
+        int duration = 60;
+        Money price = new Money("50");
+
+        if (serviceId.value().equals(MEDIUM_PET_SERVICE_ID)) {
+            petSize = PetSize.MEDIUM;
+        } else if (serviceId.value().equals(SMALL_PET_SERVICE_ID)) {
+            petSize = PetSize.SMALL;
+            type = "GROOMING_SCISSOR";
+            duration = 90;
+            price = new Money("100");
+        }
+
         return AppointmentService.builder()
-                .id(new ServiceId(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6")))
-                .type("BATH")
+                .id(serviceId)
+                .type(type)
                 .category(ServiceCategory.valueOf("HYGIENE"))
                 .description("Bath service for pets")
-                .duration(60)
-                .price(new Money("50"))
-                .petSize(PetSize.valueOf("MEDIUM"))
+                .duration(duration)
+                .price(price)
+                .petSize(petSize)
                 .build();
     }
 
