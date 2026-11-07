@@ -16,8 +16,14 @@ public class AppointmentBookingQueryServiceImpl implements AppointmentBookingQue
     private final AppointmentBookingPersistenceRepository repository;
 
     @Override
-    public List<AppointmentBookingBlockOutput> findBlockedBookings(
-            UUID scheduleId, LocalDateTime windowStart, LocalDateTime windowEnd, LocalDateTime gracePeriod) {
+    public List<AppointmentBookingBlockOutput> findBlockedBookings(UUID scheduleId,
+                                                                   LocalDateTime windowStart, LocalDateTime windowEnd,
+                                                                   LocalDateTime gracePeriod) {
         return repository.findBlockedBookings(scheduleId, windowStart, windowEnd, gracePeriod);
+    }
+
+    public List<AppointmentBookingBlockOutput> findConfirmedBookings(UUID scheduleId,
+                                                                     LocalDateTime windowStart, LocalDateTime windowEnd) {
+        return repository.findConfirmedBookings(scheduleId, windowStart, windowEnd);
     }
 }

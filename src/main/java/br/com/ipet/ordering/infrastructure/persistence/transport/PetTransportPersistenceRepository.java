@@ -26,7 +26,7 @@ public interface PetTransportPersistenceRepository
                   AND status = 'ACTIVE'
             )
             """, nativeQuery = true)
-    boolean existsActiveByCompanyId(@Param("companyId") UUID companyId);
+    boolean existsActiveByCompanyId(UUID companyId);
 
     boolean existsByVehicle_LicensePlateAndIdNot(String licensePlate, UUID id);
 

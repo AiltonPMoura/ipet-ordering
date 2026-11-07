@@ -6,11 +6,10 @@ import java.util.UUID;
 
 public interface AppointmentBookingQueryService {
 
-    List<AppointmentBookingBlockOutput> findBlockedBookings(
-            UUID scheduleId,
-            LocalDateTime windowStart,
-            LocalDateTime windowEnd,
-            LocalDateTime gracePeriod
-    );
+    List<AppointmentBookingBlockOutput> findBlockedBookings(UUID scheduleId,
+                                                            LocalDateTime windowStart, LocalDateTime windowEnd,
+                                                            LocalDateTime gracePeriod);
 
+    List<AppointmentBookingBlockOutput> findConfirmedBookings(UUID scheduleId,
+                                                              LocalDateTime windowStart, LocalDateTime windowEnd);
 }

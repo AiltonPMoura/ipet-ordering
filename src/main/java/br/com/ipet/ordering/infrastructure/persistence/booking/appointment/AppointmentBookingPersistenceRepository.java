@@ -36,7 +36,7 @@ public interface AppointmentBookingPersistenceRepository
                 'PENDING_APPROVAL', 'SCHEDULED', 'PICKING_UP',
                 'IN_PROGRESS', 'READY', 'DROPPING_OFF', 'RETURNED', 'COMPLETED'
             )
-            OR (booking.status = 'REQUESTED' AND booking.scheduledStart >= :gracePeriod)
+            OR (booking.status = 'REQUESTED' AND booking.requestedAt >= :gracePeriod)
         )
         """)
     List<AppointmentBookingBlockOutput> findBlockedBookings(
@@ -44,5 +44,24 @@ public interface AppointmentBookingPersistenceRepository
             LocalDateTime windowStart,
             LocalDateTime windowEnd,
             LocalDateTime gracePeriod
+    );
+
+    @Query("""
+        SELECT
+            booking.scheduledStart,
+            booking.scheduledEnd
+        FROM AppointmentBookingPersistenceEntity booking
+        WHERE booking.schedule.id = :scheduleId
+            AND booking.scheduledStart < :windowEnd
+            AND booking.scheduledEnd > :windowStart
+            AND booking.status IN (
+                'PENDING_APPROVAL', 'SCHEDULED', 'PICKING_UP',
+                'IN_PROGRESS', 'READY', 'DROPPING_OFF', 'RETURNED', 'COMPLETED'
+            )
+        """)
+    List<AppointmentBookingBlockOutput> findConfirmedBookings(
+            UUID scheduleId,
+            LocalDateTime windowStart,
+            LocalDateTime windowEnd
     );
 }
