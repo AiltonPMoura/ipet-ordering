@@ -12,7 +12,9 @@ import br.com.ipet.ordering.domain.model.commons.valueobject.Money;
 import br.com.ipet.ordering.domain.model.commons.valueobject.ZipCode;
 import br.com.ipet.ordering.domain.model.company.Companies;
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
+import br.com.ipet.ordering.domain.model.company.Company;
 import br.com.ipet.ordering.domain.model.company.CompanyNotFoundException;
+import br.com.ipet.ordering.domain.model.customer.Customer;
 import br.com.ipet.ordering.domain.model.customer.CustomerAddressId;
 import br.com.ipet.ordering.domain.model.commons.id.CustomerId;
 import br.com.ipet.ordering.domain.model.customer.CustomerNotFoundException;
@@ -56,21 +58,21 @@ public class AppointmentBookingManagementApplicationService {
     private final Customers customers;
     private final Companies companies;
 
-    public UUID create(AppointmentBookingInput input) {
+    public UUID create(UUID customerId, AppointmentBookingInput input) {
         var appointmentSchedule = appointmentSchedules.ofIdAndActive(new ScheduleId(input.appointmentScheduleId()))
                 .orElseThrow(() -> new DomainException("Agenda não encontrada."));
 
-        var customer = customers.ofId(new CustomerId(input.customerId()))
+        var customer = customers.ofId(new CustomerId(customerId))
                 .orElseThrow(() -> new CustomerNotFoundException(""));
 
-        var company = companies.ofId(new CompanyId(input.companyId()))
+        var company = companies.ofId(appointmentSchedule.companyId())
                 .orElseThrow(() -> new CompanyNotFoundException(""));
 
-        var petTransport = petTransports.ofCompanyWithHighestCapacityAndActive(new CompanyId(input.companyId()))
+        var petTransport = petTransports.ofCompanyWithHighestCapacityAndActive(appointmentSchedule.companyId())
                 .orElseThrow(() -> new DomainException("Empresa não possui um transporte ativo para o agendamento."));
 
-        var petsById = this.findCustomerPetsMappedById(input);
-        var servicesById = this.findAppointmentServicesMappedById(input);
+        var petsById = this.findCustomerPetsMappedById(customer, input);
+        var servicesById = this.findAppointmentServicesMappedById(company, input);
         var petServicePairs = this.buildPetServicePairs(input, petsById, servicesById);
 
         var customerAddress = customer.findAddress(new CustomerAddressId(input.customerAddressId()));
@@ -79,7 +81,7 @@ public class AppointmentBookingManagementApplicationService {
         var pricingResult = this.petTransportPricingService.calculate(petTransport, petSizes, routeResult.cost());
 
         var appointmentBooking = appointmentBookingService.book(
-                new CustomerId(input.customerId()),
+                new CustomerId(customerId),
                 appointmentSchedule,
                 input.requestedStart(),
                 petServicePairs,
@@ -95,21 +97,21 @@ public class AppointmentBookingManagementApplicationService {
         return appointmentBooking.id().value();
     }
 
-    private Map<ServiceId, AppointmentService> findAppointmentServicesMappedById(AppointmentBookingInput input) {
+    private Map<ServiceId, AppointmentService> findAppointmentServicesMappedById(Company company, AppointmentBookingInput input) {
         var serviceIds = input.petServices().stream()
                 .map(appointmentInput -> new ServiceId(appointmentInput.serviceId()))
                 .collect(Collectors.toSet());
 
-        return serviceOfferingCatalogService.ofIdsAndCompanyId(serviceIds, new CompanyId(input.companyId())).stream()
+        return serviceOfferingCatalogService.ofIdsAndCompanyId(serviceIds, company.id()).stream()
                 .collect(Collectors.toMap(AppointmentService::id, service -> service));
     }
 
-    private Map<PetId, BookingPet> findCustomerPetsMappedById(AppointmentBookingInput input) {
+    private Map<PetId, BookingPet> findCustomerPetsMappedById(Customer customer, AppointmentBookingInput input) {
         var petIds = input.petServices().stream()
                 .map(appointmentInput -> new PetId(appointmentInput.petId()))
                 .collect(Collectors.toSet());
 
-        return pets.ofCustomerAndIds(new CustomerId(input.customerId()), petIds).stream()
+        return pets.ofCustomerAndIds(customer.id(), petIds).stream()
                 .map(this::buildBookingPet)
                 .collect(Collectors.toMap(BookingPet::id, pet -> pet));
     }

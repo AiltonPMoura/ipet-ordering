@@ -2,6 +2,7 @@ package br.com.ipet.ordering.infrastructure.persistence.schedule.appointment;
 
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleStatus;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedules;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,8 @@ public class AppointmentScheduleProvider implements AppointmentSchedules {
     @Override
     @Transactional(readOnly = true)
     public Optional<AppointmentSchedule> ofIdAndActive(ScheduleId id) {
-        return appointmentScheduleRepository.findByIdAndActive(id.value()).map(mapper::toDomain);
+        return appointmentScheduleRepository.findByIdAndStatus(id.value(), ScheduleStatus.ACTIVE.name())
+                .map(mapper::toDomain);
     }
 
     @Override
@@ -56,7 +58,7 @@ public class AppointmentScheduleProvider implements AppointmentSchedules {
     @Override
     @Transactional(readOnly = true)
     public boolean existsByCompany(CompanyId companyId) {
-        return appointmentScheduleRepository.existsByCompany_Id(companyId.value());
+        return appointmentScheduleRepository.existsByCompanyId(companyId.value());
     }
 
     private void insert(AppointmentSchedule appointmentSchedule) {

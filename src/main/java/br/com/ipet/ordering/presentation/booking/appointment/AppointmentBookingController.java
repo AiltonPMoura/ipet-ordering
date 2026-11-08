@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/v1/appointment-bookings")
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ public class AppointmentBookingController {
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody AppointmentBookingInput input) {
-        var bookingId = applicationService.create(input);
+        var bookingId = applicationService.create(UUID.randomUUID(), input);
 
         var url = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{bookingId}")

@@ -10,5 +10,5 @@ public interface AppointmentScheduleQueryService {
     AppointmentScheduleDetailOutput findById(UUID id);
     AppointmentScheduleDetailOutput findByCompanyId(UUID companyId);
     Page<AppointmentScheduleSummaryOutput> filter(AppointmentScheduleFilter filter, Pageable pageable);
-    ScheduleAvailabilityOutput findScheduleAvailability(AppointmentScheduleAvailabilityFilter filter);
+    ScheduleAvailabilityOutput findScheduleAvailability(UUID customerId, AppointmentScheduleAvailabilityFilter filter);
 }

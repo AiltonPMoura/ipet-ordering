@@ -64,7 +64,7 @@ public class AppointmentScheduleController {
 
     @PostMapping("/availability")
     public ScheduleAvailabilityOutput findScheduleAvailability(@RequestBody AppointmentScheduleAvailabilityFilter filter) {
-        return queryService.findScheduleAvailability(filter);
+        return queryService.findScheduleAvailability(UUID.randomUUID(), filter);
     }
 
     @PostMapping("/{appointmentScheduleId}/activate")

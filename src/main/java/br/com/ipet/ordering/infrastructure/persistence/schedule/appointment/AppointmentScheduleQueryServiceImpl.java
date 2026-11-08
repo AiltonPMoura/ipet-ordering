@@ -13,6 +13,7 @@ import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import br.com.ipet.ordering.domain.model.schedule.DailyAvailabilityOutput;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleAvailabilityOutput;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleNotFoundException;
+import br.com.ipet.ordering.domain.model.schedule.ScheduleStatus;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceId;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceOfferingCatalogService;
@@ -54,7 +55,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
 
     @Override
     public AppointmentScheduleDetailOutput findByCompanyId(UUID companyId) {
-        var appointmentSchedulePersistence = repository.findByCompany_Id(companyId).orElseThrow(() -> new ScheduleNotFoundException(""));
+        var appointmentSchedulePersistence = repository.findByCompanyId(companyId).orElseThrow(() -> new ScheduleNotFoundException(""));
         return mapper.convert(appointmentSchedulePersistence, AppointmentScheduleDetailOutput.class);
     }
 
@@ -68,7 +69,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
 
     // Verificar mover para um QueryService específico de disponibilidade de agenda
     @Override
-    public ScheduleAvailabilityOutput findScheduleAvailability(AppointmentScheduleAvailabilityFilter filter) {
+    public ScheduleAvailabilityOutput findScheduleAvailability(UUID customerId, AppointmentScheduleAvailabilityFilter filter) {
         var companyId = filter.companyId();
 
         // TODO: Usar schedule.getCompany().getTimezone()
@@ -77,7 +78,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
         var currentTime = LocalTime.now(zoneId);
         var nowOffset = LocalDateTime.now(zoneId);
 
-        var schedule = repository.findByCompanyIdAndActive(companyId);
+        var schedule = repository.findByCompanyIdAndStatus(companyId, ScheduleStatus.ACTIVE.name());
         var existsPetTransports = petTransportRepository.existsActiveByCompanyId(companyId);
         long totalServiceDurationMinutes = this.calculateTotalServiceDurationInMinutes(companyId, filter.petServices());
 
