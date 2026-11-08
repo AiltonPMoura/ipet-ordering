@@ -29,9 +29,11 @@ public class AppointmentSchedule
         extends Schedule
         implements AggregateRoot<ScheduleId> {
 
+    private SlotIncrementMinutes slotIncrementMinutes;
     private Set<AppointmentWorkDay> workDays;
 
-    static AppointmentSchedule create(CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory) {
+    static AppointmentSchedule create(CompanyId companyId, ScheduleName name,
+                                      ServiceCategory serviceCategory, SlotIncrementMinutes slotIncrementMinutes) {
         requiresNonNull("serviceCategory", serviceCategory);
 
         if (Set.of(HYGIENE, HEALTH, ACTIVITY).stream().noneMatch(serviceCategory::equals))
@@ -40,6 +42,7 @@ public class AppointmentSchedule
         return new AppointmentSchedule(new ScheduleId(), companyId, name, serviceCategory,
                 ScheduleStatus.INACTIVE, new HashSet<>(),
                 OffsetDateTime.now(ZoneOffset.UTC),
+                slotIncrementMinutes,
                 new HashSet<>());
     }
 
@@ -47,8 +50,10 @@ public class AppointmentSchedule
     public AppointmentSchedule(ScheduleId id, CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory,
                                ScheduleStatus status, Set<LockedDate> lockedDates,
                                OffsetDateTime createdAt,
+                               SlotIncrementMinutes slotIncrementMinutes,
                                Set<AppointmentWorkDay> workDays) {
         super(id, companyId, name, serviceCategory, status, lockedDates, createdAt);
+        this.setSlotIncrementMinutes(slotIncrementMinutes);
         this.setWorkDays(workDays);
     }
 
@@ -141,6 +146,16 @@ public class AppointmentSchedule
         super.deactivate(companyId);
     }
 
+    public void verifyGridAlignment(LocalDateTime requestedStart) {
+        requiresNonNull("requestedStart", requestedStart);
+
+        int totalMinutes = (requestedStart.getHour() * 60) + requestedStart.getMinute();
+        if (totalMinutes % slotIncrementMinutes.value() != 0) {
+            throw new DomainException(String.format(
+                    "O horário solicitado deve estar em intervalos de %d minutos.", slotIncrementMinutes.value()));
+        }
+    }
+
     public void verifyOperatingHours(LocalDateTime startDateTime, LocalDateTime endDateTime) {
         verifyIfNotLocked(startDateTime.toLocalDate());
         verifyIfWithinWorkingHours(startDateTime, endDateTime);
@@ -184,6 +199,15 @@ public class AppointmentSchedule
     private void setWorkDays(Set<AppointmentWorkDay> workDays) {
         requiresNonNull("workDays", workDays);
         this.workDays = workDays;
+    }
+
+    public SlotIncrementMinutes getSlotIncrementMinutes() {
+        return this.slotIncrementMinutes;
+    }
+
+    private void setSlotIncrementMinutes(SlotIncrementMinutes slotIncrementMinutes) {
+        requiresNonNull("slotIncrementMinutes", slotIncrementMinutes);
+        this.slotIncrementMinutes = slotIncrementMinutes;
     }
 
 }

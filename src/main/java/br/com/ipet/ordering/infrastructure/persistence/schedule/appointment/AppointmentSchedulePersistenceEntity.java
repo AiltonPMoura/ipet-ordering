@@ -31,6 +31,8 @@ import java.util.Set;
 @Table(name = "appointment_schedule")
 public class AppointmentSchedulePersistenceEntity extends AbstractSchedule {
 
+    private Integer slotIncrementMinutes;
+
     @ElementCollection
     @CollectionTable(
             name = "appointment_schedule_locked_date",
