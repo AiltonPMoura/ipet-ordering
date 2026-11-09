@@ -30,7 +30,6 @@ public class AppointmentSchedulePersistenceMapper {
         appointmentSchedulePersistence.setName(appointmentSchedule.name().value());
         appointmentSchedulePersistence.setStatus(appointmentSchedule.status().name());
         appointmentSchedulePersistence.setServiceCategory(appointmentSchedule.serviceCategory().name());
-        appointmentSchedulePersistence.setSlotIncrementMinutes(appointmentSchedule.getSlotIncrementMinutes().value());
         appointmentSchedulePersistence.setWorkDays(this.mergeWorkDays(appointmentSchedulePersistence, appointmentSchedule));
         appointmentSchedulePersistence.setLockedDates(this.mergeLockedDates(appointmentSchedulePersistence, appointmentSchedule));
         return appointmentSchedulePersistence;

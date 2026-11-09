@@ -29,11 +29,11 @@ public class AppointmentSchedule
         extends Schedule
         implements AggregateRoot<ScheduleId> {
 
-    private SlotIncrementMinutes slotIncrementMinutes;
+    public static final int SLOT_INCREMENT_MINUTES = 30;
+
     private Set<AppointmentWorkDay> workDays;
 
-    static AppointmentSchedule create(CompanyId companyId, ScheduleName name,
-                                      ServiceCategory serviceCategory, SlotIncrementMinutes slotIncrementMinutes) {
+    static AppointmentSchedule create(CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory) {
         requiresNonNull("serviceCategory", serviceCategory);
 
         if (Set.of(HYGIENE, HEALTH, ACTIVITY).stream().noneMatch(serviceCategory::equals))
@@ -42,7 +42,6 @@ public class AppointmentSchedule
         return new AppointmentSchedule(new ScheduleId(), companyId, name, serviceCategory,
                 ScheduleStatus.INACTIVE, new HashSet<>(),
                 OffsetDateTime.now(ZoneOffset.UTC),
-                slotIncrementMinutes,
                 new HashSet<>());
     }
 
@@ -50,10 +49,8 @@ public class AppointmentSchedule
     public AppointmentSchedule(ScheduleId id, CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory,
                                ScheduleStatus status, Set<LockedDate> lockedDates,
                                OffsetDateTime createdAt,
-                               SlotIncrementMinutes slotIncrementMinutes,
                                Set<AppointmentWorkDay> workDays) {
         super(id, companyId, name, serviceCategory, status, lockedDates, createdAt);
-        this.setSlotIncrementMinutes(slotIncrementMinutes);
         this.setWorkDays(workDays);
     }
 
@@ -146,22 +143,21 @@ public class AppointmentSchedule
         super.deactivate(companyId);
     }
 
-    public void verifyGridAlignment(LocalDateTime requestedStart) {
+    public void verifyTimeSlotAlignment(LocalDateTime requestedStart) {
         requiresNonNull("requestedStart", requestedStart);
 
         int totalMinutes = (requestedStart.getHour() * 60) + requestedStart.getMinute();
-        if (totalMinutes % slotIncrementMinutes.value() != 0) {
-            throw new DomainException(String.format(
-                    "O horário solicitado deve estar em intervalos de %d minutos.", slotIncrementMinutes.value()));
-        }
+
+        if (totalMinutes % SLOT_INCREMENT_MINUTES != 0)
+            throw new DomainException(String.format("O horário solicitado deve estar em intervalos de %d minutos.", SLOT_INCREMENT_MINUTES));
     }
 
     public void verifyOperatingHours(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        verifyIfNotLocked(startDateTime.toLocalDate());
-        verifyIfWithinWorkingHours(startDateTime, endDateTime);
+        verifyDateIsAvailable(startDateTime.toLocalDate());
+        verifyWithinWorkingHours(startDateTime, endDateTime);
     }
 
-    private void verifyIfNotLocked(LocalDate startDate) {
+    private void verifyDateIsAvailable(LocalDate startDate) {
         boolean isLocked = this.lockedDates().stream()
                 .map(LockedDate::date)
                 .anyMatch(startDate::equals);
@@ -169,15 +165,15 @@ public class AppointmentSchedule
         if (isLocked) throw new DomainException("A data escolhida está bloqueada e não aceita agendamentos.");
     }
 
-    private void verifyIfWithinWorkingHours(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        boolean isValid = this.workDays.stream()
+    private void verifyWithinWorkingHours(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        boolean isWithinOperatingHours = this.workDays.stream()
                 .anyMatch(workDay ->
                         workDay.dayOfWeek().equals(startDateTime.getDayOfWeek()) &&
                                 !startDateTime.toLocalTime().isBefore(workDay.workingHours().startTime()) &&
                                 !endDateTime.toLocalTime().isAfter(workDay.workingHours().endTime())
                 );
 
-        if (!isValid) {
+        if (!isWithinOperatingHours) {
             throw new DomainException("Fora do horário de expediente.");
         }
     }
@@ -199,15 +195,6 @@ public class AppointmentSchedule
     private void setWorkDays(Set<AppointmentWorkDay> workDays) {
         requiresNonNull("workDays", workDays);
         this.workDays = workDays;
-    }
-
-    public SlotIncrementMinutes getSlotIncrementMinutes() {
-        return this.slotIncrementMinutes;
-    }
-
-    private void setSlotIncrementMinutes(SlotIncrementMinutes slotIncrementMinutes) {
-        requiresNonNull("slotIncrementMinutes", slotIncrementMinutes);
-        this.slotIncrementMinutes = slotIncrementMinutes;
     }
 
 }

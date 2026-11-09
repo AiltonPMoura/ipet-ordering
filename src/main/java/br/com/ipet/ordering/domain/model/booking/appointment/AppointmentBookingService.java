@@ -23,8 +23,7 @@ public class AppointmentBookingService {
                                    PetBookingTransport petBookingTransport,
                                    PaymentMethod paymentMethod) {
 
-        // Valida se 08:17 não está sendo enviado em uma agenda de 30 em 30 minutos
-        appointmentSchedule.verifyGridAlignment(requestedStart);
+        appointmentSchedule.verifyTimeSlotAlignment(requestedStart);
 
         var appointmentBooking = AppointmentBooking.create(
                 customerId,

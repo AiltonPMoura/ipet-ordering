@@ -19,8 +19,7 @@ public class AppointmentScheduleRegistrationService {
     private final Companies companies;
     private final PetTransports transport;
 
-    public AppointmentSchedule register(CompanyId companyId, ScheduleName name,
-                                        ServiceCategory serviceCategory, SlotIncrementMinutes slotIncrementMinutes) {
+    public AppointmentSchedule register(CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory) {
         if (!companies.exists(companyId))
             throw new CompanyNotFoundException("");
 
@@ -30,7 +29,7 @@ public class AppointmentScheduleRegistrationService {
         if (appointmentSchedules.existsByCompany(companyId))
             throw new ScheduleAlreadyExistsException();
 
-        return AppointmentSchedule.create(companyId, name, serviceCategory, slotIncrementMinutes);
+        return AppointmentSchedule.create(companyId, name, serviceCategory);
     }
 
 }

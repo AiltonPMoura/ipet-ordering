@@ -10,7 +10,6 @@ import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedul
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDay;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDayId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTimeSlot;
-import br.com.ipet.ordering.domain.model.schedule.appointment.SlotIncrementMinutes;
 import br.com.ipet.ordering.domain.model.schedule.appointment.WorkingHours;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +26,6 @@ public class AppointmentScheduleMapper {
                 .companyId(new CompanyId(appointmentSchedulePersistence.getCompanyId()))
                 .name(new ScheduleName(appointmentSchedulePersistence.getName()))
                 .serviceCategory(ServiceCategory.valueOf(appointmentSchedulePersistence.getServiceCategory()))
-                .slotIncrementMinutes(new SlotIncrementMinutes(appointmentSchedulePersistence.getSlotIncrementMinutes()))
                 .status(ScheduleStatus.valueOf(appointmentSchedulePersistence.getStatus()))
                 .workDays(this.toWorkDays(appointmentSchedulePersistence.getWorkDays()))
                 .lockedDates(this.toLockedDates(appointmentSchedulePersistence.getLockedDates()))

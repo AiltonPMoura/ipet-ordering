@@ -13,7 +13,6 @@ import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedul
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedules;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDayId;
 import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTimeSlot;
-import br.com.ipet.ordering.domain.model.schedule.appointment.SlotIncrementMinutes;
 import br.com.ipet.ordering.domain.model.schedule.appointment.WorkingHours;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,8 +40,7 @@ public class AppointmentScheduleApplicationService {
         var appointmentSchedule = appointmentScheduleRegistrationService.register(
                 new CompanyId(input.companyId()),
                 new ScheduleName(input.name()),
-                ServiceCategory.valueOf(input.subCategory()),
-                new SlotIncrementMinutes(input.slotIncrementMinutes())
+                ServiceCategory.valueOf(input.subCategory())
         );
 
         appointmentSchedules.add(appointmentSchedule);
