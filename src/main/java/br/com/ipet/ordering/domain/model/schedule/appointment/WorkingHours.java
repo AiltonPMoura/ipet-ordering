@@ -11,7 +11,7 @@ public record WorkingHours(LocalTime startTime, LocalTime endTime) {
     private static final LocalTime MINIMUM_START_WORKING = LocalTime.of(8, 0);
     private static final LocalTime MAXIMUM_END_WORKING = LocalTime.of(18, 0);
     private static final int WORKING_HOURS_INTERVAL_IN_MINUTES = 30;
-    private static final int MINIMUM_WORKING_HOURS_IN_MINUTES = 30;
+    public static final int MINIMUM_WORKING_MINUTES = 30;
 
     public WorkingHours {
         requiresNonNull("startTime", startTime);
@@ -23,15 +23,15 @@ public record WorkingHours(LocalTime startTime, LocalTime endTime) {
         this.verifyValidInterval(startTime, endTime);
     }
 
-    public boolean contains(LocalTime startTime, LocalTime endTime) {
+    public boolean isWithinWorkingHours(LocalTime startTime, LocalTime endTime) {
         requiresNonNull("startTime", startTime);
         requiresNonNull("endTime", endTime);
 
         return !startTime.isBefore(this.startTime) && !endTime.isAfter(this.endTime);
     }
 
-    public boolean notContains(LocalTime startTime, LocalTime endTime) {
-        return !contains(startTime, endTime);
+    public boolean isNotWithinWorkingHours(LocalTime startTime, LocalTime endTime) {
+        return !isWithinWorkingHours(startTime, endTime);
     }
 
     public long workingMinutes() {
@@ -60,8 +60,8 @@ public record WorkingHours(LocalTime startTime, LocalTime endTime) {
     private void verifyMinimumWorkingMinutes(LocalTime startTime, LocalTime endTime) {
         var workingMinutes = Duration.between(startTime, endTime).toMinutes();
 
-        if (workingMinutes < MINIMUM_WORKING_HOURS_IN_MINUTES)
-            throw new WorkingHoursCanNotBeLessThanOneHourException();
+        if (workingMinutes < MINIMUM_WORKING_MINUTES)
+            throw new MinimumWorkingHoursException();
     }
 
 }

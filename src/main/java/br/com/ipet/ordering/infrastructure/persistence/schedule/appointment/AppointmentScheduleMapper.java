@@ -40,7 +40,7 @@ public class AppointmentScheduleMapper {
                         .scheduleId(new ScheduleId(workDayPersistence.getAppointmentScheduleId()))
                         .dayOfWeek(workDayPersistence.getDayOfWeek())
                         .workingHours(new WorkingHours(workDayPersistence.getStartTime(), workDayPersistence.getEndTime()))
-                        .lockedTimeSlotSlots(this.toLockedTimes(workDayPersistence.getLockedTimeSlots()))
+                        .lockedTimeSlots(this.toLockedTimes(workDayPersistence.getLockedTimeSlots()))
                         .build())
                 .collect(Collectors.toSet());
     }

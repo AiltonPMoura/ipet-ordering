@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -53,7 +53,7 @@ public class AppointmentScheduleController {
 
     @PutMapping("/{appointmentScheduleId}/locked-dates")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changeLockedDates(@PathVariable UUID appointmentScheduleId, @RequestBody List<LocalDate> lockedDates) {
+    public void changeLockedDates(@PathVariable UUID appointmentScheduleId, @RequestBody Set<LocalDate> lockedDates) {
         applicationService.changeLockedDates(appointmentScheduleId, new CompanyId().value(), lockedDates);
     }
 

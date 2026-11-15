@@ -3,9 +3,9 @@ package br.com.ipet.ordering.domain.model.schedule.appointment;
 import br.com.ipet.ordering.domain.model.DomainException;
 import br.com.ipet.ordering.domain.model.MessageCode;
 
-public class WorkingHoursCanNotBeLessThanOneHourException extends DomainException {
+public class MinimumWorkingHoursException extends DomainException {
 
-    public WorkingHoursCanNotBeLessThanOneHourException() {
+    public MinimumWorkingHoursException() {
         super(MessageCode.ERROR_WORKING_HOURS_CANNOT_BE_LESS_THAN_ONE);
     }
 

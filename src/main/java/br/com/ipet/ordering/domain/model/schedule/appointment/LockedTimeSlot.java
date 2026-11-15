@@ -8,12 +8,14 @@ import java.time.LocalTime;
 public record LockedTimeSlot(LocalTime startTime, LocalTime endTime) {
 
     private static final int LOCKED_TIME_INTERVAL_MINUTES = 30;
+    public static final int MINIMUM_LOCKED_TIME_MINUTES = 30;
 
     public LockedTimeSlot {
         FieldValidator.requiresNonNull("start locked time", startTime);
         FieldValidator.requiresNonNull("end locked time", endTime);
         FieldValidator.requireStartTimeIsBeforeEndTime(startTime, endTime);
 
+        this.verifyMinimumDuration(startTime, endTime);
         this.verifyValidInterval(startTime, endTime);
     }
 
@@ -23,6 +25,14 @@ public record LockedTimeSlot(LocalTime startTime, LocalTime endTime) {
 
     public long lockedMinutes() {
         return Duration.between(startTime, endTime).toMinutes();
+    }
+
+    private void verifyMinimumDuration(LocalTime startTime, LocalTime endTime) {
+        var durationMinutes = Duration.between(startTime, endTime).toMinutes();
+
+        if (durationMinutes < MINIMUM_LOCKED_TIME_MINUTES) {
+            throw new MinimumLockedTimeIntervalException();
+        }
     }
 
     private void verifyValidInterval(LocalTime startTime, LocalTime endTime) {

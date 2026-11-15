@@ -114,10 +114,10 @@ public class AppointmentSchedule
         workingDay.changeWorkingHours(workingHours);
     }
 
-    public void changeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, LockedTimeSlot lockedTimeSlot, LockedTimeSlot newLockedTimeSlot, CompanyId companyId) {
+    public void changeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, Set<LockedTimeSlot> lockedTimeSlots, CompanyId companyId) {
         //this.verifyBelongToCompany(companyId);
         var workingDay = this.findWorkDay(appointmentWorkDayId);
-        workingDay.changeLockedTimeSlot(lockedTimeSlot, newLockedTimeSlot);
+        workingDay.changeLockedTimeSlots(lockedTimeSlots);
     }
 
     @Override
@@ -138,38 +138,34 @@ public class AppointmentSchedule
         requiresNonNull("scheduledEnd", scheduledEnd);
 
         this.verifyTimeSlotAlignment(scheduledStart);
-        var workDay = this.requireWorkingDate(scheduledStart.toLocalDate());
+        this.verifyLockedDate(scheduledStart.toLocalDate());
+        var workDay = this.findWorkDay(scheduledStart.toLocalDate().getDayOfWeek());
         this.verifyWorkingTimes(workDay, scheduledStart.toLocalTime(), scheduledEnd.toLocalTime());
+        this.verifyLockedTimes(workDay, new LockedTimeSlot(scheduledStart.toLocalTime(), scheduledEnd.toLocalTime()));
     }
 
     private void verifyTimeSlotAlignment(LocalDateTime scheduledStart) {
-        int totalMinutes = (scheduledStart.getHour() * 60) + scheduledStart.getMinute();
-        if (totalMinutes % SLOT_INCREMENT_MINUTES != 0) {
+        if (scheduledStart.getMinute() % SLOT_INCREMENT_MINUTES != 0) {
             throw new DomainException(String.format("O horário solicitado deve estar em intervalos de %d minutos.", SLOT_INCREMENT_MINUTES));
         }
     }
 
-    private AppointmentWorkDay requireWorkingDate(LocalDate scheduledDate) {
-        boolean isLockedDate = this.lockedDates().stream()
-                .anyMatch(locked -> locked.date().equals(scheduledDate));
-
-        if (isLockedDate) throw new DomainException("A data escolhida está bloqueada e não aceita agendamentos.");
-
-        return this.findWorkDay(scheduledDate.getDayOfWeek());
+    private void verifyLockedDate(LocalDate scheduledDate) {
+        var isLockedDate = this.lockedDates().stream().anyMatch(locked -> locked.date().equals(scheduledDate));
+        if (isLockedDate)
+            throw new DomainException("A data escolhida está bloqueada e não aceita agendamentos.");
     }
 
     private void verifyWorkingTimes(AppointmentWorkDay workDay, LocalTime scheduledStartTime, LocalTime scheduledEndTime) {
-        var workingHours = workDay.workingHours();
+         if (workDay.workingHours().isNotWithinWorkingHours(scheduledStartTime, scheduledEndTime))
+             throw new DomainException("Fora do horário de expediente.");
+    }
 
-        if (scheduledStartTime.isBefore(workingHours.startTime()) || scheduledEndTime.isAfter(workingHours.endTime())) {
-            throw new DomainException("Fora do horário de expediente.");
-        }
+    private void verifyLockedTimes(AppointmentWorkDay workDay, LockedTimeSlot lockedTimeSlot) {
+        var isLockedTime = workDay.lockedTimes().stream().anyMatch(lockedTime -> lockedTime.verifyConflict(lockedTimeSlot));
 
-        boolean isLockedTime = workDay.lockedTimes().stream().anyMatch(lockedTime ->
-                scheduledStartTime.isBefore(lockedTime.endTime()) && scheduledEndTime.isAfter(lockedTime.startTime())
-        );
-
-        if (isLockedTime) throw new DomainException("O horário solicitado entra em conflito com uma pausa ou horário de almoço da loja.");
+        if (isLockedTime)
+            throw new DomainException("O horário solicitado entra em conflito com uma pausa ou horário de almoço da loja.");
     }
 
     private AppointmentWorkDay findWorkDay(AppointmentWorkDayId appointmentWorkDayId) {

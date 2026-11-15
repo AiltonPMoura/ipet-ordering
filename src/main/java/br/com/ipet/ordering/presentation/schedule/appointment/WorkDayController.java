@@ -1,6 +1,7 @@
 package br.com.ipet.ordering.presentation.schedule.appointment;
 
 import br.com.ipet.ordering.application.schedule.appointment.management.AppointmentScheduleApplicationService;
+import br.com.ipet.ordering.application.schedule.appointment.management.LockedTimeInput;
 import br.com.ipet.ordering.application.schedule.appointment.management.WorkDayInput;
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -39,6 +41,14 @@ public class WorkDayController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable UUID appointmentScheduleId, @PathVariable UUID workDayId, @RequestBody WorkDayInput input) {
         appointmentScheduleApplicationService.updateWorkDay(appointmentScheduleId, new CompanyId().value(), workDayId, input);
+    }
+
+    @PutMapping("/{workDayId}/locked-times")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changeLockedTime(@PathVariable UUID appointmentScheduleId,
+                                 @PathVariable UUID workDayId,
+                                 @RequestBody Set<LockedTimeInput> input) {
+        appointmentScheduleApplicationService.changeLockedTime(appointmentScheduleId, workDayId, new CompanyId().value(), input);
     }
 
 }

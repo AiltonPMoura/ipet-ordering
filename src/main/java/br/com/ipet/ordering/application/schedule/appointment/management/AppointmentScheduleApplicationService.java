@@ -3,8 +3,8 @@ package br.com.ipet.ordering.application.schedule.appointment.management;
 import br.com.ipet.ordering.application.commons.NameInput;
 import br.com.ipet.ordering.application.schedule.ScheduleInput;
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
-import br.com.ipet.ordering.domain.model.schedule.LockedDate;
 import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
+import br.com.ipet.ordering.domain.model.schedule.LockedDate;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleName;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleNotFoundException;
 import br.com.ipet.ordering.domain.model.schedule.ServiceCategory;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -57,7 +57,7 @@ public class AppointmentScheduleApplicationService {
         appointmentSchedules.add(appointmentSchedule);
     }
 
-    public void changeLockedDates(UUID scheduleId, UUID companyId, List<LocalDate> dates) {
+    public void changeLockedDates(UUID scheduleId, UUID companyId, Set<LocalDate> dates) {
         requiresNonNull("dates", dates);
 
         var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
@@ -96,44 +96,18 @@ public class AppointmentScheduleApplicationService {
         appointmentSchedules.add(appointmentSchedule);
     }
 
-    public void addLockedTime(UUID scheduleId, UUID workDayId, UUID companyId, LockedTimeInput input) {
-        requiresNonNull("input", input);
+    public void changeLockedTime(UUID scheduleId, UUID workDayId, UUID companyId, Set<LockedTimeInput> inputs) {
+        requiresNonNull("inputs", inputs);
 
         var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
 
-        appointmentSchedule.addWorkDayLockedTime(
-                new AppointmentWorkDayId(workDayId),
-                new LockedTimeSlot(input.startTime(), input.endTime()),
-                new CompanyId(companyId)
-        );
-
-        appointmentSchedules.add(appointmentSchedule);
-    }
-
-    public void removeLockedTime(UUID scheduleId, UUID workDayId, UUID companyId, LockedTimeInput input) {
-        requiresNonNull("input", input);
-
-        var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
-
-        appointmentSchedule.removeWorkDayLockedTime(
-                new AppointmentWorkDayId(workDayId),
-                new LockedTimeSlot(input.startTime(), input.endTime()),
-                new CompanyId(companyId)
-        );
-
-        appointmentSchedules.add(appointmentSchedule);
-    }
-
-    public void changeLockedTime(UUID scheduleId, UUID workDayId, UUID companyId, LockedTimeInput oldInput, LockedTimeInput newInput) {
-        requiresNonNull("oldInput", oldInput);
-        requiresNonNull("newInput", newInput);
-
-        var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
+        var lockedTimeSlots = inputs.stream()
+                .map(input -> new LockedTimeSlot(input.startTime(), input.endTime()))
+                .collect(Collectors.toSet());
 
         appointmentSchedule.changeWorkDayLockedTime(
                 new AppointmentWorkDayId(workDayId),
-                new LockedTimeSlot(oldInput.startTime(), oldInput.endTime()),
-                new LockedTimeSlot(newInput.startTime(), newInput.endTime()),
+                lockedTimeSlots,
                 new CompanyId(companyId)
         );
 
