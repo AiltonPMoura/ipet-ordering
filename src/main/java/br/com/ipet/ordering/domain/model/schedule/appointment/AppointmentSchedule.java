@@ -15,6 +15,7 @@ import lombok.Builder;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ public class AppointmentSchedule
         implements AggregateRoot<ScheduleId> {
 
     public static final int SLOT_INCREMENT_MINUTES = 30;
+    public static final int REQUIRED_APPROVAL_MINUTES_FOR_NEXT_AVAILABLE_DAY = 60;
 
     private Set<AppointmentWorkDay> workDays;
 
@@ -112,18 +114,6 @@ public class AppointmentSchedule
         workingDay.changeWorkingHours(workingHours);
     }
 
-    public void addWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, LockedTimeSlot lockedTimeSlot, CompanyId companyId) {
-        //this.verifyBelongToCompany(companyId);
-        var workingDay = this.findWorkDay(appointmentWorkDayId);
-        workingDay.addLockedTimeSlot(lockedTimeSlot);
-    }
-
-    public void removeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, LockedTimeSlot lockedTimeSlot, CompanyId companyId) {
-        //this.verifyBelongToCompany(companyId);
-        var workingDay = this.findWorkDay(appointmentWorkDayId);
-        workingDay.removeLockedTimeSlot(lockedTimeSlot);
-    }
-
     public void changeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, LockedTimeSlot lockedTimeSlot, LockedTimeSlot newLockedTimeSlot, CompanyId companyId) {
         //this.verifyBelongToCompany(companyId);
         var workingDay = this.findWorkDay(appointmentWorkDayId);
@@ -143,39 +133,43 @@ public class AppointmentSchedule
         super.deactivate(companyId);
     }
 
-    public void verifyTimeSlotAlignment(LocalDateTime requestedStart) {
-        requiresNonNull("requestedStart", requestedStart);
+    public void verifyAvailableDateTime(LocalDateTime scheduledStart, LocalDateTime scheduledEnd) {
+        requiresNonNull("scheduledStart", scheduledStart);
+        requiresNonNull("scheduledEnd", scheduledEnd);
 
-        int totalMinutes = (requestedStart.getHour() * 60) + requestedStart.getMinute();
+        this.verifyTimeSlotAlignment(scheduledStart);
+        var workDay = this.requireWorkingDate(scheduledStart.toLocalDate());
+        this.verifyWorkingTimes(workDay, scheduledStart.toLocalTime(), scheduledEnd.toLocalTime());
+    }
 
-        if (totalMinutes % SLOT_INCREMENT_MINUTES != 0)
+    private void verifyTimeSlotAlignment(LocalDateTime scheduledStart) {
+        int totalMinutes = (scheduledStart.getHour() * 60) + scheduledStart.getMinute();
+        if (totalMinutes % SLOT_INCREMENT_MINUTES != 0) {
             throw new DomainException(String.format("O horário solicitado deve estar em intervalos de %d minutos.", SLOT_INCREMENT_MINUTES));
+        }
     }
 
-    public void verifyOperatingHours(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        verifyDateIsAvailable(startDateTime.toLocalDate());
-        verifyWithinWorkingHours(startDateTime, endDateTime);
+    private AppointmentWorkDay requireWorkingDate(LocalDate scheduledDate) {
+        boolean isLockedDate = this.lockedDates().stream()
+                .anyMatch(locked -> locked.date().equals(scheduledDate));
+
+        if (isLockedDate) throw new DomainException("A data escolhida está bloqueada e não aceita agendamentos.");
+
+        return this.findWorkDay(scheduledDate.getDayOfWeek());
     }
 
-    private void verifyDateIsAvailable(LocalDate startDate) {
-        boolean isLocked = this.lockedDates().stream()
-                .map(LockedDate::date)
-                .anyMatch(startDate::equals);
+    private void verifyWorkingTimes(AppointmentWorkDay workDay, LocalTime scheduledStartTime, LocalTime scheduledEndTime) {
+        var workingHours = workDay.workingHours();
 
-        if (isLocked) throw new DomainException("A data escolhida está bloqueada e não aceita agendamentos.");
-    }
-
-    private void verifyWithinWorkingHours(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        boolean isWithinOperatingHours = this.workDays.stream()
-                .anyMatch(workDay ->
-                        workDay.dayOfWeek().equals(startDateTime.getDayOfWeek()) &&
-                                !startDateTime.toLocalTime().isBefore(workDay.workingHours().startTime()) &&
-                                !endDateTime.toLocalTime().isAfter(workDay.workingHours().endTime())
-                );
-
-        if (!isWithinOperatingHours) {
+        if (scheduledStartTime.isBefore(workingHours.startTime()) || scheduledEndTime.isAfter(workingHours.endTime())) {
             throw new DomainException("Fora do horário de expediente.");
         }
+
+        boolean isLockedTime = workDay.lockedTimes().stream().anyMatch(lockedTime ->
+                scheduledStartTime.isBefore(lockedTime.endTime()) && scheduledEndTime.isAfter(lockedTime.startTime())
+        );
+
+        if (isLockedTime) throw new DomainException("O horário solicitado entra em conflito com uma pausa ou horário de almoço da loja.");
     }
 
     private AppointmentWorkDay findWorkDay(AppointmentWorkDayId appointmentWorkDayId) {
@@ -183,6 +177,15 @@ public class AppointmentSchedule
 
         return this.workDays.stream()
                 .filter(appointmentWorkDay -> appointmentWorkDay.id().equals(appointmentWorkDayId))
+                .findFirst()
+                .orElseThrow(() -> new WorkinDayNotFoundException(""));
+    }
+
+    private AppointmentWorkDay findWorkDay(DayOfWeek dayOfWeek) {
+        requiresNonNull("dayOfWeek", dayOfWeek);
+
+        return this.workDays.stream()
+                .filter(appointmentWorkDay -> appointmentWorkDay.dayOfWeek().equals(dayOfWeek))
                 .findFirst()
                 .orElseThrow(() -> new WorkinDayNotFoundException(""));
     }

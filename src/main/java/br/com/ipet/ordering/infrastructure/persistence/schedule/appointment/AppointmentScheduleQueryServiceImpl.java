@@ -38,6 +38,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule.REQUIRED_APPROVAL_MINUTES_FOR_NEXT_AVAILABLE_DAY;
+
 @Service
 @RequiredArgsConstructor
 public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQueryService {
@@ -121,7 +123,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
                                          Long totalServiceDurationMinutes,
                                          ZoneId zoneId) {
         return this.findAvailableWorkDayToday(schedule, today, currentTime, totalServiceDurationMinutes)
-                .map(workDayToday -> this.isTodayFullyBooked(schedule.getId(), workDayToday, today, zoneId, totalServiceDurationMinutes))
+                .map(workDayToday -> this.isTodayFullyBooked(schedule.getId(), workDayToday, today, currentTime, zoneId, totalServiceDurationMinutes))
                 .orElse(true);
 
     }
@@ -164,7 +166,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
         return candidateDates.stream().map(availableDate -> {
             var workDay = workDayMap.get(availableDate.getDayOfWeek());
             var dayBookings = bookingsByDate.getOrDefault(availableDate, List.of());
-            var times = this.generateTimeSlots(workDay, dayBookings, totalServiceDurationMinutes, zoneId);
+            var times = this.generateTimeSlots(workDay, dayBookings, totalServiceDurationMinutes, zoneId, LocalTime.MIN);
             return new DailyAvailabilityOutput(availableDate, times);
         }).toList();
     }
@@ -191,14 +193,17 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
     }
 
     private boolean isTodayFullyBooked(UUID scheduleId, AppointmentWorkDayPersistenceEntity workDayToday,
-                                       LocalDate today, ZoneId zoneId,
+                                       LocalDate today, LocalTime currentTime,
+                                       ZoneId zoneId,
                                        Long totalServiceDurationMinutes) {
-        var windowStartToday = today.atTime(workDayToday.getStartTime());
+        var windowStartToday = today.atTime(currentTime);
         var windowEndToday = today.atTime(workDayToday.getEndTime());
 
         var confirmedBookingsToday = bookingQueryService.findConfirmedBookings(scheduleId, windowStartToday, windowEndToday);
 
-        var availableSlots = this.generateTimeSlots(workDayToday, confirmedBookingsToday, totalServiceDurationMinutes, zoneId);
+        var schedulingCutoffTime = currentTime.plusMinutes(REQUIRED_APPROVAL_MINUTES_FOR_NEXT_AVAILABLE_DAY);
+
+        var availableSlots = this.generateTimeSlots(workDayToday, confirmedBookingsToday, totalServiceDurationMinutes, zoneId, schedulingCutoffTime);
 
         return availableSlots.isEmpty();
     }
@@ -206,13 +211,18 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
     private List<LocalTime> generateTimeSlots(AppointmentWorkDayPersistenceEntity workDay,
                                               List<AppointmentBookingBlockOutput> existingBookings,
                                               Long totalServiceDurationMinutes,
-                                              ZoneId zoneId) {
+                                              ZoneId zoneId,
+                                              LocalTime schedulingCutoffTime) {
+        var endTime = workDay.getEndTime();
+        var lockedTimeSlots = workDay.getLockedTimeSlots();
+
         return Stream.iterate(workDay.getStartTime(),
-                        time -> !time.plusMinutes(totalServiceDurationMinutes).isAfter(workDay.getEndTime()),
-                        time -> time.plusMinutes(AppointmentSchedule.SLOT_INCREMENT_MINUTES)
+                        workTime -> !workTime.plusMinutes(totalServiceDurationMinutes).isAfter(endTime),
+                        workTime -> workTime.plusMinutes(AppointmentSchedule.SLOT_INCREMENT_MINUTES)
                 )
-                .filter(time -> !this.isLockedTime(time, totalServiceDurationMinutes, workDay.getLockedTimeSlots()))
-                .filter(time -> !this.isAlreadyBooked(time, totalServiceDurationMinutes, existingBookings, zoneId))
+                .filter(workTime -> workTime.isAfter(schedulingCutoffTime))
+                .filter(workTime -> !this.isLockedTime(workTime, totalServiceDurationMinutes, lockedTimeSlots))
+                .filter(workTime -> !this.isAlreadyBooked(workTime, totalServiceDurationMinutes, existingBookings, zoneId))
                 .toList();
     }
 
