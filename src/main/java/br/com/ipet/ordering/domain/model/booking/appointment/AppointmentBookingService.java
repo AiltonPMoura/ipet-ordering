@@ -23,8 +23,6 @@ public class AppointmentBookingService {
                                    PetBookingTransport petBookingTransport,
                                    PaymentMethod paymentMethod) {
 
-        appointmentSchedule.verifyTimeSlotAlignment(requestedStart);
-
         var appointmentBooking = AppointmentBooking.create(
                 customerId,
                 appointmentSchedule.companyId(),
@@ -39,7 +37,7 @@ public class AppointmentBookingService {
 
         var scheduledEnd = appointmentBooking.scheduledEnd();
 
-        appointmentSchedule.verifyOperatingHours(requestedStart, scheduledEnd);
+        appointmentSchedule.verifyAvailableDateTime(requestedStart, scheduledEnd);
 
         this.verifyNoTimeSlotConflict(appointmentSchedule, requestedStart, scheduledEnd);
 

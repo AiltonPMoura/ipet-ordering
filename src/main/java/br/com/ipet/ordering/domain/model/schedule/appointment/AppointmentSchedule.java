@@ -18,9 +18,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static br.com.ipet.ordering.domain.model.FieldValidator.requireNonNullMinutePrecision;
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 import static br.com.ipet.ordering.domain.model.schedule.ServiceCategory.ACTIVITY;
 import static br.com.ipet.ordering.domain.model.schedule.ServiceCategory.HEALTH;
@@ -30,15 +32,16 @@ public class AppointmentSchedule
         extends Schedule
         implements AggregateRoot<ScheduleId> {
 
-    public static final int SLOT_INCREMENT_MINUTES = 30;
     public static final int REQUIRED_APPROVAL_MINUTES_FOR_NEXT_AVAILABLE_DAY = 60;
+
+    private static final Set<ServiceCategory> SUPPORTED_CATEGORIES = Set.of(HYGIENE, HEALTH, ACTIVITY);
 
     private Set<AppointmentWorkDay> workDays;
 
     static AppointmentSchedule create(CompanyId companyId, ScheduleName name, ServiceCategory serviceCategory) {
         requiresNonNull("serviceCategory", serviceCategory);
 
-        if (Set.of(HYGIENE, HEALTH, ACTIVITY).stream().noneMatch(serviceCategory::equals))
+        if (!SUPPORTED_CATEGORIES.contains(serviceCategory))
             throw new ScheduleDontSupportSubcategoryException(serviceCategory);
 
         return new AppointmentSchedule(new ScheduleId(), companyId, name, serviceCategory,
@@ -61,29 +64,11 @@ public class AppointmentSchedule
         requiresNonNull("workingHours", workingHours);
         requiresNonNull("companyId", companyId);
 
-        //this.verifyBelongToCompany(companyId);
-        var existingWorkDay = this.workDays.stream()
-                .anyMatch(appointmentWorkDay -> appointmentWorkDay.dayOfWeek().equals(dayOfWeek));
-
-        if (existingWorkDay) throw new WorkDayAlreadyExistsException();
+        if (this.hasWorkDay(dayOfWeek))
+            throw new WorkDayAlreadyExistsException();
 
         var workingDay = AppointmentWorkDay.createNew(this.id(), dayOfWeek, workingHours);
         this.workDays.add(workingDay);
-    }
-
-    public void changeWorkDayWeek(AppointmentWorkDayId appointmentWorkDayId, DayOfWeek dayOfWeek, CompanyId companyId) {
-        requiresNonNull("dayOfWeek", dayOfWeek);
-
-        //this.verifyBelongToCompany(companyId);
-        var workingDay = this.findWorkDay(appointmentWorkDayId);
-
-        var existingWorkDay = this.workDays.stream()
-                .anyMatch(appointmentWorkDay -> appointmentWorkDay.dayOfWeek().equals(dayOfWeek)
-                        && !appointmentWorkDay.equals(workingDay));
-
-        if (existingWorkDay) throw new WorkDayAlreadyExistsException();
-
-        workingDay.changeDayOfWeek(dayOfWeek);
     }
 
     public void removeWorkDay(AppointmentWorkDayId appointmentWorkDayId, CompanyId companyId) {
@@ -94,64 +79,67 @@ public class AppointmentSchedule
 
         var workingDay = this.findWorkDay(appointmentWorkDayId);
         this.workDays.remove(workingDay);
-
-        if (this.workDays.isEmpty()) this.deactivate(companyId);
     }
 
-    @Override
-    public void changeName(ScheduleName name, CompanyId companyId) {
-        super.changeName(name, companyId);
-    }
+    public void changeWorkDayOfWeek(AppointmentWorkDayId appointmentWorkDayId, DayOfWeek dayOfWeek, CompanyId companyId) {
+        requiresNonNull("appointmentWorkDayId", appointmentWorkDayId);
+        requiresNonNull("dayOfWeek", dayOfWeek);
+        requiresNonNull("companyId", companyId);
 
-    @Override
-    public void changeLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
-        super.changeLockedDates(lockedDates, companyId);
+        //this.verifyBelongToCompany(companyId);
+        var workingDay = this.findWorkDay(appointmentWorkDayId);
+
+        if (this.hasAnotherWorkDay(dayOfWeek, workingDay))
+            throw new WorkDayAlreadyExistsException();
+
+        workingDay.changeDayOfWeek(dayOfWeek);
     }
 
     public void changeWorkDayHours(AppointmentWorkDayId appointmentWorkDayId, WorkingHours workingHours, CompanyId companyId) {
+        requiresNonNull("appointmentWorkDayId", appointmentWorkDayId);
+        requiresNonNull("workingHours", workingHours);
+        //requiresNonNull("companyId", companyId);
         //this.verifyBelongToCompany(companyId);
+
         var workingDay = this.findWorkDay(appointmentWorkDayId);
         workingDay.changeWorkingHours(workingHours);
     }
 
-    public void changeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, Set<LockedTimeSlot> lockedTimeSlots, CompanyId companyId) {
+    public void changeWorkDayLockedTime(AppointmentWorkDayId appointmentWorkDayId, Set<LockedTime> lockedTimes, CompanyId companyId) {
+        requiresNonNull("appointmentWorkDayId", appointmentWorkDayId);
+        requiresNonNull("lockedTimes", lockedTimes);
+        //requiresNonNull("companyId", companyId);
         //this.verifyBelongToCompany(companyId);
+
         var workingDay = this.findWorkDay(appointmentWorkDayId);
-        workingDay.changeLockedTimeSlots(lockedTimeSlots);
-    }
-
-    @Override
-    public void activate(CompanyId companyId) {
-        if (workDays.isEmpty())
-            throw new AppointmentScheduleCannotBeActivedException("");
-
-        super.activate(companyId);
-    }
-
-    @Override
-    public void deactivate(CompanyId companyId) {
-        super.deactivate(companyId);
+        workingDay.changeLockedTimes(lockedTimes);
     }
 
     public void verifyAvailableDateTime(LocalDateTime scheduledStart, LocalDateTime scheduledEnd) {
         requiresNonNull("scheduledStart", scheduledStart);
         requiresNonNull("scheduledEnd", scheduledEnd);
+        requireNonNullMinutePrecision("scheduledStart", scheduledStart.toLocalTime());
+        requireNonNullMinutePrecision("scheduledEnd", scheduledEnd.toLocalTime());
 
-        this.verifyTimeSlotAlignment(scheduledStart);
+        AppointmentSlotPolicy.verifyStartAligned(scheduledStart.toLocalTime());
         this.verifyLockedDate(scheduledStart.toLocalDate());
         var workDay = this.findWorkDay(scheduledStart.toLocalDate().getDayOfWeek());
         this.verifyWorkingTimes(workDay, scheduledStart.toLocalTime(), scheduledEnd.toLocalTime());
-        this.verifyLockedTimes(workDay, new LockedTimeSlot(scheduledStart.toLocalTime(), scheduledEnd.toLocalTime()));
+        this.verifyLockedTimes(workDay, new LockedTime(scheduledStart.toLocalTime(), scheduledEnd.toLocalTime()));
     }
 
-    private void verifyTimeSlotAlignment(LocalDateTime scheduledStart) {
-        if (scheduledStart.getMinute() % SLOT_INCREMENT_MINUTES != 0) {
-            throw new DomainException(String.format("O horário solicitado deve estar em intervalos de %d minutos.", SLOT_INCREMENT_MINUTES));
-        }
+    private boolean hasWorkDay(DayOfWeek dayOfWeek) {
+        return this.workDays.stream().anyMatch(appointmentWorkDay -> appointmentWorkDay.dayOfWeek().equals(dayOfWeek));
+    }
+
+    private boolean hasAnotherWorkDay(DayOfWeek dayOfWeek, AppointmentWorkDay workDay) {
+        return this.workDays.stream().anyMatch(appointmentWorkDay -> appointmentWorkDay.dayOfWeek().equals(dayOfWeek)
+                && !appointmentWorkDay.equals(workDay));
     }
 
     private void verifyLockedDate(LocalDate scheduledDate) {
         var isLockedDate = this.lockedDates().stream().anyMatch(locked -> locked.date().equals(scheduledDate));
+
         if (isLockedDate)
             throw new DomainException("A data escolhida está bloqueada e não aceita agendamentos.");
     }
@@ -161,7 +149,7 @@ public class AppointmentSchedule
              throw new DomainException("Fora do horário de expediente.");
     }
 
-    private void verifyLockedTimes(AppointmentWorkDay workDay, LockedTimeSlot lockedTimeSlot) {
+    private void verifyLockedTimes(AppointmentWorkDay workDay, LockedTime lockedTimeSlot) {
         var isLockedTime = workDay.lockedTimes().stream().anyMatch(lockedTime -> lockedTime.verifyConflict(lockedTimeSlot));
 
         if (isLockedTime)
@@ -169,8 +157,6 @@ public class AppointmentSchedule
     }
 
     private AppointmentWorkDay findWorkDay(AppointmentWorkDayId appointmentWorkDayId) {
-        requiresNonNull("appointmentWorkDayId", appointmentWorkDayId);
-
         return this.workDays.stream()
                 .filter(appointmentWorkDay -> appointmentWorkDay.id().equals(appointmentWorkDayId))
                 .findFirst()
@@ -186,14 +172,13 @@ public class AppointmentSchedule
                 .orElseThrow(() -> new WorkinDayNotFoundException(""));
     }
 
-
     public Set<AppointmentWorkDay> workDays() {
-        return workDays;
+        return Collections.unmodifiableSet(workDays);
     }
 
     private void setWorkDays(Set<AppointmentWorkDay> workDays) {
         requiresNonNull("workDays", workDays);
-        this.workDays = workDays;
+        this.workDays = new HashSet<>(workDays);
     }
 
 }

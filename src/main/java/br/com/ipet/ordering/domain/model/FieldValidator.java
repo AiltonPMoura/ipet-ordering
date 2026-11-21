@@ -5,6 +5,7 @@ import br.com.ipet.ordering.domain.model.commons.exception.DateTimeMustBeLaterTh
 import br.com.ipet.ordering.domain.model.commons.exception.EmailValidatorException;
 import br.com.ipet.ordering.domain.model.commons.exception.FieldCannotBeEmptyException;
 import br.com.ipet.ordering.domain.model.commons.exception.StartTimeMustBeBeforeEndTimeException;
+import br.com.ipet.ordering.domain.model.commons.exception.TimeMustHaveMinutePrecisionException;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.util.StringUtils;
 
@@ -40,17 +41,31 @@ public class FieldValidator {
     }
 
     public static void requireDateTimeIsAfterNow(String field, OffsetDateTime dateTime) {
+        requiresNonNull(field, dateTime);
+
         if (!dateTime.isAfter(OffsetDateTime.now()))
             throw new DateTimeMustBeLaterThanNowException(field);
     }
 
     public static void requireDateIsAfterNow(String field, LocalDate date) {
+        requiresNonNull(field, date);
+
         if (!date.isAfter(LocalDate.now()))
             throw new DateMustBeLaterThanNowException(field);
     }
 
     public static void requireStartTimeIsBeforeEndTime(LocalTime startTime, LocalTime endTime) {
+        requiresNonNull("startTime", startTime);
+        requiresNonNull("endTime", endTime);
+
         if (!startTime.isBefore(endTime))
             throw new StartTimeMustBeBeforeEndTimeException(startTime.toString(), endTime.toString());
+    }
+
+    public static void requireNonNullMinutePrecision(String field, LocalTime time) {
+        requiresNonNull(field, time);
+
+        if (time.getSecond() != 0 || time.getNano() != 0)
+            throw new TimeMustHaveMinutePrecisionException(field);
     }
 }

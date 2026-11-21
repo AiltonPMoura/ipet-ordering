@@ -9,7 +9,7 @@ import br.com.ipet.ordering.domain.model.schedule.ServiceCategory;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDay;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDayId;
-import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTimeSlot;
+import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTime;
 import br.com.ipet.ordering.domain.model.schedule.appointment.WorkingHours;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +40,7 @@ public class AppointmentScheduleMapper {
                         .scheduleId(new ScheduleId(workDayPersistence.getAppointmentScheduleId()))
                         .dayOfWeek(workDayPersistence.getDayOfWeek())
                         .workingHours(new WorkingHours(workDayPersistence.getStartTime(), workDayPersistence.getEndTime()))
-                        .lockedTimeSlots(this.toLockedTimes(workDayPersistence.getLockedTimeSlots()))
+                        .lockedTimes(this.toLockedTimes(workDayPersistence.getLockedTimeSlots()))
                         .build())
                 .collect(Collectors.toSet());
     }
@@ -49,10 +49,10 @@ public class AppointmentScheduleMapper {
         return lockedDates.stream().map(LockedDate::new).collect(Collectors.toSet());
     }
 
-    private Set<LockedTimeSlot> toLockedTimes(Set<LockedTimeSlotEmbeddable> lockedTimesEmbeddable) {
+    private Set<LockedTime> toLockedTimes(Set<LockedTimeSlotEmbeddable> lockedTimesEmbeddable) {
         return lockedTimesEmbeddable.stream()
                 .map(lockedTimeEmbeddable ->
-                        new LockedTimeSlot(lockedTimeEmbeddable.getStartTime(), lockedTimeEmbeddable.getEndTime()))
+                        new LockedTime(lockedTimeEmbeddable.getStartTime(), lockedTimeEmbeddable.getEndTime()))
                 .collect(Collectors.toSet());
     }
 

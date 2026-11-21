@@ -5,6 +5,7 @@ import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import lombok.Builder;
 
 import java.time.DayOfWeek;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -16,20 +17,20 @@ public class AppointmentWorkDay {
     private ScheduleId scheduleId;
     private DayOfWeek dayOfWeek;
     private WorkingHours workingHours;
-    private Set<LockedTimeSlot> lockedTimeSlots;
+    private Set<LockedTime> lockedTimes;
 
     static AppointmentWorkDay createNew(ScheduleId scheduleId, DayOfWeek dayOfWeek, WorkingHours workingHours) {
         return new AppointmentWorkDay(new AppointmentWorkDayId(), scheduleId, dayOfWeek, workingHours, new HashSet<>());
     }
 
     @Builder(builderClassName = "ExistingWorkDayBuilder", builderMethodName = "existing")
-    public AppointmentWorkDay(AppointmentWorkDayId id, ScheduleId scheduleId,
-                              DayOfWeek dayOfWeek, WorkingHours workingHours, Set<LockedTimeSlot> lockedTimeSlots) {
+    private AppointmentWorkDay(AppointmentWorkDayId id, ScheduleId scheduleId,
+                              DayOfWeek dayOfWeek, WorkingHours workingHours, Set<LockedTime> lockedTimes) {
         this.setId(id);
         this.setScheduleId(scheduleId);
         this.setDayOfWeek(dayOfWeek);
         this.setWorkingHours(workingHours);
-        this.setLockedTimeSlots(lockedTimeSlots);
+        this.setLockedTimes(lockedTimes);
     }
 
     void changeDayOfWeek(DayOfWeek dayOfWeek) {
@@ -37,39 +38,48 @@ public class AppointmentWorkDay {
     }
 
     void changeWorkingHours(WorkingHours workingHours) {
+        FieldValidator.requiresNonNull("workingHours", workingHours);
+
+        this.verifyWorkingHoursAccommodateLockedTimes(workingHours);
+        this.verifyMinimumWorkingTime(this.lockedTimes, workingHours);
         this.setWorkingHours(workingHours);
     }
 
-    void changeLockedTimeSlots(Set<LockedTimeSlot> lockedTimeSlots) {
-        FieldValidator.requiresNonNull("lockedTimes", lockedTimeSlots);
+    void changeLockedTimes(Set<LockedTime> lockedTimes) {
+        FieldValidator.requiresNonNull("lockedTimes", lockedTimes);
 
-        var validSlots = this.findValidLockedTimes(lockedTimeSlots);
-        this.verifyMinimumWorkingTime(validSlots);
-
-        this.setLockedTimeSlots(validSlots);
+        this.verifyLockedTimes(lockedTimes);
+        this.verifyMinimumWorkingTime(lockedTimes, this.workingHours);
+        this.setLockedTimes(lockedTimes);
     }
 
-    private Set<LockedTimeSlot> findValidLockedTimes(Set<LockedTimeSlot> lockedTimeSlots) {
-        var validSlots = new HashSet<LockedTimeSlot>();
+    private void verifyWorkingHoursAccommodateLockedTimes(WorkingHours workingHours) {
+        lockedTimes.forEach(lockedTime -> {
+            if (workingHours.isNotStrictlyWithinWorkingHours(lockedTime.startTime(), lockedTime.endTime()))
+                throw new LockedTimeOutsideWorkingHoursException("");
+        });
+    }
 
-        lockedTimeSlots.forEach(slot -> {
-            FieldValidator.requiresNonNull("lockedTime", slot);
+    private void verifyLockedTimes(Set<LockedTime> lockedTimes) {
+        var verifiedLockedTimes = new HashSet<LockedTime>();
 
-            if (workingHours.isNotWithinWorkingHours(slot.startTime(), slot.endTime()))
+        lockedTimes.forEach(lockedTime -> {
+            FieldValidator.requiresNonNull("lockedTime", lockedTime);
+
+            if (workingHours.isNotStrictlyWithinWorkingHours(lockedTime.startTime(), lockedTime.endTime()))
                 throw new LockedTimeOutsideWorkingHoursException("");
 
-            if (validSlots.stream().anyMatch(slot::verifyConflict))
+            if (verifiedLockedTimes.stream().anyMatch(lockedTime::verifyConflict))
                 throw new ConflictLockedTimeException("");
 
-            validSlots.add(slot);
+            verifiedLockedTimes.add(lockedTime);
         });
 
-        return validSlots;
     }
 
-    private void verifyMinimumWorkingTime(Set<LockedTimeSlot> lockedTimeSlots) {
-        long totalLockedMinutes = lockedTimeSlots.stream()
-                .mapToLong(LockedTimeSlot::lockedMinutes)
+    private void verifyMinimumWorkingTime(Set<LockedTime> lockedTimes, WorkingHours workingHours) {
+        long totalLockedMinutes = lockedTimes.stream()
+                .mapToLong(LockedTime::lockedMinutes)
                 .sum();
 
         if (workingHours.workingMinutes() - totalLockedMinutes < MINIMUM_WORKING_MINUTES)
@@ -112,13 +122,13 @@ public class AppointmentWorkDay {
         this.workingHours = workingHours;
     }
 
-    public Set<LockedTimeSlot> lockedTimes() {
-        return lockedTimeSlots;
+    public Set<LockedTime> lockedTimes() {
+        return Collections.unmodifiableSet(lockedTimes);
     }
 
-    private void setLockedTimeSlots(Set<LockedTimeSlot> lockedTimeSlots) {
-        FieldValidator.requiresNonNull("lockedTimeSlots", lockedTimeSlots);
-        this.lockedTimeSlots = lockedTimeSlots;
+    private void setLockedTimes(Set<LockedTime> lockedTimes) {
+        FieldValidator.requiresNonNull("lockedTimes", lockedTimes);
+        this.lockedTimes = new HashSet<>(lockedTimes);
     }
 
     @Override

@@ -12,7 +12,7 @@ import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedul
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentScheduleRegistrationService;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedules;
 import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentWorkDayId;
-import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTimeSlot;
+import br.com.ipet.ordering.domain.model.schedule.appointment.LockedTime;
 import br.com.ipet.ordering.domain.model.schedule.appointment.WorkingHours;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class AppointmentScheduleApplicationService {
         var appointmentSchedule = appointmentScheduleRegistrationService.register(
                 new CompanyId(input.companyId()),
                 new ScheduleName(input.name()),
-                ServiceCategory.valueOf(input.subCategory())
+                ServiceCategory.valueOf(input.category())
         );
 
         appointmentSchedules.add(appointmentSchedule);
@@ -90,7 +90,7 @@ public class AppointmentScheduleApplicationService {
         requiresNonNull("input", input);
 
         var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
-        appointmentSchedule.changeWorkDayWeek(new AppointmentWorkDayId(workDayId), input.dayOfWeek(), new CompanyId(companyId));
+        appointmentSchedule.changeWorkDayOfWeek(new AppointmentWorkDayId(workDayId), input.dayOfWeek(), new CompanyId(companyId));
         appointmentSchedule.changeWorkDayHours(new AppointmentWorkDayId(workDayId), new WorkingHours(input.startTime(), input.endTime()), new CompanyId(companyId));
 
         appointmentSchedules.add(appointmentSchedule);
@@ -102,7 +102,7 @@ public class AppointmentScheduleApplicationService {
         var appointmentSchedule = this.findAppointmentSchedule(scheduleId);
 
         var lockedTimeSlots = inputs.stream()
-                .map(input -> new LockedTimeSlot(input.startTime(), input.endTime()))
+                .map(input -> new LockedTime(input.startTime(), input.endTime()))
                 .collect(Collectors.toSet());
 
         appointmentSchedule.changeWorkDayLockedTime(

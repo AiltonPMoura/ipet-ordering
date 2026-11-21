@@ -65,6 +65,8 @@ public class MessageCode {
     public static final String ERROR_SERVICE_DESCRIPTION_CANNOT_BE_VERY_SMALL = "error.service.description.cannot.be.very.small";
     public static final String ERROR_WORKING_HOURS_CANNOT_BE_LESS_THAN_ONE = "error.working.hours.cannot.be.less.than.one";
     public static final String ERROR_INVALID_INTERVAL_LOCKED_TIME = "error.invalid.interval.locked.time";
+    public static final String ERROR_INVALID_APPOINTMENT_SLOT = "error.invalid.appointment.slot";
+    public static final String ERROR_TIME_MUST_HAVE_MINUTE_PRECISION = "error.time.must.have.minute.precision";
     public static final String ERROR_START_TIME_CANNOT_BE_GREATER_THAN_END_TIME = "start.time.cannot.be.greater.than.end.time";
     public static final String ERROR_START_DATE_CANNOT_BE_GREATER_THAN_END_DATE = "start.date.cannot.be.greater.than.end.date";
     public static final String ERROR_DATE_TIME_MUST_BE_LATTER_THAN_NOW = "error.date.time.must.be.latter.than.now";

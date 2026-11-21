@@ -14,7 +14,7 @@ import br.com.ipet.ordering.domain.model.schedule.DailyAvailabilityOutput;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleAvailabilityOutput;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleNotFoundException;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleStatus;
-import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSchedule;
+import br.com.ipet.ordering.domain.model.schedule.appointment.AppointmentSlotPolicy;
 import br.com.ipet.ordering.domain.model.serviceoffering.AppointmentService;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceId;
 import br.com.ipet.ordering.domain.model.serviceoffering.ServiceOfferingCatalogService;
@@ -218,7 +218,7 @@ public class AppointmentScheduleQueryServiceImpl implements AppointmentScheduleQ
 
         return Stream.iterate(workDay.getStartTime(),
                         workTime -> !workTime.plusMinutes(totalServiceDurationMinutes).isAfter(endTime),
-                        workTime -> workTime.plusMinutes(AppointmentSchedule.SLOT_INCREMENT_MINUTES)
+                        workTime -> workTime.plusMinutes(AppointmentSlotPolicy.INCREMENT_MINUTES)
                 )
                 .filter(workTime -> workTime.isAfter(schedulingCutoffTime))
                 .filter(workTime -> !this.isLockedTime(workTime, totalServiceDurationMinutes, lockedTimeSlots))

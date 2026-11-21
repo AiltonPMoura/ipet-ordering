@@ -5,7 +5,11 @@ import br.com.ipet.ordering.domain.model.commons.exception.CannotChangeStatusExc
 import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import br.com.ipet.ordering.domain.model.commons.id.CompanyId;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
@@ -32,23 +36,37 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.setCreatedAt(createdAt);
     }
 
-    protected void changeName(ScheduleName name, CompanyId companyId) {
-        this.verifyBelongToCompany(companyId);
+    public void changeName(ScheduleName name, CompanyId companyId) {
+        //this.verifyBelongToCompany(companyId);
         this.setName(name);
     }
 
-    protected void changeLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
+    public void changeLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
         //this.verifyBelongToCompany(companyId);
+        this.verifyLockedDatesAreAfterToday(lockedDates);
         this.setLockedDates(lockedDates);
     }
 
-    protected void activate(CompanyId companyId) {
-        this.verifyBelongToCompany(companyId);
+    private void verifyLockedDatesAreAfterToday(Set<LockedDate> lockedDates) {
+        requiresNonNull("lockedDates", lockedDates);
+
+        var today = LocalDate.now(ZoneOffset.UTC);
+
+        lockedDates.forEach(lockedDate -> {
+            requiresNonNull("lockedDate", lockedDate);
+
+            if (!lockedDate.date().isAfter(today))
+                throw new LockedDateMustBeAfterNow("");
+        });
+    }
+
+    public void activate(CompanyId companyId) {
+        //this.verifyBelongToCompany(companyId);
         this.changeStatus(ScheduleStatus.ACTIVE);
     }
 
-    protected void deactivate(CompanyId companyId) {
-        this.verifyBelongToCompany(companyId);
+    public void deactivate(CompanyId companyId) {
+        //this.verifyBelongToCompany(companyId);
         this.changeStatus(ScheduleStatus.INACTIVE);
     }
 
@@ -118,12 +136,12 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     public Set<LockedDate> lockedDates() {
-        return lockedDates;
+        return Collections.unmodifiableSet(lockedDates);
     }
 
     private void setLockedDates(Set<LockedDate> lockedDates) {
         requiresNonNull("lockedDates", lockedDates);
-        this.lockedDates = lockedDates;
+        this.lockedDates = new HashSet<>(lockedDates);
     }
 
     public OffsetDateTime createdAt() {

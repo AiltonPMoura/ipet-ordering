@@ -5,22 +5,24 @@ import br.com.ipet.ordering.domain.model.FieldValidator;
 import java.time.Duration;
 import java.time.LocalTime;
 
-public record LockedTimeSlot(LocalTime startTime, LocalTime endTime) {
+import static br.com.ipet.ordering.domain.model.FieldValidator.requireNonNullMinutePrecision;
+
+public record LockedTime(LocalTime startTime, LocalTime endTime) {
 
     private static final int LOCKED_TIME_INTERVAL_MINUTES = 30;
     public static final int MINIMUM_LOCKED_TIME_MINUTES = 30;
 
-    public LockedTimeSlot {
-        FieldValidator.requiresNonNull("start locked time", startTime);
-        FieldValidator.requiresNonNull("end locked time", endTime);
+    public LockedTime {
+        requireNonNullMinutePrecision("start locked time", startTime);
+        requireNonNullMinutePrecision("end locked time", endTime);
         FieldValidator.requireStartTimeIsBeforeEndTime(startTime, endTime);
 
         this.verifyMinimumDuration(startTime, endTime);
         this.verifyValidInterval(startTime, endTime);
     }
 
-    public boolean verifyConflict(LockedTimeSlot newLockedTimeSlot) {
-        return startTime.isBefore(newLockedTimeSlot.endTime()) && endTime.isAfter(newLockedTimeSlot.startTime());
+    public boolean verifyConflict(LockedTime newLockedTime) {
+        return startTime.isBefore(newLockedTime.endTime()) && endTime.isAfter(newLockedTime.startTime());
     }
 
     public long lockedMinutes() {

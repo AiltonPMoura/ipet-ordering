@@ -3,6 +3,7 @@ package br.com.ipet.ordering.domain.model.schedule.appointment;
 import java.time.Duration;
 import java.time.LocalTime;
 
+import static br.com.ipet.ordering.domain.model.FieldValidator.requireNonNullMinutePrecision;
 import static br.com.ipet.ordering.domain.model.FieldValidator.requireStartTimeIsBeforeEndTime;
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
@@ -14,8 +15,8 @@ public record WorkingHours(LocalTime startTime, LocalTime endTime) {
     public static final int MINIMUM_WORKING_MINUTES = 30;
 
     public WorkingHours {
-        requiresNonNull("startTime", startTime);
-        requiresNonNull("endTime", endTime);
+        requireNonNullMinutePrecision("startTime", startTime);
+        requireNonNullMinutePrecision("endTime", endTime);
         requireStartTimeIsBeforeEndTime(startTime, endTime);
         this.verifyMinimumStartTime(startTime);
         this.verifyMaximumEndTime(endTime);
@@ -32,6 +33,17 @@ public record WorkingHours(LocalTime startTime, LocalTime endTime) {
 
     public boolean isNotWithinWorkingHours(LocalTime startTime, LocalTime endTime) {
         return !isWithinWorkingHours(startTime, endTime);
+    }
+
+    public boolean isStrictlyWithinWorkingHours(LocalTime startTime, LocalTime endTime) {
+        requiresNonNull("startTime", startTime);
+        requiresNonNull("endTime", endTime);
+
+        return startTime.isAfter(this.startTime) && endTime.isBefore(this.endTime);
+    }
+
+    public boolean isNotStrictlyWithinWorkingHours(LocalTime startTime, LocalTime endTime) {
+        return !isStrictlyWithinWorkingHours(startTime, endTime);
     }
 
     public long workingMinutes() {
