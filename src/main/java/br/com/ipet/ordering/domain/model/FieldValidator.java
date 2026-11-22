@@ -1,6 +1,6 @@
 package br.com.ipet.ordering.domain.model;
 
-import br.com.ipet.ordering.domain.model.commons.exception.DateMustBeLaterThanNowException;
+import br.com.ipet.ordering.domain.model.commons.exception.DateMustBeAfterNow;
 import br.com.ipet.ordering.domain.model.commons.exception.DateTimeMustBeLaterThanNowException;
 import br.com.ipet.ordering.domain.model.commons.exception.EmailValidatorException;
 import br.com.ipet.ordering.domain.model.commons.exception.FieldCannotBeEmptyException;
@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
 
 public class FieldValidator {
@@ -50,8 +51,8 @@ public class FieldValidator {
     public static void requireDateIsAfterNow(String field, LocalDate date) {
         requiresNonNull(field, date);
 
-        if (!date.isAfter(LocalDate.now()))
-            throw new DateMustBeLaterThanNowException(field);
+        if (!date.isAfter(LocalDate.now(ZoneOffset.UTC)))
+            throw new DateMustBeAfterNow(field);
     }
 
     public static void requireStartTimeIsBeforeEndTime(LocalTime startTime, LocalTime endTime) {

@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
+import static br.com.ipet.ordering.domain.model.FieldValidator.requireDateIsAfterNow;
 
 public abstract class Schedule extends AbstractEventSourceEntity {
     private ScheduleId id;
@@ -60,13 +61,9 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     private void verifyLockedDatesAreAfterToday(Set<LockedDate> lockedDates) {
         requiresNonNull("lockedDates", lockedDates);
 
-        var today = LocalDate.now(ZoneOffset.UTC);
-
         lockedDates.forEach(lockedDate -> {
             requiresNonNull("lockedDate", lockedDate);
-
-            if (!lockedDate.date().isAfter(today))
-                throw new LockedDateMustBeAfterNow("");
+            requireDateIsAfterNow("lockedDate", lockedDate.date());
         });
     }
 

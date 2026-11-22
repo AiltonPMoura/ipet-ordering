@@ -5,11 +5,11 @@ import br.com.ipet.ordering.domain.model.MessageCode;
 import lombok.Getter;
 
 @Getter
-public class DateMustBeLaterThanNowException extends DomainException {
+public class DateMustBeAfterNow extends DomainException {
 
     private final String field;
 
-    public DateMustBeLaterThanNowException(String field) {
+    public DateMustBeAfterNow(String field) {
         super(MessageCode.ERROR_DATE_MUST_BE_LATTER_THAN_NOW);
         this.field = field;
     }
