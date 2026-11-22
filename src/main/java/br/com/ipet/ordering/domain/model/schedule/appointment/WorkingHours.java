@@ -5,7 +5,6 @@ import java.time.LocalTime;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requireMinutePrecision;
 import static br.com.ipet.ordering.domain.model.FieldValidator.requireStartTimeIsBeforeEndTime;
-import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
 public record WorkingHours(LocalTime startTime, LocalTime endTime) {
 
@@ -28,9 +27,9 @@ public record WorkingHours(LocalTime startTime, LocalTime endTime) {
     public boolean isWithinWorkingHours(LocalTime startTime, LocalTime endTime) {
         requireMinutePrecision("startTime", startTime);
         requireMinutePrecision("endTime", endTime);
+        requireStartTimeIsBeforeEndTime(startTime, endTime);
 
-        return startTime.isBefore(endTime)
-                && !startTime.isBefore(this.startTime)
+        return !startTime.isBefore(this.startTime)
                 && !endTime.isAfter(this.endTime);
     }
 
@@ -41,9 +40,9 @@ public record WorkingHours(LocalTime startTime, LocalTime endTime) {
     public boolean isStrictlyWithinWorkingHours(LocalTime startTime, LocalTime endTime) {
         requireMinutePrecision("startTime", startTime);
         requireMinutePrecision("endTime", endTime);
+        requireStartTimeIsBeforeEndTime(startTime, endTime);
 
-        return startTime.isBefore(endTime)
-                && startTime.isAfter(this.startTime)
+        return startTime.isAfter(this.startTime)
                 && endTime.isBefore(this.endTime);
     }
 

@@ -1,10 +1,9 @@
 package br.com.ipet.ordering.domain.model.schedule.appointment;
 
-import br.com.ipet.ordering.domain.model.FieldValidator;
-
 import java.time.Duration;
 import java.time.LocalTime;
 
+import static br.com.ipet.ordering.domain.model.FieldValidator.requireStartTimeIsBeforeEndTime;
 import static br.com.ipet.ordering.domain.model.FieldValidator.requireMinutePrecision;
 
 public record LockedTime(LocalTime startTime, LocalTime endTime) {
@@ -15,7 +14,7 @@ public record LockedTime(LocalTime startTime, LocalTime endTime) {
     public LockedTime {
         requireMinutePrecision("start locked time", startTime);
         requireMinutePrecision("end locked time", endTime);
-        FieldValidator.requireStartTimeIsBeforeEndTime(startTime, endTime);
+        requireStartTimeIsBeforeEndTime(startTime, endTime);
 
         this.verifyMinimumDuration(startTime, endTime);
         this.verifyValidInterval(startTime, endTime);

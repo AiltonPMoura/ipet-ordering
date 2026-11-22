@@ -77,6 +77,15 @@ class WorkingHoursTest {
     }
 
     @Test
+    void givenStartTimeEqualToEndTime_whenCreatingWorkingHours_thenThrowsStartTimeMustBeBeforeEndTimeException() {
+        var startTime = LocalTime.of(9, 0);
+        var endTime = LocalTime.of(9, 0);
+
+        assertThatExceptionOfType(StartTimeMustBeBeforeEndTimeException.class)
+                .isThrownBy(() -> new WorkingHours(startTime, endTime));
+    }
+
+    @Test
     void givenStartTimeBeforeMinimum_whenCreatingWorkingHours_thenThrowsMinimumStartWorkingException() {
         var startTime = LocalTime.of(7, 30);
         var endTime = LocalTime.of(9, 0);
@@ -176,14 +185,44 @@ class WorkingHoursTest {
     }
 
     @Test
-    void givenStartTimeAfterEndTime_whenCallingIsNotWithinWorkingHours_thenReturnsTrue() {
+    void givenIntervalWithinWorkingHours_whenCallingIsNotWithinWorkingHours_thenReturnsFalse() {
+        var workingHours = new WorkingHours(LocalTime.of(9, 0), LocalTime.of(17, 0));
+        var startTime = LocalTime.of(9, 0);
+        var endTime = LocalTime.of(10, 0);
+
+        var isNotWithinWorkingHours = workingHours.isNotWithinWorkingHours(startTime, endTime);
+
+        assertThat(isNotWithinWorkingHours).isFalse();
+    }
+
+    @Test
+    void givenStartTimeAfterEndTime_whenCallingIsNotWithinWorkingHours_thenThrowsStartTimeMustBeBeforeEndTimeException() {
         var workingHours = new WorkingHours(LocalTime.of(9, 0), LocalTime.of(17, 0));
         var startTime = LocalTime.of(10, 0);
         var endTime = LocalTime.of(9, 30);
 
-        var isNotWithinWorkingHours = workingHours.isNotWithinWorkingHours(startTime, endTime);
+        assertThatExceptionOfType(StartTimeMustBeBeforeEndTimeException.class)
+                .isThrownBy(() -> workingHours.isNotWithinWorkingHours(startTime, endTime));
+    }
 
-        assertThat(isNotWithinWorkingHours).isTrue();
+    @Test
+    void givenStartTimeEqualToEndTime_whenCallingIsWithinWorkingHours_thenThrowsStartTimeMustBeBeforeEndTimeException() {
+        var workingHours = new WorkingHours(LocalTime.of(9, 0), LocalTime.of(17, 0));
+        var startTime = LocalTime.of(10, 0);
+        var endTime = LocalTime.of(10, 0);
+
+        assertThatExceptionOfType(StartTimeMustBeBeforeEndTimeException.class)
+                .isThrownBy(() -> workingHours.isWithinWorkingHours(startTime, endTime));
+    }
+
+    @Test
+    void givenStartTimeEqualToEndTime_whenCallingIsNotWithinWorkingHours_thenThrowsStartTimeMustBeBeforeEndTimeException() {
+        var workingHours = new WorkingHours(LocalTime.of(9, 0), LocalTime.of(17, 0));
+        var startTime = LocalTime.of(10, 0);
+        var endTime = LocalTime.of(10, 0);
+
+        assertThatExceptionOfType(StartTimeMustBeBeforeEndTimeException.class)
+                .isThrownBy(() -> workingHours.isNotWithinWorkingHours(startTime, endTime));
     }
 
     @Test
@@ -204,6 +243,16 @@ class WorkingHoursTest {
         var endTime = LocalTime.of(10, 30, 0, 1);
 
         assertThatExceptionOfType(TimeMustHaveMinutePrecisionException.class)
+                .isThrownBy(() -> workingHours.isStrictlyWithinWorkingHours(startTime, endTime));
+    }
+
+    @Test
+    void givenStartTimeEqualToEndTime_whenCallingIsStrictlyWithinWorkingHours_thenThrowsStartTimeMustBeBeforeEndTimeException() {
+        var workingHours = new WorkingHours(LocalTime.of(9, 0), LocalTime.of(17, 0));
+        var startTime = LocalTime.of(10, 0);
+        var endTime = LocalTime.of(10, 0);
+
+        assertThatExceptionOfType(StartTimeMustBeBeforeEndTimeException.class)
                 .isThrownBy(() -> workingHours.isStrictlyWithinWorkingHours(startTime, endTime));
     }
 
@@ -230,14 +279,34 @@ class WorkingHoursTest {
     }
 
     @Test
-    void givenStartTimeAfterEndTime_whenCallingIsNotStrictlyWithinWorkingHours_thenReturnsTrue() {
+    void givenIntervalStrictlyWithinWorkingHours_whenCallingIsNotStrictlyWithinWorkingHours_thenReturnsFalse() {
+        var workingHours = new WorkingHours(LocalTime.of(9, 0), LocalTime.of(17, 0));
+        var startTime = LocalTime.of(10, 0);
+        var endTime = LocalTime.of(11, 0);
+
+        var isNotStrictlyWithinWorkingHours = workingHours.isNotStrictlyWithinWorkingHours(startTime, endTime);
+
+        assertThat(isNotStrictlyWithinWorkingHours).isFalse();
+    }
+
+    @Test
+    void givenStartTimeAfterEndTime_whenCallingIsNotStrictlyWithinWorkingHours_thenThrowsStartTimeMustBeBeforeEndTimeException() {
         var workingHours = new WorkingHours(LocalTime.of(9, 0), LocalTime.of(17, 0));
         var startTime = LocalTime.of(10, 0);
         var endTime = LocalTime.of(9, 30);
 
-        var isNotStrictlyWithinWorkingHours = workingHours.isNotStrictlyWithinWorkingHours(startTime, endTime);
+        assertThatExceptionOfType(StartTimeMustBeBeforeEndTimeException.class)
+                .isThrownBy(() -> workingHours.isNotStrictlyWithinWorkingHours(startTime, endTime));
+    }
 
-        assertThat(isNotStrictlyWithinWorkingHours).isTrue();
+    @Test
+    void givenStartTimeEqualToEndTime_whenCallingIsNotStrictlyWithinWorkingHours_thenThrowsStartTimeMustBeBeforeEndTimeException() {
+        var workingHours = new WorkingHours(LocalTime.of(9, 0), LocalTime.of(17, 0));
+        var startTime = LocalTime.of(10, 0);
+        var endTime = LocalTime.of(10, 0);
+
+        assertThatExceptionOfType(StartTimeMustBeBeforeEndTimeException.class)
+                .isThrownBy(() -> workingHours.isNotStrictlyWithinWorkingHours(startTime, endTime));
     }
 
     @Test
