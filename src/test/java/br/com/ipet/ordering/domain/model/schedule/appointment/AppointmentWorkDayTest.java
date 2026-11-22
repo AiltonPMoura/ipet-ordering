@@ -242,10 +242,6 @@ class AppointmentWorkDayTest {
         assertThat(workDay).isNotEqualTo("not a work day");
     }
 
-    private AppointmentWorkDay createWorkDay() {
-        return AppointmentWorkDay.createNew(new ScheduleId(), DayOfWeek.MONDAY, standardWorkingHours());
-    }
-
     private AppointmentWorkDay existingWorkDay() {
         return AppointmentWorkDay.existing()
                 .id(new AppointmentWorkDayId())
