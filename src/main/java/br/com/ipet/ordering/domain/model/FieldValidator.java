@@ -62,7 +62,7 @@ public class FieldValidator {
             throw new StartTimeMustBeBeforeEndTimeException(startTime.toString(), endTime.toString());
     }
 
-    public static void requireNonNullMinutePrecision(String field, LocalTime time) {
+    public static void requireMinutePrecision(String field, LocalTime time) {
         requiresNonNull(field, time);
 
         if (time.getSecond() != 0 || time.getNano() != 0)

@@ -3,7 +3,7 @@ package br.com.ipet.ordering.domain.model.schedule.appointment;
 import java.time.Duration;
 import java.time.LocalTime;
 
-import static br.com.ipet.ordering.domain.model.FieldValidator.requireNonNullMinutePrecision;
+import static br.com.ipet.ordering.domain.model.FieldValidator.requireMinutePrecision;
 import static br.com.ipet.ordering.domain.model.FieldValidator.requireStartTimeIsBeforeEndTime;
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
@@ -15,9 +15,10 @@ public record WorkingHours(LocalTime startTime, LocalTime endTime) {
     public static final int MINIMUM_WORKING_MINUTES = 30;
 
     public WorkingHours {
-        requireNonNullMinutePrecision("startTime", startTime);
-        requireNonNullMinutePrecision("endTime", endTime);
+        requireMinutePrecision("startTime", startTime);
+        requireMinutePrecision("endTime", endTime);
         requireStartTimeIsBeforeEndTime(startTime, endTime);
+
         this.verifyMinimumStartTime(startTime);
         this.verifyMaximumEndTime(endTime);
         this.verifyMinimumWorkingMinutes(startTime, endTime);
@@ -25,10 +26,12 @@ public record WorkingHours(LocalTime startTime, LocalTime endTime) {
     }
 
     public boolean isWithinWorkingHours(LocalTime startTime, LocalTime endTime) {
-        requiresNonNull("startTime", startTime);
-        requiresNonNull("endTime", endTime);
+        requireMinutePrecision("startTime", startTime);
+        requireMinutePrecision("endTime", endTime);
 
-        return !startTime.isBefore(this.startTime) && !endTime.isAfter(this.endTime);
+        return startTime.isBefore(endTime)
+                && !startTime.isBefore(this.startTime)
+                && !endTime.isAfter(this.endTime);
     }
 
     public boolean isNotWithinWorkingHours(LocalTime startTime, LocalTime endTime) {
@@ -36,10 +39,12 @@ public record WorkingHours(LocalTime startTime, LocalTime endTime) {
     }
 
     public boolean isStrictlyWithinWorkingHours(LocalTime startTime, LocalTime endTime) {
-        requiresNonNull("startTime", startTime);
-        requiresNonNull("endTime", endTime);
+        requireMinutePrecision("startTime", startTime);
+        requireMinutePrecision("endTime", endTime);
 
-        return startTime.isAfter(this.startTime) && endTime.isBefore(this.endTime);
+        return startTime.isBefore(endTime)
+                && startTime.isAfter(this.startTime)
+                && endTime.isBefore(this.endTime);
     }
 
     public boolean isNotStrictlyWithinWorkingHours(LocalTime startTime, LocalTime endTime) {

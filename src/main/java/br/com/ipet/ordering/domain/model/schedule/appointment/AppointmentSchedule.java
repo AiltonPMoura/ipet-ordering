@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static br.com.ipet.ordering.domain.model.FieldValidator.requireNonNullMinutePrecision;
+import static br.com.ipet.ordering.domain.model.FieldValidator.requireMinutePrecision;
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 import static br.com.ipet.ordering.domain.model.schedule.ServiceCategory.ACTIVITY;
 import static br.com.ipet.ordering.domain.model.schedule.ServiceCategory.HEALTH;
@@ -118,8 +118,8 @@ public class AppointmentSchedule
     public void verifyAvailableDateTime(LocalDateTime scheduledStart, LocalDateTime scheduledEnd) {
         requiresNonNull("scheduledStart", scheduledStart);
         requiresNonNull("scheduledEnd", scheduledEnd);
-        requireNonNullMinutePrecision("scheduledStart", scheduledStart.toLocalTime());
-        requireNonNullMinutePrecision("scheduledEnd", scheduledEnd.toLocalTime());
+        requireMinutePrecision("scheduledStart", scheduledStart.toLocalTime());
+        requireMinutePrecision("scheduledEnd", scheduledEnd.toLocalTime());
 
         AppointmentSlotPolicy.verifyStartAligned(scheduledStart.toLocalTime());
         this.verifyLockedDate(scheduledStart.toLocalDate());

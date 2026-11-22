@@ -5,7 +5,7 @@ import br.com.ipet.ordering.domain.model.FieldValidator;
 import java.time.Duration;
 import java.time.LocalTime;
 
-import static br.com.ipet.ordering.domain.model.FieldValidator.requireNonNullMinutePrecision;
+import static br.com.ipet.ordering.domain.model.FieldValidator.requireMinutePrecision;
 
 public record LockedTime(LocalTime startTime, LocalTime endTime) {
 
@@ -13,8 +13,8 @@ public record LockedTime(LocalTime startTime, LocalTime endTime) {
     public static final int MINIMUM_LOCKED_TIME_MINUTES = 30;
 
     public LockedTime {
-        requireNonNullMinutePrecision("start locked time", startTime);
-        requireNonNullMinutePrecision("end locked time", endTime);
+        requireMinutePrecision("start locked time", startTime);
+        requireMinutePrecision("end locked time", endTime);
         FieldValidator.requireStartTimeIsBeforeEndTime(startTime, endTime);
 
         this.verifyMinimumDuration(startTime, endTime);
