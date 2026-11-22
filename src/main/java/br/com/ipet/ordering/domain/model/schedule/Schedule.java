@@ -11,6 +11,7 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 
@@ -44,7 +45,16 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     public void changeLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
         //this.verifyBelongToCompany(companyId);
         this.verifyLockedDatesAreAfterToday(lockedDates);
-        this.setLockedDates(lockedDates);
+
+        var today = LocalDate.now(ZoneOffset.UTC);
+
+        var updatedLockedDates = this.lockedDates.stream()
+                .filter(lockedDate -> lockedDate.date().isBefore(today))
+                .collect(Collectors.toCollection(HashSet::new));
+
+        updatedLockedDates.addAll(lockedDates);
+
+        this.setLockedDates(updatedLockedDates);
     }
 
     private void verifyLockedDatesAreAfterToday(Set<LockedDate> lockedDates) {
@@ -149,7 +159,7 @@ public abstract class Schedule extends AbstractEventSourceEntity {
     }
 
     private void setCreatedAt(OffsetDateTime createdAt) {
-        //requiresNonNull("createdAt", createdAt);
+        requiresNonNull("createdAt", createdAt);
         this.createdAt = createdAt;
     }
 

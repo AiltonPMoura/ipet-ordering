@@ -1,6 +1,5 @@
 package br.com.ipet.ordering.domain.model.schedule.appointment;
 
-import br.com.ipet.ordering.domain.model.FieldValidator;
 import br.com.ipet.ordering.domain.model.commons.id.ScheduleId;
 import lombok.Builder;
 
@@ -10,6 +9,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static br.com.ipet.ordering.domain.model.FieldValidator.requiresNonNull;
 import static br.com.ipet.ordering.domain.model.schedule.appointment.WorkingHours.MINIMUM_WORKING_MINUTES;
 
 public class AppointmentWorkDay {
@@ -38,7 +38,7 @@ public class AppointmentWorkDay {
     }
 
     void changeWorkingHours(WorkingHours workingHours) {
-        FieldValidator.requiresNonNull("workingHours", workingHours);
+        requiresNonNull("workingHours", workingHours);
 
         this.verifyWorkingHoursAccommodateLockedTimes(workingHours);
         this.verifyMinimumWorkingTime(this.lockedTimes, workingHours);
@@ -46,7 +46,7 @@ public class AppointmentWorkDay {
     }
 
     void changeLockedTimes(Set<LockedTime> lockedTimes) {
-        FieldValidator.requiresNonNull("lockedTimes", lockedTimes);
+        requiresNonNull("lockedTimes", lockedTimes);
 
         this.verifyLockedTimes(lockedTimes);
         this.verifyMinimumWorkingTime(lockedTimes, this.workingHours);
@@ -64,7 +64,7 @@ public class AppointmentWorkDay {
         var verifiedLockedTimes = new HashSet<LockedTime>();
 
         lockedTimes.forEach(lockedTime -> {
-            FieldValidator.requiresNonNull("lockedTime", lockedTime);
+            requiresNonNull("lockedTime", lockedTime);
 
             if (workingHours.isNotStrictlyWithinWorkingHours(lockedTime.startTime(), lockedTime.endTime()))
                 throw new LockedTimeOutsideWorkingHoursException("");
@@ -91,7 +91,7 @@ public class AppointmentWorkDay {
     }
 
     private void setId(AppointmentWorkDayId id) {
-        FieldValidator.requiresNonNull("id", id);
+        requiresNonNull("id", id);
         this.id = id;
     }
 
@@ -100,7 +100,7 @@ public class AppointmentWorkDay {
     }
 
     private void setScheduleId(ScheduleId scheduleId) {
-        FieldValidator.requiresNonNull("scheduleId", scheduleId);
+        requiresNonNull("scheduleId", scheduleId);
         this.scheduleId = scheduleId;
     }
 
@@ -109,7 +109,7 @@ public class AppointmentWorkDay {
     }
 
     private void setDayOfWeek(DayOfWeek dayOfWeek) {
-        FieldValidator.requiresNonNull("dayOfWeek", dayOfWeek);
+        requiresNonNull("dayOfWeek", dayOfWeek);
         this.dayOfWeek = dayOfWeek;
     }
 
@@ -118,7 +118,7 @@ public class AppointmentWorkDay {
     }
 
     private void setWorkingHours(WorkingHours workingHours) {
-        FieldValidator.requiresNonNull("workingHours", workingHours);
+        requiresNonNull("workingHours", workingHours);
         this.workingHours = workingHours;
     }
 
@@ -127,7 +127,7 @@ public class AppointmentWorkDay {
     }
 
     private void setLockedTimes(Set<LockedTime> lockedTimes) {
-        FieldValidator.requiresNonNull("lockedTimes", lockedTimes);
+        requiresNonNull("lockedTimes", lockedTimes);
         this.lockedTimes = new HashSet<>(lockedTimes);
     }
 
