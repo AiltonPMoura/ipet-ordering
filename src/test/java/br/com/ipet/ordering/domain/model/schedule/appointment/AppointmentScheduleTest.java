@@ -8,6 +8,8 @@ import br.com.ipet.ordering.domain.model.schedule.ScheduleName;
 import br.com.ipet.ordering.domain.model.schedule.ScheduleStatus;
 import br.com.ipet.ordering.domain.model.schedule.ServiceCategory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -21,16 +23,18 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class AppointmentScheduleTest {
 
-    @Test
-    void givenSupportedServiceCategory_whenCreatingAppointmentSchedule_thenCreatesInactiveSchedule() {
+    @ParameterizedTest
+    @EnumSource(value = ServiceCategory.class, names = {"HYGIENE", "HEALTH", "ACTIVITY"})
+    void givenSupportedServiceCategory_whenCreatingAppointmentSchedule_thenCreatesInactiveSchedule(
+            ServiceCategory serviceCategory) {
         var companyId = new CompanyId();
         var name = new ScheduleName("Appointment schedule");
 
-        var schedule = AppointmentSchedule.create(companyId, name, ServiceCategory.HYGIENE);
+        var schedule = AppointmentSchedule.create(companyId, name, serviceCategory);
 
         assertThat(schedule.companyId()).isEqualTo(companyId);
         assertThat(schedule.name()).isEqualTo(name);
-        assertThat(schedule.serviceCategory()).isEqualTo(ServiceCategory.HYGIENE);
+        assertThat(schedule.serviceCategory()).isEqualTo(serviceCategory);
         assertThat(schedule.status()).isEqualTo(ScheduleStatus.INACTIVE);
         assertThat(schedule.lockedDates()).isEmpty();
         assertThat(schedule.workDays()).isEmpty();
@@ -90,6 +94,18 @@ class AppointmentScheduleTest {
                     assertThat(workDay.workingHours()).isEqualTo(workingHours);
                     assertThat(workDay.lockedTimes()).isEmpty();
                 });
+    }
+
+    @Test
+    void givenWorkDayForAnotherWeekday_whenAddingWorkDay_thenAddsAnotherWorkDay() {
+        var mondayWorkDay = existingWorkDay(DayOfWeek.MONDAY);
+        var schedule = existingSchedule(Set.of(mondayWorkDay));
+
+        schedule.addWorkDay(DayOfWeek.TUESDAY, standardWorkingHours(), new CompanyId());
+
+        assertThat(schedule.workDays())
+                .extracting(AppointmentWorkDay::dayOfWeek)
+                .containsExactlyInAnyOrder(DayOfWeek.MONDAY, DayOfWeek.TUESDAY);
     }
 
     @Test

@@ -56,74 +56,181 @@ class ScheduleTest {
     }
 
     @Test
-    void givenPastAndFutureLockedDates_whenChangingLockedDates_thenPreservesPastAndReplacesFuture() {
+    void givenExistingLockedDates_whenAddingLockedDates_thenAddsDatesWithoutReplacingExistingOnes() {
         var today = LocalDate.now(ZoneOffset.UTC);
-        var pastDate = new LockedDate(today.minusDays(1));
-        var oldFutureDate = new LockedDate(today.plusDays(1));
+        var existingPastDate = new LockedDate(today.minusDays(1));
+        var existingFutureDate = new LockedDate(today.plusDays(1));
         var newFutureDate = new LockedDate(today.plusDays(2));
-        var schedule = existingSchedule(Set.of(pastDate, oldFutureDate));
+        var schedule = existingSchedule(Set.of(existingPastDate, existingFutureDate));
 
-        schedule.changeLockedDates(Set.of(newFutureDate), new CompanyId());
+        schedule.addLockedDates(Set.of(newFutureDate), new CompanyId());
 
-        assertThat(schedule.lockedDates()).containsExactlyInAnyOrder(pastDate, newFutureDate);
+        assertThat(schedule.lockedDates())
+                .containsExactlyInAnyOrder(existingPastDate, existingFutureDate, newFutureDate);
     }
 
     @Test
-    void givenPastAndFutureLockedDates_whenChangingLockedDatesToEmpty_thenPreservesPastAndRemovesFuture() {
+    void givenExistingLockedDates_whenRemovingLockedDates_thenRemovesOnlySpecifiedFutureDates() {
         var today = LocalDate.now(ZoneOffset.UTC);
         var pastDate = new LockedDate(today.minusDays(1));
-        var futureDate = new LockedDate(today.plusDays(1));
-        var schedule = existingSchedule(Set.of(pastDate, futureDate));
+        var dateToRemove = new LockedDate(today.plusDays(1));
+        var dateToKeep = new LockedDate(today.plusDays(2));
+        var schedule = existingSchedule(Set.of(pastDate, dateToRemove, dateToKeep));
 
-        schedule.changeLockedDates(Set.of(), new CompanyId());
+        schedule.removeLockedDates(Set.of(dateToRemove), new CompanyId());
 
-        assertThat(schedule.lockedDates()).containsExactly(pastDate);
+        assertThat(schedule.lockedDates()).containsExactlyInAnyOrder(pastDate, dateToKeep);
     }
 
     @Test
-    void givenTomorrowLockedDate_whenChangingLockedDates_thenAddsLockedDate() {
-        var tomorrow = new LockedDate(LocalDate.now(ZoneOffset.UTC).plusDays(1));
-        var schedule = existingSchedule(Set.of());
+    void givenExistingLockedDate_whenRemovingLockedDates_thenRemovesDate() {
+        var existingDate = new LockedDate(LocalDate.now(ZoneOffset.UTC).plusDays(1));
+        var schedule = existingSchedule(Set.of(existingDate));
 
-        schedule.changeLockedDates(Set.of(tomorrow), new CompanyId());
+        schedule.removeLockedDates(Set.of(existingDate), new CompanyId());
 
-        assertThat(schedule.lockedDates()).containsExactly(tomorrow);
+        assertThat(schedule.lockedDates()).isEmpty();
     }
 
     @Test
-    void givenTodayLockedDate_whenChangingLockedDates_thenThrowsDateMustBeAfterNow() {
+    void givenExistingLockedDate_whenAddingLockedDates_thenDoesNotDuplicateDate() {
+        var existingDate = new LockedDate(LocalDate.now(ZoneOffset.UTC).plusDays(1));
+        var schedule = existingSchedule(Set.of(existingDate));
+
+        schedule.addLockedDates(Set.of(existingDate), new CompanyId());
+
+        assertThat(schedule.lockedDates()).containsExactly(existingDate);
+    }
+
+    @Test
+    void givenExistingLockedDates_whenAddingEmptySet_thenKeepsLockedDates() {
+        var existingDate = new LockedDate(LocalDate.now(ZoneOffset.UTC).plusDays(1));
+        var schedule = existingSchedule(Set.of(existingDate));
+
+        schedule.addLockedDates(Set.of(), new CompanyId());
+
+        assertThat(schedule.lockedDates()).containsExactly(existingDate);
+    }
+
+    @Test
+    void givenExistingLockedDates_whenRemovingEmptySet_thenKeepsLockedDates() {
+        var existingDate = new LockedDate(LocalDate.now(ZoneOffset.UTC).plusDays(1));
+        var schedule = existingSchedule(Set.of(existingDate));
+
+        schedule.removeLockedDates(Set.of(), new CompanyId());
+
+        assertThat(schedule.lockedDates()).containsExactly(existingDate);
+    }
+
+    @Test
+    void givenLockedDateNotInSchedule_whenRemovingLockedDates_thenKeepsExistingLockedDates() {
+        var existingDate = new LockedDate(LocalDate.now(ZoneOffset.UTC).plusDays(1));
+        var absentDate = new LockedDate(LocalDate.now(ZoneOffset.UTC).plusDays(2));
+        var schedule = existingSchedule(Set.of(existingDate));
+
+        schedule.removeLockedDates(Set.of(absentDate), new CompanyId());
+
+        assertThat(schedule.lockedDates()).containsExactly(existingDate);
+    }
+
+    @Test
+    void givenTodayLockedDate_whenAddingLockedDates_thenThrowsDateMustBeAfterNow() {
         var today = new LockedDate(LocalDate.now(ZoneOffset.UTC));
         var schedule = existingSchedule(Set.of());
 
         assertThatExceptionOfType(DateMustBeAfterNow.class)
-                .isThrownBy(() -> schedule.changeLockedDates(Set.of(today), new CompanyId()));
+                .isThrownBy(() -> schedule.addLockedDates(Set.of(today), new CompanyId()));
     }
 
     @Test
-    void givenPastLockedDate_whenChangingLockedDates_thenThrowsDateMustBeAfterNow() {
-        var pastDate = new LockedDate(LocalDate.now(ZoneOffset.UTC).minusDays(1));
+    void givenValidAndTodayLockedDates_whenAddingLockedDates_thenDoesNotAddAnyDate() {
+        var today = LocalDate.now(ZoneOffset.UTC);
+        var existingDate = new LockedDate(today.plusDays(3));
+        var validDate = new LockedDate(today.plusDays(1));
+        var invalidDate = new LockedDate(today);
+        var schedule = existingSchedule(Set.of(existingDate));
+
+        assertThatExceptionOfType(DateMustBeAfterNow.class)
+                .isThrownBy(() -> schedule.addLockedDates(Set.of(validDate, invalidDate), new CompanyId()));
+
+        assertThat(schedule.lockedDates()).containsExactly(existingDate);
+    }
+
+    @Test
+    void givenTodayLockedDate_whenRemovingLockedDates_thenThrowsDateMustBeAfterNow() {
+        var today = new LockedDate(LocalDate.now(ZoneOffset.UTC));
         var schedule = existingSchedule(Set.of());
 
         assertThatExceptionOfType(DateMustBeAfterNow.class)
-                .isThrownBy(() -> schedule.changeLockedDates(Set.of(pastDate), new CompanyId()));
+                .isThrownBy(() -> schedule.removeLockedDates(Set.of(today), new CompanyId()));
     }
 
     @Test
-    void givenNullLockedDates_whenChangingLockedDates_thenThrowsFieldCannotBeEmptyException() {
+    void givenValidAndTodayLockedDates_whenRemovingLockedDates_thenDoesNotRemoveAnyDate() {
+        var today = LocalDate.now(ZoneOffset.UTC);
+        var existingDate = new LockedDate(today.plusDays(1));
+        var anotherExistingDate = new LockedDate(today.plusDays(2));
+        var invalidDate = new LockedDate(today);
+        var schedule = existingSchedule(Set.of(existingDate, anotherExistingDate));
+
+        assertThatExceptionOfType(DateMustBeAfterNow.class)
+                .isThrownBy(() -> schedule.removeLockedDates(Set.of(existingDate, invalidDate), new CompanyId()));
+
+        assertThat(schedule.lockedDates()).containsExactlyInAnyOrder(existingDate, anotherExistingDate);
+    }
+
+    @Test
+    void givenNullLockedDates_whenAddingLockedDates_thenThrowsFieldCannotBeEmptyException() {
         var schedule = existingSchedule(Set.of());
 
         assertThatExceptionOfType(FieldCannotBeEmptyException.class)
-                .isThrownBy(() -> schedule.changeLockedDates(null, new CompanyId()));
+                .isThrownBy(() -> schedule.addLockedDates(null, new CompanyId()));
     }
 
     @Test
-    void givenNullLockedDate_whenChangingLockedDates_thenThrowsFieldCannotBeEmptyException() {
+    void givenNullLockedDates_whenRemovingLockedDates_thenThrowsFieldCannotBeEmptyException() {
+        var schedule = existingSchedule(Set.of());
+
+        assertThatExceptionOfType(FieldCannotBeEmptyException.class)
+                .isThrownBy(() -> schedule.removeLockedDates(null, new CompanyId()));
+    }
+
+    @Test
+    void givenNullLockedDate_whenAddingLockedDates_thenThrowsFieldCannotBeEmptyException() {
         var lockedDates = new HashSet<LockedDate>();
         lockedDates.add(null);
         var schedule = existingSchedule(Set.of());
 
         assertThatExceptionOfType(FieldCannotBeEmptyException.class)
-                .isThrownBy(() -> schedule.changeLockedDates(lockedDates, new CompanyId()));
+                .isThrownBy(() -> schedule.addLockedDates(lockedDates, new CompanyId()));
+    }
+
+    @Test
+    void givenNullLockedDate_whenRemovingLockedDates_thenThrowsFieldCannotBeEmptyException() {
+        var lockedDates = new HashSet<LockedDate>();
+        lockedDates.add(null);
+        var schedule = existingSchedule(Set.of());
+
+        assertThatExceptionOfType(FieldCannotBeEmptyException.class)
+                .isThrownBy(() -> schedule.removeLockedDates(lockedDates, new CompanyId()));
+    }
+
+    @Test
+    void givenPastLockedDate_whenAddingLockedDates_thenThrowsDateMustBeAfterNow() {
+        var pastDate = new LockedDate(LocalDate.now(ZoneOffset.UTC).minusDays(1));
+        var schedule = existingSchedule(Set.of());
+
+        assertThatExceptionOfType(DateMustBeAfterNow.class)
+                .isThrownBy(() -> schedule.addLockedDates(Set.of(pastDate), new CompanyId()));
+    }
+
+    @Test
+    void givenPastLockedDate_whenRemovingLockedDates_thenThrowsDateMustBeAfterNow() {
+        var pastDate = new LockedDate(LocalDate.now(ZoneOffset.UTC).minusDays(1));
+        var schedule = existingSchedule(Set.of(pastDate));
+
+        assertThatExceptionOfType(DateMustBeAfterNow.class)
+                .isThrownBy(() -> schedule.removeLockedDates(Set.of(pastDate), new CompanyId()));
     }
 
     @Test
