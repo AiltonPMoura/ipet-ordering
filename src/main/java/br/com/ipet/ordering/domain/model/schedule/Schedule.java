@@ -43,19 +43,16 @@ public abstract class Schedule extends AbstractEventSourceEntity {
         this.setName(name);
     }
 
-    public void changeLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
+    public void addLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
         //this.verifyBelongToCompany(companyId);
         this.verifyLockedDatesAreAfterToday(lockedDates);
+        this.lockedDates.addAll(lockedDates);
+    }
 
-        var today = LocalDate.now(ZoneOffset.UTC);
-
-        var updatedLockedDates = this.lockedDates.stream()
-                .filter(lockedDate -> lockedDate.date().isBefore(today))
-                .collect(Collectors.toCollection(HashSet::new));
-
-        updatedLockedDates.addAll(lockedDates);
-
-        this.setLockedDates(updatedLockedDates);
+    public void removeLockedDates(Set<LockedDate> lockedDates, CompanyId companyId) {
+        //this.verifyBelongToCompany(companyId);
+        this.verifyLockedDatesAreAfterToday(lockedDates);
+        this.lockedDates.removeAll(lockedDates);
     }
 
     private void verifyLockedDatesAreAfterToday(Set<LockedDate> lockedDates) {
